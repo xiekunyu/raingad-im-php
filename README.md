@@ -9,7 +9,7 @@ im后端代码，需要配合前端使用
 
 #### 安装教程
 
-1.  xxxx
+1.  composer intsall
 2.  xxxx
 3.  xxxx
 
