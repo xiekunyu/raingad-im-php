@@ -16,7 +16,7 @@ class Group extends Model
    public static function getMyGroup($map){
       return Db::name('group_user')
       ->alias('gu')
-      ->field('gr.group_id,gr.name as displayName,gu.unread')
+      ->field('gr.group_id,gr.name as displayName,gu.unread,gr.name_py')
       ->join('group gr','gu.group_id=gr.group_id','left')
       ->where($map)
       ->select();

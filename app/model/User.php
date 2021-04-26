@@ -25,7 +25,7 @@ class User extends Model
      }
 
       //查询用户列表
-    public static function getUserList($map,$user_id,$field="user_id,realname,account,avatar"){
+    public static function getUserList($map,$user_id,$field="user_id,realname,account,avatar,name_py"){
       $list=Db::name('user')->field($field)->where($map)->select();
       $list_chart=chartSort($list,'realname',false,'index');
       // 查询未读消息
@@ -52,6 +52,7 @@ class User extends Model
             $group_id='group-'.$v['group_id'];
             $group[$k]['id']=$group_id;
             $group[$k]['avatar']='https://lvzhe-file.oss-cn-beijing.aliyuncs.com/tools/group.png';
+            $group[$k]['name_py']=$v['name_py'];
             $group[$k]['is_group']=1;
             $group[$k]['index']="群聊";
             if($getGroupLastMsg){
@@ -68,6 +69,7 @@ class User extends Model
       foreach($list_chart as $k=>$v){
          $list_chart[$k]['id']=$v['user_id'];
          $list_chart[$k]['displayName']=$v['realname'];
+         $list_chart[$k]['name_py']=$v['name_py'];
          $list_chart[$k]['avatar']=avatarUrl($v['avatar'],$v['realname'],$v['user_id']);
          $list_chart[$k]['lastContent']='';
          $list_chart[$k]['unread']=0;
