@@ -22,11 +22,4 @@ class Group extends Model
       ->select();
    }
 
-   // 获取我的团队
-   public static function editGroupUser($map,$data){
-      return Db::name('group_user')->where($map)->update($data);
-   }
-
-   
-
 }

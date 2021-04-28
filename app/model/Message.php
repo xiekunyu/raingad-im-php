@@ -7,7 +7,7 @@ namespace app\model;
 
 use think\Model;
 use think\facade\Db;
-use app\model\{User};
+use app\model\{User,GroupUser};
 
 class Message extends Model
 {
@@ -109,7 +109,7 @@ class Message extends Model
         if($is_group){
             $sendData['toContactId']=$param['toContactId'];
             // 将团队所有成员的未读状态+1
-            Group::editGroupUser([['group_id','=',$toContactId],['user_id','<>',$param['user_id']]],['unread'=>Db::raw('unread+1')]);
+            GroupUser::editGroupUser([['group_id','=',$toContactId],['user_id','<>',$param['user_id']]],['unread'=>Db::raw('unread+1')]);
         }else{
             $sendData['toContactId']=$param['user_id'];
         }

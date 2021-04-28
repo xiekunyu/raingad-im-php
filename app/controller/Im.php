@@ -4,7 +4,7 @@ namespace app\controller;
 use app\BaseController;
 use think\facade\Request;
 use think\facade\Db;
-use app\model\{User,Message,Group};
+use app\model\{User,Message,GroupUser};
 class Im extends BaseController
 {
 
@@ -51,23 +51,13 @@ class Im extends BaseController
         return success();
     }
 
-    // 修改团队名称
-    public function editGroupName(){
-        $param=$this->request->param();
-        $group_id=explode('-',$param['id'])[1];
-        Group::where(['group_id'=>$group_id])->update(['name'=>$param['displayName']]);
-        $param['editUserName']=$this->userInfo['realname'];
-        wsSendMsg($group_id,'editGroupName',$param,1);
-        return success('修改成功');
-    }
-
     // 设置消息已读
     protected function setIsRead($is_group,$to_user){
         if($is_group){
             $chat_identify=$to_user;
             $toContactId=explode('-',$to_user)[1];
             // 更新群里面我的所有未读消息为0
-            Group::editGroupUser(['user_id'=>$this->userInfo['user_id'],'group_id'=>$toContactId],['unread'=>0]);
+            GroupUser::editGroupUser(['user_id'=>$this->userInfo['user_id'],'group_id'=>$toContactId],['unread'=>0]);
         }else{
             $chat_identify=chat_identify($this->userInfo['user_id'],$to_user);
             // 更新我的未读消息为0
