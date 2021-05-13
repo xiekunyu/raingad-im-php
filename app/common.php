@@ -445,7 +445,7 @@ function getFileType($ext){
 }
 
 //gateway向web页面推送消息
-function wsSendMsg($user, $type,  $data, $isGroup)
+function wsSendMsg($user, $type,  $data, $isGroup=0)
 {
     $message = json_encode([
         'type' => $type,

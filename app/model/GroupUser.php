@@ -21,7 +21,15 @@ class GroupUser extends Model
    public static function getGroupUser($map){
       $data=self::where($map)->order('role asc')->select();
       return User::matchUser($data,true,'user_id');
-
    }
 
+   // 验证权限
+   public static function checkAuth($map,$role=1){
+      $info=self::where($map)->find()->toArray();
+      if($info['role']<=$role){
+         return true;
+      }else{
+         return false;
+      }
+   }
 }

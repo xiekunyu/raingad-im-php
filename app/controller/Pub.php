@@ -146,5 +146,15 @@ class Pub
         // pushMessage($this->userInfo['uid'],'notice','消息通知','恭喜您，已成功绑定UID','');
     }
   
-
+ /**
+     * 将用户团队绑定到消息推送服务中
+     * @return \think\response\Json
+     */
+    public function bindGroup(){
+        $client_id=input('client_id');
+        $group_id=input('group_id');
+        $group_id = explode('-', $group_id)[1];
+        Gateway::joinGroup($client_id, $group_id); 
+        return success();
+    }
 }

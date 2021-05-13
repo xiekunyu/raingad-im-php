@@ -14,6 +14,7 @@ class Im extends BaseController
        return success('',$data);
    }
 
+
     //发送消息
     public function sendMessage(){
         $param=$this->request->param();
@@ -75,5 +76,4 @@ class Im extends BaseController
         }
         return warning('设置失败');
     }
-
 }
