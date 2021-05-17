@@ -12,11 +12,6 @@ class Index extends BaseController
 {
 
    public function index(){
-       echo "RAINGAD IM";
-    // circleAvatar(input('str'),input('s')?:80,input('uid'));die;
-    //    echo 123;
-    //    echo root_path();
-    //    dump(Session::getId());
-    //    echo 4567;
+    return view::fetch();
    }
 }

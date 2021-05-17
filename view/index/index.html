@@ -3,164 +3,50 @@
 
 <head>
     <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
-    <title>{$title}</title>
+    <title>文件编辑</title>
     <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
     <meta name="keywords" content="" />
     <meta name="description" content="" />
     <meta name="viewport" content="width=device-width,initial-scale=1.0,maximum-scale=1.0,user-scalable=0,viewport-fit=cover" />
     <meta name="format-detection" content="telephone=no" />
-    <link rel="stylesheet" href="/static/css/style.css">
-    <link rel="stylesheet" href="/static/elementui/element-ui.css">
-
+    <!-- <script type="text/javascript" src="http://39.106.36.245:5433/web-apps/apps/api/documents/api.js"></script> -->
+    <script type="text/javascript" src="https://onlyoffice.lcoce.com/web-apps/apps/api/documents/api.js"></script>
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+        }
+        
+        .onlyofficeBox {
+            height: 100%;
+            padding: 0;
+            position: absolute;
+            width: 100%;
+        }
+    </style>
 </head>
 
-<body>
 
-    <div class="main" id='el-app'>
-        <div class="container a-container is-txl" id="a-container">
-            <div class="form">
-                <h2 class="form_title title">手机号登录</h2>
-                <!-- <span class="form__span">or use email for registration</span> -->
-                <input class="form__input" type="text" v-model='form.account' placeholder="手机号" maxlength="11">
-                <div class="mobile-login">
-                    <input class="form__input" style="width:100px;flex:1;margin-right: 20px;" type="text" placeholder="验证码" v-model="form.code" maxlength="4">
-                    <el-button round v-text="codeText" :disabled="codeStatus" @click="sendCode()">获取验证码</el-button>
-                </div>
-                <el-button class='button' type="success" @click="login('code')">登录</button>
-            </div>
-        </div>
-        <div class="container b-container is-txl is-z200" id="b-container">
-            <div class="form">
-                <h2 class="form_title title">普通登录</h2>
-                <!-- <span class="form__span">or use your email account</span> -->
-                <input class="form__input" type="text" v-model='form.account' placeholder="手机号" maxlength="11">
-                <input class="form__input" type="password" v-model="form.password" placeholder="密码">
-                <div class="normal-login" maxlength="16">
-                    <input class="form__input" style="width:100px;flex: 1;margin-right: 20px;" type="text" placeholder="验证码" v-model="form.captcha" maxlength="4">
-                    <img @click="getCaptcha()" :src="captcha" alt="">
-                </div>
-                <el-button class='button' type="primary" @click="login('verify')">登录</el-button>
-            </div>
-        </div>
-        <div class="switch is-txr" id="switch-cnt">
-            <div class="switch__circle is-txr"></div>
-            <div class="switch__circle switch__circle--t is-txr"></div>
-            <div class="switch__container is-hidden" id="switch-c1">
-                <div class="form__icons">
-                    <el-avatar style="width:80px;height:80px" src="https://file.lcoce.com/logo/lzoa.png" alt=""></el-avatar>
-                </div>
-                <h2 class="switch__title title">律者-律师协作系统</h2>
-                <p class="switch__description description">手机不在身边，可以选择一下登录方式！</p>
-                <el-button class="switch__button button switch-btn" type="primary">账号密码登录</el-button>
-            </div>
-            <div class="switch__container" id="switch-c2">
-                <div class="form__icons">
-                    <el-avatar style="width:80px;height:80px" src="https://file.lcoce.com/logo/lzoa.png" alt=""></el-avatar>
-                </div>
-                <h2 class="switch__title title">律者-律师协作系统</h2>
-                <p class="switch__description description">如果您不记得密码，可以选择一下登录方式！</p>
-                <el-button class="switch__button button switch-btn" type="success">手机号登录</el-button>
-            </div>
-        </div>
+<body>
+    <div class='onlyofficeBox'>
+        <div id="placeholder"></div>
     </div>
 
-    <script src="/static/js/jquery-2.0.3.min.js"></script>
-    <script src="/static/js/vue.js"></script>
-    <script src="/static/elementui/element-ui.js"></script>
-    <script>
-        var redirectUrl = "{:request()->param('redirectUrl')}";
-        var app = new Vue({
-            delimiters: ['${', '}'],
-            el: '#el-app',
-            data() {
-                return {
-                    email: '',
-                    codeText: '发送验证码',
-                    codeClass: "layui-btn layui-btn-warm",
-                    codeStatus: false,
-                    loading: false,
-                    captcha: "{:captcha_src()}",
-                    form: {
-                        account: '',
-                        password: '',
-                        code: '',
-                        captcha: ''
-                    }
-                }
-            },
-            methods: {
-                sendCode() {
-                    var that = this;
-                    if (!(/^1[3456789]\d{9}$/.test(this.form.account))) {
-                        return this.$message.error('手机号不正确');
-                    }
-                    $.post("{:url('index/sendCode')}", {
-                        account: this.form.account
-                    }, function(res) {
-                        if (res.code == 0) {
-                            that.$message({
-                                message: res.msg,
-                                type: 'success'
-                            });
-                            that.codeStatus = true;
-                            var time = 10;
-                            that.setTime(time);
-                            that.codeText = '' + time + 's后重新发送';
-                        } else {
-                            that.$message.error(res.msg);
-                        }
-                    })
-                },
-                login(type) {
-                    var field = this.form;
-                    var that = this;
-                    if (type == 'verify') {
-                        if (field.password == '' || field.password.length < 6) {
-                            return this.$message.error('密码格式不正确');
-                        }
-                        if (field.captcha == '' || field.captcha.length < 4) {
-                            return this.$message.error('验证码格式不正确');
-                        }
-                    } else {
-                        if (field.code == '') {
-                            return this.$message.error('手机号不正确');
-                        }
-                    }
-                    field.loginType = type;
-                    field.redirectUrl = redirectUrl;
-                    $.post("{:url('index/login')}", field, function(res) {
-                        if (res.code == 0) {
-                            that.$message({
-                                message: res.msg,
-                                type: 'success'
-                            });
-                            window.location.href = res.data;
-                        } else {
-                            that.getCaptcha();
-                            that.$message.error(res.msg);
-                        }
-                    })
-                },
-                setTime(time) {
-                    var that = this;
-                    timeClock = setInterval(function() {
-                        time--;
-                        that.codeText = '' + time + 's后重新发送';
-                        if (time == 0) {
-                            clearInterval(timeClock);
-                            that.codeText = '发送验证码';
-                            that.codeStatus = false;
-                        }
-                    }, 1000)
-                },
-                getCaptcha() {
-                    this.captcha = "{:captcha_src()}?t=" + new Date().getTime();
-                }
-            }
-
-        })
-    </script>
-    <script src="/static/js/script.js"></script>
 </body>
+<script>
+    new DocsAPI.DocEditor("placeholder", {
+        "document": {
+            "fileType": "docx",
+            "key": "Khirz6zTPdfd71232123asdasd",
+            "title": "法律顾问流程.docx",
+            "url": "https://document.lcoce.com/disk_VAO34jXqWoQ2/folder_2G9r4xOGavwy/5f8502435b650.docx"
+        },
+        "documentType": "word",
+        'editorConfig': {
+            'lang': 'zh-CN'
+        },
+        'lang': 'zh-CN'
+    });
+</script>
 
 </html>

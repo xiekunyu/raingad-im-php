@@ -163,16 +163,57 @@ class Group extends BaseController
          $group_id = explode('-', $param['id'])[1];
          $user_id=$param['user_id'];
          $role=GroupUser::where(['group_id'=>$group_id,'user_id'=>$uid])->value('role');
-         if($role>2){
+         if($role>2 && $user_id!=$uid){
             return warning('您没有操作权限！');
          }
          $groupUser=GroupUser::where(['group_id'=>$group_id,'user_id'=>$user_id])->find();
-         if($groupUser && $groupUser['role']>$role){
+         if(($groupUser && $groupUser['role']>$role) || $user_id==$uid){
             GroupUser::destroy($groupUser->id);
          }else{
             return warning('您的权限不够！');
          }
          wsSendMsg($group_id,"removeUser",['group_id'=>$param['id']],1);
          return success('删除成功');
+      }
+
+      // 解散团队
+      public function removeGroup(){
+         $param = $this->request->param();
+         $uid=$this->userInfo['user_id'];
+         $group_id = explode('-', $param['id'])[1];
+         $role=GroupUser::where(['group_id'=>$group_id,'user_id'=>$uid])->value('role');
+         if($role>1){
+            return warning('您没有操作权限！');
+         }
+         Db::startTrans();
+         try{
+            // 删除团队成员
+            GroupUser::where(['group_id'=>$group_id])->delete();
+            // 删除团队
+            GroupModel::destroy($group_id);
+            wsSendMsg($group_id,"removeGroup",['group_id'=>$param['id']],1);
+            Db::commit();
+            return success();
+         }catch(Exception $e){
+            Db::rollback();
+            return error($e->getMessage());
+         }
+      }
+
+      // 设置公告
+      public function setNotice(){
+         $param = $this->request->param();
+         $uid=$this->userInfo['user_id'];
+         $group_id = explode('-', $param['id'])[1];
+         if($param['notice']==''){
+            return warning('请输入内容！');
+         }
+         $role=GroupUser::where(['group_id'=>$group_id,'user_id'=>$uid])->value('role');
+         if($role>2){
+            return warning('您没有操作权限！');
+         }
+         GroupModel::update(['notice'=>$param['notice']],['group_id'=>$group_id]);
+         wsSendMsg($group_id,"setNotice",['group_id'=>$param['id'],'notice'=>$param['notice']],1);
+         return success();
       }
 }
