@@ -12,6 +12,9 @@ class Index extends BaseController
 {
 
    public function index(){
-    return view::fetch();
+      if (!file_exists(CONF_PATH . "install.lock")) {
+         return redirect(url('install/index'));    
+      }
+      return view::fetch();
    }
 }

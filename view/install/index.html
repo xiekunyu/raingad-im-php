@@ -7,6 +7,7 @@
     <title>Raingad IM简易安装向导</title>
     <link rel="stylesheet" href="__STATIC__/elementui/element-ui.css">
     <script src="__STATIC__/vue.js"></script>
+    <script src="__STATIC__/jquery-2.0.3.min.js"></script>
     <script src="__STATIC__/elementui/element-ui.js"></script>
 </head>
 
@@ -44,13 +45,16 @@
                     <p>后端地址：<a href="https://gitee.com/raingad/im-instant-chat" target="_blank">https://gitee.com/raingad/im-instant-chat</a></p>
 
                     <b> 支持功能：</b>
-                    <p>1、单聊和群聊</p>
-                    <p>2、支持发送表情、图片和文件</p>
-                    <p>3、单聊支持消息已读未读的状态显示</p>
-                    <p>4、支持设置新消息提醒</p>
-                    <p>5、支持部分Lemon-imui内功能设置</p>
-                    <p>5、支持文件和图片在线预览</p>
-                    <p>6、群聊创建、删除和群成员管理、群公告等</p>
+                    <ul>
+                        <li>单聊和群聊</li>
+                        <li>支持发送表情、图片和文件</li>
+                        <li>单聊支持消息已读未读的状态显示</li>
+                        <li>支持设置新消息提醒</li>
+                        <li>支持部分Lemon-imui内功能设置</li>
+                        <li>支持文件和图片在线预览</li>
+                        <li>群聊创建、删除和群成员管理、群公告等</li>
+                    </ul>
+
                 </div>
                 <div class="setting-version" style="color: #a6a6a6">
                     <p>后端技术栈：thinkphp6+workerman</p>
@@ -58,16 +62,78 @@
                 </div>
             </div>
             <div class="step-item" v-if="action==1">
-                2
+                <h4>环境状态</h4>
+                <el-table :data="env" border style="width: 100%" size="mini">
+                    <el-table-column prop="name" label="检查项" align="center">
+                    </el-table-column>
+                    <el-table-column prop="description" label="要求" width="200px" align="center">
+                    </el-table-column>
+                    <el-table-column prop="value" label="当前状态" align="center">
+                    </el-table-column>
+                    <el-table-column prop="status" label="是否通过" align="center">
+                        <template slot-scope="scope">
+                            <span :class="scope.row.status === 'ok' ? 'fc-success' : 'fc-danger'">${scope.row.status}</span>
+                          </template>
+                    </el-table-column>
+
+                </el-table>
+                <h4>文件夹权限</h4>
+                <el-table :data="dir" border style="width: 100%" size="mini">
+                    <el-table-column prop="path" label="检查项" width="300px" align="center">
+                    </el-table-column>
+                    <el-table-column prop="need" label="要求" align="center">
+                    </el-table-column>
+                    <el-table-column prop="value" label="当前状态" align="center">
+                    </el-table-column>
+                    <el-table-column prop="status" label="是否通过" align="center">
+                        <template slot-scope="scope">
+                            <span :class="scope.row.status === 'ok' ? 'fc-success' : 'fc-danger'">${scope.row.status}</span>
+                          </template>
+                    </el-table-column>
+                </el-table>
+                <div align="center" style="margin-top:15px;">
+                    <el-button round @click="reCheckEnv" :loading="loading">重新检测</el-button>
+                </div>
+
             </div>
-            <div class="step-item" v-if="action==2">
-                3
+            <div class="step-item" v-if="action==2" align="center">
+                <div class="step-form">
+                    <h4>数据库</h4>
+                    <el-form ref="form" :model="form" label-width="120px">
+                        <el-form-item label="服务器地址">
+                            <el-input v-model="form.hostname"></el-input>
+                        </el-form-item>
+                        <el-form-item label="数据库">
+                            <el-input v-model="form.database"></el-input>
+                        </el-form-item>
+                        <el-form-item label="表前缀">
+                            <el-input v-model="form.prefix"></el-input>
+                        </el-form-item>
+                        <el-form-item label="数据库用户名">
+                            <el-input v-model="form.username"></el-input>
+                        </el-form-item>
+                        <el-form-item label="数据库密码">
+                            <el-input v-model="form.password"></el-input>
+                        </el-form-item>
+                        <el-form-item label="端口">
+                            <el-input v-model="form.hostport"></el-input>
+                        </el-form-item>
+                    </el-form>
+                </div>
+
             </div>
             <div class="step-item" v-if="action==3">
-                4
+                <p>开始安装...</p>
+                <div id='install-process'>
+                </div>
+
             </div>
             <div class="step-item" v-if="action==4">
-                这不，安装完了
+                <div class="setting-version">
+                    <p>安装完成！</p>
+                    <p>前台地址：<a href="http://{:request()->host()}/index.html" target="_blank">http://{:request()->host()}/index.html</a></p>
+                    <p>交流群：336921267</p>
+                </div>
             </div>
             <hr style="border: 1px solid #f5f5f5;">
             <div class="next-button" align="center" v-if="!isDone">
@@ -102,25 +168,58 @@
                 isDone: false,
                 doneText: '进入系统',
                 env: [],
+                dir: [],
                 database: [],
+                status: 1,
+                loading: false,
+                form: {
+                    hostname: '127.0.0.1',
+                    database: 'im',
+                    username: 'root',
+                    password: '',
+                    hostport: 3306,
+                    prefix: 'yu_'
+                }
 
             }
         },
         watch: {
             action(val) {
+                this.status = 1;
                 if (val == 0) {
                     this.preDisabled = true;
                 } else {
                     this.preDisabled = false;
                 }
+                if (val == 1) {
+                    this.getEnv();
+                }
+                if (val == 3) {
+                    this.process('正在写入数据库...');
+                    var _this = this;
+                    setTimeout(function() {
+                        _this.install()
+                    }, 1000);
+                } else {
+                    $('#install-process').html('');
+                }
                 if (val == 4) {
                     this.isDone = true;
+                }
+            },
+            status(val) {
+                if (val == 0) {
+                    this.nextDisabled = true;
+                } else {
+                    this.nextDisabled = false;
                 }
             }
         },
         methods: {
             next() {
-                if (this.action < 4) {
+                if (this.action == 2) {
+                    this.checkDatabase();
+                } else if (this.action < 4) {
                     this.action++;
                 }
             },
@@ -130,6 +229,63 @@
                 }
             },
             openSys() {
+                widnow.location.href = "http://" + document.domain + "/index.html";
+            },
+            getEnv() {
+                var _this = this;
+                $.post("{:url('install/getEnv')}", {}, function(res) {
+                    if (res.code == 0) {
+                        _this.env = res.data.env;
+                        _this.dir = res.data.dir;
+                        _this.status = res.data.status;
+                    }
+                    _this.loading = false;
+                })
+            },
+            checkDatabase() {
+                var _this = this;
+                $.post("{:url('install/checkDatabase')}", {
+                    form: this.form
+                }, function(res) {
+                    if (res.code == 0) {
+                        _this.status = res.data.status;
+                        _this.action++;
+                    } else {
+                        _this.$message.error(res.msg);
+                    }
+                    _this.loading = false;
+                })
+            },
+            install() {
+                this.status = 0;
+                var _this = this;
+                $.post("{:url('install/install')}", {}, function(res) {
+                    if (res.code == 0) {
+                        setTimeout(function() {
+                            _this.process('数据库写入成功，执行sql语句 ' + 1 + ' 条！');
+                            setTimeout(function() {
+                                _this.process('正在跳转...');
+                                setTimeout(function() {
+                                    _this.action++;
+                                }, 1000);
+                            }, 1000);
+                        }, 1000);
+                        _this.status = res.data.status;
+                    } else {
+                        setTimeout(_this.process("<span class='fc-danger'>" + res.msg + "</span>"), 1000);
+                    }
+                    _this.loading = false;
+                })
+            },
+            reCheckEnv() {
+                this.loading = true;
+                this.getEnv();
+            },
+            process(text) {
+                var html = "<p>" + text + "</p>";
+                this.$nextTick(() => {
+                    $('#install-process').append(html);
+                });
 
             }
 
@@ -160,8 +316,9 @@
     }
     
     .step-item {
-        min-height: 500px;
-        padding: 20px 40px;
+        height: 500px;
+        overflow: auto;
+        padding: 20px;
     }
     
     .container {
@@ -177,8 +334,33 @@
         margin: 12px 0;
     }
     
-    .setting-version {
-        line-height: 1.2;
+    .setting-version,
+    .install-process {
+        line-height: 1.3;
+    }
+    
+    .step-form {
+        width: 400px
+    }
+    
+    .fc-danger {
+        color: #f56c6c;
+    }
+    
+    .fc-warning {
+        color: #e6a23c;
+    }
+    
+    .fc-success {
+        color: #67c23a;
+    }
+    
+    .fc-info {
+        color: #909399;
+    }
+    
+    .fc-primary {
+        color: #409eff;
     }
 </style>
 
