@@ -44,7 +44,7 @@ composer intsall
 4.  进入项目根目录，修改 `example.env` 为 `.env` ，并修改数据库相应的参数。
 
 ##### 第二种方式
-1. 下载完整源码放到自己的服务器上。
+1. 下载完整源码放到自己的服务器上[下载地址](https://gitee.com/raingad/im-instant-chat/releases/0.5.18)。
 2. 开启伪静态，下面只展示nginx的，Apache的自己百度
 ``` 
 location / {
