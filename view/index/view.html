@@ -1,0 +1,161 @@
+<!DOCTYPE html>
+<html lang="zh">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>文件预览插件</title>
+    <link rel="stylesheet" href="__STATIC__/css/main.css">
+    <link rel="stylesheet" href="__STATIC__/elementui/element-ui.css">
+</head>
+
+<body>
+    <div id="el-app">
+        <div class="container" v-if="viewer===0">
+        </div>
+        <div id="picview" align="center" class="picview" v-if="viewer===1">
+            <img src="__STATIC__/img/none.png" alt="..." name="viewArea" id="viewArea" draggable="false" />
+        </div>
+        <div id="videoContainer" v-if="viewer===3"></div>
+        <div class="container" v-if="viewer===8">
+            不支持该资源！
+        </div>
+        <div class="container" v-if="viewer===-1">
+            资源不存在！
+        </div>
+    </div>
+
+    <!-- built files will be auto injected -->
+    <script type="text/javascript" src="__STATIC__/js/pdfobject.js"></script>
+    <script type="text/javascript" src="__STATIC__/js/jquery-2.0.3.min.js"></script>
+    <script type="text/javascript" src="__STATIC__/js/jquery.mousewheel.min.js"></script>
+    <script type="text/javascript" src="__STATIC__/js/zoom-marker.js"></script>
+    <script type="text/javascript" src="__STATIC__/js/superVideo.js"></script>
+    <script type="text/javascript" src="__STATIC__/js/vue.js"></script>
+    <script type="text/javascript" src="__STATIC__/js/element-ui.js"></script>
+    <script>
+        var app = new Vue({
+                delimiters: ['${', '}'],
+                el: '#el-app',
+                data() {
+                    return {
+                        loading: true,
+                        viewer: 0,
+                        videoExt: ['mp4', 'avi', '3gp', 'rmvb'],
+                        imgExt: ['jpeg', 'jpg', 'gif', 'png', 'bmp'],
+                        pdfExt: ['pdf'],
+                        audioExt: ['mp3', 'wav', 'ogg'],
+                    };
+                },
+                created() {
+                    const loading = this.$loading({
+                        lock: true,
+                        text: '资源加载中...',
+                        spinner: 'el-icon-loading',
+                        background: 'rgba(0, 0, 0, 0.9)'
+                    });
+                    setTimeout(() => {
+                        this.openUrl();
+                        loading.close();
+                    }, 1000);
+
+                    /*var img="https://lvzhe-project-file.oss-cn-beijing.aliyuncs.com/project856/5c389cbe8cb30.jpg";
+                    var pdf="https://lvzhe-project-file.oss-cn-beijing.aliyuncs.com/project856/5f068d4a35898.pdf";
+                    var video="https://blz-videos.nosdn.127.net/1/OverWatch/AnimatedShots/Overwatch_AnimatedShot_Winston_Recall.mp4";*/
+                },
+                methods: {
+                    imgView(url) {
+                        this.$nextTick(function() {
+                            $('#viewArea').zoomMarker({
+                                src: url,
+                                rate: 0.2,
+                            });
+                        })
+
+                    },
+                    pdfView(url) {
+                        new PDFObject({
+                            url: url
+                        }).embed();
+                    },
+                    videoView(url) {
+                        this.$nextTick(function() {
+                            var nextControl = new Super.NextControl() // 实例化“下一个”按钮控件
+                            var Dbspeen = new Super.DbspeenControl() // 倍速控件
+                                // var BarrageControl = new Super.BarrageControl() // 弹幕控件
+                            var fullScreenControl = new Super.FullScreenControl() // 实例化“全屏”控件
+                            var video = new Super.Svideo('videoContainer', {
+                                source: new Super.VideoSource({ // 引入视频资源
+                                    src: url
+                                }),
+                                leftControls: [nextControl], // 控件栏左槽插入控件
+                                rightControls: [Dbspeen, fullScreenControl], // 控件栏右槽插入控件
+                                // centerControls: [BarrageControl] // 弹幕控件插入中间插槽
+                            })
+                            video.addEventListener('change', function(event) { // 监听video各属性变化
+                                //  console.log(event)
+                            })
+                            nextControl.addEventListener('click', function(event) { // 监听“下一个”按钮控件点击事件
+                                alert('click next menu !!!')
+                            })
+                            fullScreenControl.addEventListener('fullscreen', function(event) { // 监听进入全屏
+                                console.log('is fullscreen !!!')
+                            })
+                            fullScreenControl.addEventListener('cancelfullscreen', function(event) { // 监听退出全屏
+                                console.log('cancel fullscreen !!!')
+                            })
+                            video.addEventListener('fullscreen', function(event) {
+                                console.log('is fullscreen !!!')
+                            })
+                        })
+                    },
+                    openUrl() {
+                        var url = parseUrl('src');
+                        var spl = url.split(".");
+                        var exts = spl[spl.length - 1];
+                        var ext = exts.toLowerCase();
+                        console.log('ext：' + ext);
+                        if (!url || !ext) {
+                            return this.viewer = -1;
+                        }
+                        if ($.inArray(ext, this.imgExt) >= 0) {
+                            console.log('img：' + ext);
+                            this.viewer = 1;
+                            this.imgView(url);
+                        } else if ($.inArray(ext, this.pdfExt) >= 0) {
+                            console.log('pdf：' + ext);
+                            this.viewer = 2;
+                            this.pdfView(url);
+                        } else if ($.inArray(ext, this.videoExt) >= 0) {
+                            console.log('video：' + ext);
+                            this.viewer = 3;
+                            this.videoView(url);
+                        } else {
+                            return this.viewer = 8;
+                        }
+                    }
+                }
+            })
+            //序列化url，将url链接后面的get参数序列化成json对象
+        function parseUrl(field, urlstr) {
+            if (typeof(urlstr) === 'undefined') {
+                urlstr = window.location.href;
+            }
+            var param = urlstr.substring(urlstr.indexOf("?") + 1);
+            var paramArr = param.split("&");
+            var urlArr = {};
+            for (var i = 0; i < paramArr.length; i++) {
+                var str = paramArr[i];
+                var itemArr = str.split("=");
+                urlArr[itemArr[0]] = itemArr[1];
+            }
+            if (typeof(urlArr[field]) === 'undefined') {
+                return '';
+            }
+            return urlArr[field];
+        }
+    </script>
+</body>
+
+</html>

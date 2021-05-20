@@ -85,7 +85,7 @@ class User extends Model
          $list_chart[$k]['id'] = $v['user_id'];
          $list_chart[$k]['displayName'] = $v['realname'];
          $list_chart[$k]['name_py'] = $v['name_py'];
-         $list_chart[$k]['avatar'] = avatarUrl($v['avatar'], $v['realname'], $v['user_id']);
+         $list_chart[$k]['avatar'] = avatarUrl($v['avatar'], $v['realname'], $v['user_id'],120);
          $list_chart[$k]['lastContent'] = '';
          $list_chart[$k]['unread'] = 0;
          $list_chart[$k]['lastSendTime'] = time() * 1000;

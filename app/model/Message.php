@@ -32,14 +32,14 @@ class Message extends Model
         ->order($sort)
         ->paginate(['list_rows'=>$listRows,'page'=>$pageSize]);
         $data=[];
-        $oss=config('oss');
+        $ossUrl=config('oss.ossUrl')?:request()->url().'/';
         if($list){
             $listData=$list->toArray()['data'];
             foreach($listData as $k=>$v){
                 $content=$v['content'];
                 $preview='';
                 if(in_array($v['type'],self::$fileType)){
-                    $content=$oss['ossUrl'].$v['content'];
+                    $content=$ossUrl.$v['content'];
                     if($v['type']=='image'){
                         $preview=previewUrl($content);
                     }else{
@@ -116,9 +116,9 @@ class Message extends Model
         $sendData['fromUser']['id']=(int)$sendData['fromUser']['id'];
         $sendData['fileSize']=$fileSzie;
         $sendData['fileName']=$fileName;
-        $oss=config('oss');
+        $ossUrl=config('oss.ossUrl')?:request()->url().'/';
         if(in_array($sendData['type'],self::$fileType)){
-            $sendData['content']=$oss['ossUrl'].$sendData['content'];
+            $sendData['content']=$ossUrl.$sendData['content'];
             if($sendData['type']=='image'){
                 $pre=1;
             }else{

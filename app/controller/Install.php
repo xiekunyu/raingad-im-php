@@ -2,7 +2,7 @@
 // +----------------------------------------------------------------------
 // | Description: 安装
 // +----------------------------------------------------------------------
-// | Author:  Michael_xu | gengxiaoxu@5kcrm.com 
+// | Author:  xiekunyu | raingad@foxmail.com 
 // +----------------------------------------------------------------------
 
 namespace app\controller;
@@ -40,8 +40,6 @@ class Install extends BaseController
 //            die();
 //        }
     }
-
-    private $upgrade_site = "http://message.72crm.com/";
 
     /**
      * [index 安装步骤]
@@ -319,11 +317,14 @@ INFO;
         //     'pdo' => ['pdo', '开启', '开启', 'ok'],
         // ];
         $items = [
-            ['name'=>'操作系统','alias'=>'os','value'=>PHP_OS, 'need'=>'类Unix','status'=> 'ok','description'=>"操作系统需要类Unix"],
-            ['name'=>'PHP版本','alias'=>'version','value'=> PHP_VERSION, 'need'=>'7.0', 'status'=>'ok','description'=>"PHP版本必须大于7.0"],
-            ['name'=>'gd库','alias'=>'gd', 'value'=>'开启', 'need'=>'开启', 'status'=>'ok','description'=>"必须开启GD库"],
-            ['name'=>'pdo','alias'=>'pdo', 'value'=>'开启', 'need'=>'开启', 'status'=>'ok','description'=>"必须开启PDO"],
-            ['name'=>'openssl','alias'=>'openssl', 'value'=>'开启', 'need'=>'开启', 'status'=>'ok','description'=>"必须开启OPENSSL"],
+            ['name'=>'操作系统','alias'=>'os','value'=>PHP_OS,'status'=> 'ok','description'=>"操作系统需要类Unix"],
+            ['name'=>'PHP版本','alias'=>'version','value'=> PHP_VERSION,  'status'=>'ok','description'=>"PHP版本必须大于7.0"],
+            ['name'=>'gd库','alias'=>'gd', 'value'=>'开启', 'status'=>'ok','description'=>"开启GD库"],
+            ['name'=>'pdo','alias'=>'pdo', 'value'=>'开启', 'status'=>'ok','description'=>"PDO扩展"],
+            ['name'=>'openssl','alias'=>'openssl', 'value'=>'开启',  'status'=>'ok','description'=>"OPENSSL扩展"],
+            ['name'=>'pcntl','alias'=>'pcntl', 'value'=>'开启',  'status'=>'ok','description'=>"pcntl扩展，消息推送必须开启"],
+            ['name'=>'posix','alias'=>'posix', 'value'=>'开启',  'status'=>'ok','description'=>"posix扩展，消息推送必须开启"],
+            ['name'=>'event','alias'=>'event', 'value'=>'开启',  'status'=>'ok','description'=>"event选择安装,处理消息推送高并发"],
         ];
         foreach($items as $k=>$v){
             $status='ok';
@@ -355,6 +356,26 @@ INFO;
                         $status='no';
                     }
                     break;
+                case 'pcntl':
+                    if (!extension_loaded('pcntl')) {
+                        $this->status=0;
+                        $items[$k]['value'] = '未开启';
+                        $status='no';
+                    }
+                    break;
+                case 'posix':
+                    if (!extension_loaded('posix')) {
+                        $this->status=0;
+                        $items[$k]['value'] = '未开启';
+                        $status='no';
+                    }
+                    break;
+                case 'event':
+                    if (!extension_loaded('event')) {
+                        $items[$k]['value'] = '未开启';
+                        $status='no';
+                    }
+                    break;
             }
             
             $items[$k]['status'] = $status;
@@ -376,11 +397,11 @@ INFO;
             ['file', root_path().'config', 'config', '读写', '读写', 'ok'],
         ];
         $items = [
-            ['path'=>root_path().'app', 'need'=>'读写', 'value'=>'读写', 'type'=>'dir','status'=>'ok'],
-            ['path'=>root_path().'extend', 'need'=>'读写', 'value'=>'读写', 'type'=>'dir','status'=>'ok'],
-            ['path'=> root_path().'runtime', 'need'=>'读写', 'value'=>'读写', 'type'=>'dir','status'=>'ok'],
-            ['path'=>root_path().'public', 'need'=>'读写', 'value'=>'读写', 'type'=>'dir','status'=>'ok'],
-            ['path'=>root_path().'config', 'need'=>'读写', 'value'=>'读写', 'type'=>'file','status'=>'ok'],
+            ['path'=>root_path().'app', 'dir'=>'app', 'value'=>'读写', 'type'=>'dir','status'=>'ok'],
+            ['path'=>root_path().'extend', 'dir'=>'extend', 'value'=>'读写', 'type'=>'dir','status'=>'ok'],
+            ['path'=> root_path().'runtime', 'dir'=>'runtime', 'value'=>'读写', 'type'=>'dir','status'=>'ok'],
+            ['path'=>root_path().'public', 'dir'=>'public', 'value'=>'读写', 'type'=>'dir','status'=>'ok'],
+            ['path'=>root_path().'config', 'dir'=>'config', 'value'=>'读写', 'type'=>'file','status'=>'ok'],
         ];
         $status=1;
         foreach ($items as $k=>$v) {

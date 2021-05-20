@@ -16,3 +16,4 @@ Route::get('think', function () {
 
 Route::get('hello/:name', 'index/hello');
 Route::rule('avatar/:str/:s/:uid','pub/avatar');
+Route::rule('view','index/view');

@@ -486,6 +486,8 @@ function previewUrl($url,$type=1){
         $preview=$previewConf['own']."view.html?src=".$url;
     }elseif($type==2 && $previewConf['yzdcs']){
         $preview=$previewConf['yzdcs'].'?k='.$previewConf['keycode'].'&url='.$url;
+    }else{
+        $preview=request()->domain()."view.html?src=".$url;
     }
     return $preview;
 }

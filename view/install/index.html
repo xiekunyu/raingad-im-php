@@ -6,27 +6,27 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
     <title>Raingad IM简易安装向导</title>
     <link rel="stylesheet" href="__STATIC__/elementui/element-ui.css">
-    <script src="__STATIC__/vue.js"></script>
-    <script src="__STATIC__/jquery-2.0.3.min.js"></script>
+    <script src="__STATIC__/js/vue.js"></script>
+    <script src="__STATIC__/js/jquery-2.0.3.min.js"></script>
     <script src="__STATIC__/elementui/element-ui.js"></script>
 </head>
 
 <body>
     <div id="el-app">
-        <div class="header-wrapper">
+        <el-card class="box-card header-card" style="margin-bottom: 20px;">
             <header class="header" align="center">
                 <div class="header-content">
                     <div class="header-logo">
-                        <el-avatar src="http://img.raingad.com/logo/logo.png" :size="55">
+                        <el-avatar src="http://img.raingad.com/logo/logo.png" :size="50">
                         </el-avatar>
                     </div>
                     <div class="contact-us">
-                        <div><span class="main-color"> Raingad IM </span>for 0.5.18</div>
-                        <div>交流群：336921267</div>
+                        <div><a class="main-color" href="http://img.raingad.com/index.html"> Raingad IM </a>for 0.5.18</div>
+                        <div>QQ交流群： <a href="https://jq.qq.com/?_wv=1027&k=jMQAt9lh" target="_blank">336921267</a></div>
                     </div>
                 </div>
             </header>
-        </div>
+        </el-card>
 
         <el-card class="container box-card" style="padding:0">
             <el-steps :active="action" simple finish-status="success">
@@ -66,9 +66,9 @@
                 <el-table :data="env" border style="width: 100%" size="mini">
                     <el-table-column prop="name" label="检查项" align="center">
                     </el-table-column>
-                    <el-table-column prop="description" label="要求" width="200px" align="center">
+                    <el-table-column prop="description" label="建议要求" width="300px" align="center">
                     </el-table-column>
-                    <el-table-column prop="value" label="当前状态" align="center">
+                    <el-table-column prop="value" label="当前环境" align="center">
                     </el-table-column>
                     <el-table-column prop="status" label="是否通过" align="center">
                         <template slot-scope="scope">
@@ -79,11 +79,9 @@
                 </el-table>
                 <h4>文件夹权限</h4>
                 <el-table :data="dir" border style="width: 100%" size="mini">
-                    <el-table-column prop="path" label="检查项" width="300px" align="center">
+                    <el-table-column prop="dir" label="目录检查项" width="300px" align="center">
                     </el-table-column>
-                    <el-table-column prop="need" label="要求" align="center">
-                    </el-table-column>
-                    <el-table-column prop="value" label="当前状态" align="center">
+                    <el-table-column prop="value" label="当前环境" align="center">
                     </el-table-column>
                     <el-table-column prop="status" label="是否通过" align="center">
                         <template slot-scope="scope">
@@ -98,25 +96,34 @@
             </div>
             <div class="step-item" v-if="action==2" align="center">
                 <div class="step-form">
-                    <h4>数据库</h4>
+                    <h4>请填写数据库信息</h4>
                     <el-form ref="form" :model="form" label-width="120px">
                         <el-form-item label="服务器地址">
-                            <el-input v-model="form.hostname"></el-input>
+                            <el-input v-model="form.hostname">
+                                <template slot="append">数据库地址一般为：172.0.0.1</template>
+                            </el-input>
+
                         </el-form-item>
                         <el-form-item label="数据库">
                             <el-input v-model="form.database"></el-input>
                         </el-form-item>
                         <el-form-item label="表前缀">
-                            <el-input v-model="form.prefix"></el-input>
+                            <el-input v-model="form.prefix">
+                                <template slot="append">默认为yu_</template>
+                            </el-input>
                         </el-form-item>
                         <el-form-item label="数据库用户名">
-                            <el-input v-model="form.username"></el-input>
+                            <el-input v-model="form.username">
+                                <template slot="append">生产环境建议创建独立账户</template>
+                            </el-input>
                         </el-form-item>
                         <el-form-item label="数据库密码">
                             <el-input v-model="form.password"></el-input>
                         </el-form-item>
                         <el-form-item label="端口">
-                            <el-input v-model="form.hostport"></el-input>
+                            <el-input v-model="form.hostport">
+                                <template slot="append">数据库端口一般为：3306</template>
+                            </el-input>
                         </el-form-item>
                     </el-form>
                 </div>
@@ -130,9 +137,14 @@
             </div>
             <div class="step-item" v-if="action==4">
                 <div class="setting-version">
-                    <p>安装完成！</p>
-                    <p>前台地址：<a href="http://{:request()->host()}/index.html" target="_blank">http://{:request()->host()}/index.html</a></p>
-                    <p>交流群：336921267</p>
+                    <p>您已成功安装本程序，现在您还需最后一步即可使用聊天程序！</p>
+                    <h4>启动消息推送</h4>
+                    <p>第一种方式：利用shell工具进入项目根目录，运行根目录下[ <b>./start.sh</b> ]文件</p>
+                    <p>第二种方式：直接命令行输入[ <code>php start.php start -d</code> ]即可启动服务</p>
+                    <p>PS：消息推送的服务器必须开启8282端口。如需更改，请修改[ <b>app\push\start_gateway.php</b> ]中的8282端口</p>
+                    <h4>前台地址：</h4>
+                    <p>浏览器访问：<a href="http://{:request()->host()}/index.html">http://{:request()->host()}/index.html</a></p>
+                    <div>QQ交流群： <a href="https://jq.qq.com/?_wv=1027&k=jMQAt9lh" target="_blank">336921267</a></div>
                 </div>
             </div>
             <hr style="border: 1px solid #f5f5f5;">
@@ -146,9 +158,9 @@
 
         </el-card>
 
-        <div class="footer-wrapper">
+        <div class="footer-wrapper" align="center">
             <footer class="footer">
-
+                ©2021 Raingad IM for 0.5.18
             </footer>
         </div>
     </div>
@@ -293,6 +305,20 @@
     })
 </script>
 <style>
+    body {
+        background-color: #f5f5f5;
+        margin: 0;
+        padding: 0
+    }
+    
+    .header-card {
+        margin-bottom: 15px;
+    }
+    
+    .header-card .el-card__body {
+        padding: 10px;
+    }
+    
     .header-content {
         display: flex;
         flex-direction: row;
@@ -304,7 +330,7 @@
     }
     
     .header-logo {
-        margin: 20px;
+        margin-right: 20px;
     }
     
     .contact-us {
@@ -316,7 +342,7 @@
     }
     
     .step-item {
-        height: 500px;
+        height: 550px;
         overflow: auto;
         padding: 20px;
     }
@@ -340,7 +366,16 @@
     }
     
     .step-form {
-        width: 400px
+        width: 600px
+    }
+    
+    .el-input-group__append {
+        width: 190px;
+    }
+    
+    .footer-wrapper {
+        margin: 15px auto;
+        color: #888888
     }
     
     .fc-danger {

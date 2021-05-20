@@ -40,9 +40,15 @@ class Upload extends BaseController
         $file=File::where(['md5'=>$info['md5']])->find();
         // 判断文件是否存在，如果有则不再上传
         if(!$file){
-            $object = $prefix.uniqid().'.'.$info['ext'];
-            $ossClient = new OssClient($oss['accessKeyId'], $oss['accessKeySecret'],$oss['endpoint']);
-            $ossClient->uploadFile($oss['bucket'], $object, $info['path']);
+            // 如果没有开启oss文件服务，默认存本地
+            if($oss['accessKeyId']==""){
+                $savename = \think\facade\Filesystem::disk('public')->putFile( $filecate, $filePath,uniqid().'.'.$info['ext']);
+                $object='storage/'.$savename;
+            }else{
+                $object = $prefix.uniqid().'.'.$info['ext'];
+                $ossClient = new OssClient($oss['accessKeyId'], $oss['accessKeySecret'],$oss['endpoint']);
+                $ossClient->uploadFile($oss['bucket'], $object, $info['path']);
+            }
         }else{
             $object = $file['src'];
         }

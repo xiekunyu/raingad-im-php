@@ -144,8 +144,10 @@ class Group extends BaseController
                'id'=>'group-'.$group_id,
                'avatar'=>'https://lvzhe-file.oss-cn-beijing.aliyuncs.com/tools/group.png',
                'is_group'=>1,
-               'lastContent'=>'',
-               'lastSendTime'=>''
+               'lastContent'=>$this->userInfo['realname'].' 创建了群聊',
+               'lastSendTime'=>time()*1000,
+               'index'=>"群聊"
+         
             ];
             wsSendMsg($user_ids, 'addGroup', $groupInfo);
             Db::commit();
