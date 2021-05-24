@@ -140,6 +140,7 @@ class Group extends BaseController
             $groupInfo=[
                'displayName'=>$create['name'],
                'owner_id'=>$create['owner_id'],
+               'role'=>3,
                'name_py'=>$create['name_py'],
                'id'=>'group-'.$group_id,
                'avatar'=>'https://lvzhe-file.oss-cn-beijing.aliyuncs.com/tools/group.png',

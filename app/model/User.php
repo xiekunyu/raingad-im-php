@@ -68,6 +68,7 @@ class User extends Model
             $group[$k]['avatar'] = 'https://lvzhe-file.oss-cn-beijing.aliyuncs.com/tools/group.png';
             $group[$k]['name_py'] = $v['name_py'];
             $group[$k]['owner_id'] = $v['owner_id'];
+            $group[$k]['role'] = $v['role'];
             $group[$k]['is_group'] = 1;
             $group[$k]['index'] = "群聊";
             if ($getGroupLastMsg) {
@@ -119,7 +120,7 @@ class User extends Model
    }
 
    // 匹配用户列表信息
-   public static function matchUser($data, $many = false, $field = 'user_id', $key = "userInfo")
+   public static function matchUser($data, $many = false, $field = 'user_id', $key = "userInfo",$cs=80)
    {
       if ($many) {
          $idr = arrayToString($data, $field);
@@ -131,7 +132,7 @@ class User extends Model
                      'id' => $vv['user_id'],
                      'displayName' => $vv['realname'],
                      'account' => $vv['account'],
-                     'avatar' => avatarUrl($vv['avatar'], $vv['realname'], $vv['user_id']),
+                     'avatar' => avatarUrl($vv['avatar'], $vv['realname'], $vv['user_id'],$cs),
                   ];
                }
             }

@@ -62,7 +62,7 @@ class Message extends Model
                     'fileSize'=>$v['file_size']
                 ];
             }
-            $data=User::matchUser($data,true,'from_user','fromUser');
+            $data=User::matchUser($data,true,'from_user','fromUser',120);
         }
 
         return $data;
