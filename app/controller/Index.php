@@ -15,7 +15,7 @@ class Index extends BaseController
       if (!file_exists(CONF_PATH . "install.lock")) {
          return redirect(url('install/index'));    
       }
-      redirect(request()->host()."/index.html");
+      return redirect("/index.html");
       // return view::fetch();
    }
 
