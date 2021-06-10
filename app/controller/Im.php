@@ -25,7 +25,6 @@ class Im extends BaseController
         }else{
             return error('发送失败');
         }
-        
     }
 
     // 获取聊天记录
@@ -39,7 +38,6 @@ class Im extends BaseController
         $data=Message::getList($map,'','msg_id desc',$listRows,$pageSize);
         $data = array_reverse($data);
         return success('',$data);
-
     }
 
     // 设置当前窗口的消息默认为已读
