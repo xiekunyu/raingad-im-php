@@ -71,6 +71,7 @@ class User extends Model
             $group[$k]['role'] = $v['role'];
             $group[$k]['is_group'] = 1;
             $group[$k]['index'] = "群聊";
+            $group[$k]['realname'] = $v['displayName']." [群聊]";
             if ($getGroupLastMsg) {
                foreach ($getGroupLastMsg as $val) {
                   if ($val['to_user'] == $v['group_id']) {

@@ -83,11 +83,19 @@ class Message extends Model
         }
         $fileSzie=isset($param['file_size'])?$param['file_size']:'';
         $fileName=isset($param['file_name'])?$param['file_name']:'';
+        $ossUrl=config('oss.ossUrl')?:request()->url().'/';
+        // 如果是转发图片文件的消息，必须把域名去除掉
+        $content=$param['content'];
+        if(in_array($param['type'],self::$fileType)){
+            if(strpos($param['content'],$ossUrl)!==false){
+                $content=str_replace($ossUrl,'',$param['content']);
+            }
+        }
         $data=[
             'from_user'=>$param['user_id'],
             'to_user'=>$toContactId,
             'id'=>$param['id'],
-            'content'=>$param['content'],
+            'content'=>$content,
             'chat_identify'=>$chat_identify,
             'create_time'=>time(),
             'type'=>$param['type'],
@@ -116,7 +124,7 @@ class Message extends Model
         $sendData['fromUser']['id']=(int)$sendData['fromUser']['id'];
         $sendData['fileSize']=$fileSzie;
         $sendData['fileName']=$fileName;
-        $ossUrl=config('oss.ossUrl')?:request()->url().'/';
+        
         if(in_array($sendData['type'],self::$fileType)){
             $sendData['content']=$ossUrl.$sendData['content'];
             if($sendData['type']=='image'){
@@ -128,6 +136,7 @@ class Message extends Model
         }
         // 向发送方发送消息
         wsSendMsg($toContactId,$type,$sendData,$is_group);
+        $sendData['toContactId']=$param['toContactId'];
         return $sendData;
     }
 
