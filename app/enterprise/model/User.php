@@ -31,7 +31,11 @@ class User extends Model
    //查询用户信息
    public static function getUserInfo($map)
    {
-      return self::where($map)->find();
+      $data=self::where($map)->find();
+      if($data){
+         $data=$data->toArray();
+      }
+      return $data;
    }
    //   获取所有用户列表
    public static function getAllUser($map,$user_ids=[],$field='user_id,realname,avatar,account,name_py')
