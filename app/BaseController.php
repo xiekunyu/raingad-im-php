@@ -65,24 +65,7 @@ abstract class BaseController
     // 初始化
     protected function initialize()
     {
-       $authToken=$this->request->header('authToken');
-       $userInfo=[
-            'clientId'=>'',
-            'user_id'=>1,
-            'realname'=>'管理员',
-            'account'=>'admin',
-            'avatar'=>"http://im.raingad.com/avatar/%E7%AE%A1%E7%90%86%E5%90%9B/80/1"
-        ];
-       if($authToken){
-           $userInfo=Cache::get($authToken);
-           if($userInfo){
-            $this->userInfo=$userInfo;
-           }
-       }
-       $this->postData=input('post.');
-       $this->userInfo=$userInfo;
-       
-    
+       $this->userInfo=$this->request->userInfo;
     }
 
     /**

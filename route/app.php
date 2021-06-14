@@ -13,7 +13,3 @@ Route::get('captcha/[:config]','\\think\\captcha\\CaptchaController@index');
 Route::get('think', function () {
     return 'hello,ThinkPHP6!';
 });
-
-Route::get('hello/:name', 'index/hello');
-Route::rule('avatar/:str/:s/:uid','pub/avatar');
-Route::rule('view','index/view');

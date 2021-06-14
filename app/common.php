@@ -18,25 +18,33 @@ use GatewayClient\Gateway;
  * @param array $extend    扩展数据
  * @param int $count    总数
  */
-function success($msg = '操作成功',$data = '',$count=0, $page=1,$code=0)
+function success($msg = '操作成功', $data = '', $count = 0, $page = 1, $code = 0)
 {
-    return ret($code, $msg,$data,$count, $page);
+    return ret($code, $msg, $data, $count, $page);
 }
 
 /**
  * 返回警告json信息
  */
-function warning($msg = '操作失败',$data = '',$count=0,$page=1)
+function warning($msg = '操作失败', $data = '', $count = 0, $page = 1)
 {
-    return success($msg,$data,$count,$page,1);
+    return success($msg, $data, $count, $page, 1);
 }
 
 /**
  * 返回错误json信息
  */
-function error($msg = '操作失败',$code=502)
+function error($msg = '操作失败', $code = 502)
 {
-    return ret($code,$msg);
+    return ret($code, '系统错误：'.$msg);
+}
+
+/**
+ * 提前终止信息
+ */
+function shutdown($msg = '禁止访问', $code = 401)
+{
+    exit(json_encode(['code' => $code, 'msg' => $msg, 'data' => []]));
 }
 
 

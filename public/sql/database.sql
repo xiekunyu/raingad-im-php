@@ -104,13 +104,12 @@ CREATE TABLE `yu_message` (
   `is_read` tinyint(1) NOT NULL DEFAULT '0' COMMENT '是否阅读',
   `is_last` tinyint(1) NOT NULL DEFAULT '1' COMMENT '是否是最后一条消息',
   `create_time` int(13) NOT NULL DEFAULT '0' COMMENT '发送时间',
-  `is_withdraw` tinyint(1) NOT NULL DEFAULT '0' COMMENT '是否撤回',
+  `is_undo` tinyint(1) NOT NULL DEFAULT '0' COMMENT '是否撤回',
   `file_size` int(11) NOT NULL DEFAULT '0' COMMENT '文件大小',
   `file_name` varchar(256) DEFAULT NULL COMMENT '文件名称',
   `extends` text COMMENT '消息扩展内容',
   `status` tinyint(1) NOT NULL DEFAULT '1' COMMENT '状态',
-  `form_del` tinyint(1) NOT NULL DEFAULT '0' COMMENT '发送者已删除',
-  `to_del` tinyint(1) NOT NULL DEFAULT '0' COMMENT '接受者已删除'
+  `del_user` text DEFAULT null COMMENT '发送者已删除',
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 --
