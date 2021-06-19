@@ -235,7 +235,7 @@ function circleAvatar($str,$s,$uid=0){
     if($width<40 or $width>120){
         $width = $height =80;
     }
-    $colors=['#e54d42','#f37b1d','#fbbd08','#8dc63f','#39b54a','#1cbbb4','#0081ff','#6739b6','#9c26b0','#e03997'];
+    $colors=['#F56C6C','#E6A23C','#fbbd08','#67C23A','#39b54a','#1cbbb4','#409EFF','#6739b6','#e239ff','#e03997'];
     $color=hex2rgb($colors[(int)$uid%10]);
     $size=$width/4;
     $textLeft=($height/2)-$size-$width/10;

@@ -85,7 +85,7 @@ class User extends Model
          foreach ($group as $k => $v) {
             $group_id = 'group-' . $v['group_id'];
             $group[$k]['id'] = $group_id;
-            $group[$k]['avatar'] = 'https://lvzhe-file.oss-cn-beijing.aliyuncs.com/tools/group.png';
+            $group[$k]['avatar'] = avatarUrl('', $v['displayName'], $v['group_id'],120);
             $group[$k]['name_py'] = $v['name_py'];
             $group[$k]['owner_id'] = $v['owner_id'];
             $group[$k]['role'] = $v['role'];
