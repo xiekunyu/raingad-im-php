@@ -33,13 +33,25 @@ class Im extends BaseController
         $is_group=$param['is_group']?:0;
         // 设置当前聊天消息为已读
         $chat_identify=$this->setIsRead($is_group,$param['toContactId']);
+        $type=isset($param['type'])?$param['type']:'';
         $map=['chat_identify'=>$chat_identify,'status'=>1,'is_group'=>$is_group];
+        $where="";
+        if($type){
+            $where="type=".$type;
+        }else{
+            if(isset($param['type'])){
+                $where=[['type','<>','event']];
+            }
+        }
         $listRows =input('listRows')?:20;
         $pageSize=input('pageSize');
-        $list=Message::getList($map,'','msg_id desc',$listRows,$pageSize);
+        $list=Message::getList($map,$where,'msg_id desc',$listRows,$pageSize);
         $data=$this->recombileMsg($list);
-        $data = array_reverse($data);
-        return success('',$data);
+        // 如果是消息管理器则不用倒序
+        if(!isset($param['type'])){
+            $data = array_reverse($data);
+        }
+        return success('',$data,$list->total());
     }
 
     protected function recombileMsg($list){

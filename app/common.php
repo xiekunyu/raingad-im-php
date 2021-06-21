@@ -452,6 +452,30 @@ function getFileType($ext){
     return $fileType;
 }
 
+/**
+ * 二位数组排序
+ * $array 需要排序的数组
+ * $sort_key 需要排序的字段
+ * $sort_order 正序还是倒序
+ * $sort_type  排序的类型:数字,字母
+ */
+function sortArray($arrays, $sort_key, $sort_order = SORT_ASC, $sort_type = SORT_NUMERIC)
+{
+    if (is_array($arrays)) {
+        foreach ($arrays as $array) {
+            if (is_array($array)) {
+                $key_arrays[] = $array[$sort_key];
+            } else {
+                return false;
+            }
+        }
+    } else {
+        return false;
+    }
+    array_multisort($key_arrays, $sort_order, $sort_type, $arrays);
+    return $arrays;
+}
+
 //gateway向web页面推送消息
 function wsSendMsg($user, $type,  $data, $isGroup=0)
 {
