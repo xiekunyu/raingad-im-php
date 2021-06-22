@@ -35,13 +35,17 @@ class Im extends BaseController
         $chat_identify=$this->setIsRead($is_group,$param['toContactId']);
         $type=isset($param['type'])?$param['type']:'';
         $map=['chat_identify'=>$chat_identify,'status'=>1,'is_group'=>$is_group];
-        $where="";
-        if($type){
-            $where="type=".$type;
+        $where=[];
+        if($type && $type!="all"){
+            $map['type']=$type;
         }else{
             if(isset($param['type'])){
-                $where=[['type','<>','event']];
+                $where[]=['type','<>','event'];
             }
+        }
+        $keywords=isset($param['keywords'])?$param['keywords']:'';
+        if($keywords && in_array($type,['text','all'])){
+            $where[]=['content','like','%'.$keywords.'%'];
         }
         $listRows =input('listRows')?:20;
         $pageSize=input('pageSize');
