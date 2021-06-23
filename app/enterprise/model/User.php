@@ -71,7 +71,7 @@ class User extends Model
       // 查询最近的联系人
       $map1 = [['to_user', '=', $user_id], ['is_last', '=', 1], ['is_group', '=', 0]];
       $map2 = [['from_user', '=', $user_id], ['is_last', '=', 1], ['is_group', '=', 0]];
-      $msgField = 'from_user,to_user,content as lastContent,create_time as lastSendTime,chat_identify,type';
+      $msgField = 'from_user,to_user,content as lastContent,create_time as lastSendTime,chat_identify,type,del_user';
       $lasMsgList = Db::name('message')
          ->field($msgField)
          ->whereOr([$map1, $map2])
@@ -83,6 +83,7 @@ class User extends Model
          $group_ids = arrayToString($group, 'group_id');
          $getGroupLastMsg = Db::name('message')->field($msgField)->where([['to_user', 'in', $group_ids], ['is_group', '=', 1], ['is_last', '=', 1]])->select();
          foreach ($group as $k => $v) {
+            $setting=$v['setting']?json_encode($v['setting']):[];
             $group_id = 'group-' . $v['group_id'];
             $group[$k]['id'] = $group_id;
             $group[$k]['avatar'] = avatarUrl('', $v['displayName'], $v['group_id'],120);
@@ -90,6 +91,8 @@ class User extends Model
             $group[$k]['owner_id'] = $v['owner_id'];
             $group[$k]['role'] = $v['role'];
             $group[$k]['is_group'] = 1;
+            $group[$k]['is_notice'] = $v['is_notice'];
+            $group[$k]['setting'] = $setting;
             $group[$k]['index'] = "群聊";
             $group[$k]['realname'] = $v['displayName']." [群聊]";
             if ($getGroupLastMsg) {
@@ -112,6 +115,8 @@ class User extends Model
          $list_chart[$k]['unread'] = 0;
          $list_chart[$k]['lastSendTime'] = time() * 1000;
          $list_chart[$k]['is_group'] = 0;
+         $list_chart[$k]['is_notice'] = 1;
+         $list_chart[$k]['setting'] = [];
          if ($unread) {
             foreach ($unread as $val) {
                if ($val['from_user'] == $v['user_id']) {
@@ -123,8 +128,17 @@ class User extends Model
          if ($lasMsgList) {
             foreach ($lasMsgList as $val) {
                if ($val['from_user'] == $v['user_id'] || $val['to_user'] == $v['user_id']) {
-                  $list_chart[$k]['lastContent'] = getMsgType($val['type'], $val['lastContent']);
+                  $content=getMsgType($val['type'], $val['lastContent']);
+                    // 屏蔽已删除的消息
+                 if($val['del_user']){
+                        $delUser=explode(',',$val['del_user']);
+                        if(in_array($user_id,$delUser)){
+                           $content="";
+                        }
+                  }
+                  $list_chart[$k]['lastContent'] = $content;
                   $list_chart[$k]['lastSendTime'] = $val['lastSendTime'] * 1000;
+                
                   break;
                }
             }

@@ -86,17 +86,17 @@ class Im extends BaseController
                         $preview=previewUrl($content,2);
                     } 
                 }
+                $fromUser=$userList[$v['from_user']];
                 // 处理撤回的消息
                 if($v['type']=="event"){
                     if($v['from_user']==$userInfo['user_id']){
                         $content="你".$v['content'];
                     }elseif($v['is_group']==1){
-                        $content=$userInfo.$v['content'];
+                        $content=$fromUser['realname'].$v['content'];
                     }else{
                         $content="对方".$v['content'];
                     }
                 }
-                $fromUser=$userList[$v['from_user']];
                 $data[]=[
                     'msg_id'=>$v['msg_id'],
                     'id'=>$v['id'],
