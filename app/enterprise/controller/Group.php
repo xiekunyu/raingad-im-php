@@ -220,12 +220,4 @@ class Group extends BaseController
          return success();
       }
 
-      // 消息免打扰
-      public function isNotice(){
-         $param = $this->request->param();
-         $uid=$this->userInfo['user_id'];
-         $group_id = explode('-', $param['id'])[1];
-         GroupUser::update(['is_notice'=>$param['is_notice']],['user_id'=>$uid,'group_id'=>$group_id]);
-         return success();
-      }
 }

@@ -62,6 +62,7 @@ class User extends Model
       }
       $list = Db::name('user')->field($field)->where($map)->select();
       $list_chart = chartSort($list, 'realname', false, 'index');
+      $friendList=Friend::getFriend(['create_user'=>$user_id]);
       // 查询未读消息
       $unread = Db::name('message')
          ->field('from_user,count(msg_id) as unread')
@@ -82,6 +83,7 @@ class User extends Model
          $group = $group->toArray();
          $group_ids = arrayToString($group, 'group_id');
          $getGroupLastMsg = Db::name('message')->field($msgField)->where([['to_user', 'in', $group_ids], ['is_group', '=', 1], ['is_last', '=', 1]])->select();
+
          foreach ($group as $k => $v) {
             $setting=$v['setting']?json_encode($v['setting']):[];
             $group_id = 'group-' . $v['group_id'];
@@ -91,10 +93,17 @@ class User extends Model
             $group[$k]['owner_id'] = $v['owner_id'];
             $group[$k]['role'] = $v['role'];
             $group[$k]['is_group'] = 1;
-            $group[$k]['is_notice'] = $v['is_notice'];
             $group[$k]['setting'] = $setting;
             $group[$k]['index'] = "群聊";
             $group[$k]['realname'] = $v['displayName']." [群聊]";
+            $group[$k]['is_notice'] = $v['is_notice'];
+            // 是否置顶聊天
+            $friend=isset($friendList[$group_id])?$friendList[$group_id]:[];
+            $is_top=0;
+            if($friend){
+               $is_top=$friend['is_top'];
+            }
+            $group[$k]['is_top'] = $is_top;
             if ($getGroupLastMsg) {
                foreach ($getGroupLastMsg as $val) {
                   if ($val['to_user'] == $v['group_id']) {
@@ -115,8 +124,17 @@ class User extends Model
          $list_chart[$k]['unread'] = 0;
          $list_chart[$k]['lastSendTime'] = time() * 1000;
          $list_chart[$k]['is_group'] = 0;
-         $list_chart[$k]['is_notice'] = 1;
          $list_chart[$k]['setting'] = [];
+         // 是否置顶聊天
+         $friend=isset($friendList[$v['user_id']])?$friendList[$v['user_id']]:[];
+         $is_top=0;
+         $is_notice=1;
+         if($friend){
+            $is_top=$friend['is_top'];
+            $is_notice=$friend['is_notice'];
+         }
+         $list_chart[$k]['is_top'] = $is_top;
+         $list_chart[$k]['is_notice'] = $is_notice;
          if ($unread) {
             foreach ($unread as $val) {
                if ($val['from_user'] == $v['user_id']) {
