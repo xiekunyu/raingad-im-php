@@ -48,7 +48,7 @@ class Group extends BaseController
          $group['userInfo']=$userInfo;
          $group['ownerName']=$userInfo['realname'];
          $group['groupUserCount']=$userCount;
-         $group['setting']=json_decode($group['setting'],true);
+         $group['setting']=$group['setting']?json_decode($group['setting'],true):['manage' => 0, 'invite' => 1, 'nospeak' => 0];
          return success('', $group);
       } catch (Exception $e) {
          return error($e->getMessage());

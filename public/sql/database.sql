@@ -82,6 +82,7 @@ CREATE TABLE `yu_group_user` (
   `create_time` int(11) NOT NULL DEFAULT '0' COMMENT '创建时间',
   `unread` int(11) NOT NULL DEFAULT '0' COMMENT '群未读消息',
   `status` tinyint(1) NOT NULL DEFAULT '1' COMMENT '状态 0 ，未同意邀请，1，同意',
+  `is_notice` tinyint(1) NOT NULL DEFAULT '1' COMMENT '是否消息通知',
   `isdelete` tinyint(1) NOT NULL DEFAULT '0' COMMENT '是否删除'
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
@@ -152,9 +153,41 @@ INSERT INTO `yu_user` (`user_id`, `account`, `realname`, `password`, `salt`, `av
 (9, '13800000009', '唐三藏', '2cb4ecb7fd5295685e275edc7d44e02e', 'srww', NULL, 'lantian@qq.com', '', 'tangsanzang', '{\"theme\":\"default\",\"hideMessageName\":\"false\",\"hideMessageTime\":\"false\",\"avatarCricle\":\"true\",\"sendKey\":\"1\",\"isVoice\":\"true\"}', 1604587409, 1604587409, 0, 0, NULL, 0, 1),
 (11, '13800000010', '沙悟净', '2cb4ecb7fd5295685e275edc7d44e02e', 'srww', NULL, 'lantian@qq.com', '', 'tangsanzang', '{\"theme\":\"default\",\"hideMessageName\":\"false\",\"hideMessageTime\":\"false\",\"avatarCricle\":\"true\",\"sendKey\":\"1\",\"isVoice\":\"true\"}', 1604587409, 1604587409, 0, 0, NULL, 0, 1);
 
+
+
+CREATE TABLE `yu_friend` (
+  `friend_id` int(11) NOT NULL,
+  `friend_user_id` varchar(32) DEFAULT NULL COMMENT '好友ID',
+  `is_group` tinyint(1) NOT NULL DEFAULT '0' COMMENT '是否为群聊',
+  `is_top` tinyint(1) NOT NULL DEFAULT '0' COMMENT '是否置顶',
+  `is_notice` tinyint(1) NOT NULL DEFAULT '1' COMMENT '是否消息提醒',
+  `create_user` int(11) NOT NULL DEFAULT '0',
+  `update_time` int(11) NOT NULL DEFAULT '0',
+  `create_time` int(11) NOT NULL DEFAULT '0',
+  `delete_time` int(11) NOT NULL DEFAULT '0',
+  `satus` tinyint(1) NOT NULL DEFAULT '1'
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='联系人置顶表';
+
 --
 -- Indexes for dumped tables
 --
+
+--
+-- Indexes for table `yu_friend`
+--
+ALTER TABLE `yu_friend`
+  ADD PRIMARY KEY (`friend_id`);
+
+--
+-- 在导出的表使用AUTO_INCREMENT
+--
+
+--
+-- 使用表AUTO_INCREMENT `yu_friend`
+--
+ALTER TABLE `yu_friend`
+  MODIFY `friend_id` int(11) NOT NULL AUTO_INCREMENT;
+COMMIT;
 
 --
 -- Indexes for table `yu_file`
