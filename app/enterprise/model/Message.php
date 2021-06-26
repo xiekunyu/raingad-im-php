@@ -45,6 +45,9 @@ class Message extends Model
             $toContactIdArr=explode('-',$toContactId);
             $toContactId=$toContactIdArr[1];
             $is_read=1;
+            if(!self::nospeak($toContactId,$param['user_id'])){
+                return shutdown("群聊已禁言！");
+            }
         }
         $fileSzie=isset($param['file_size'])?$param['file_size']:'';
         $fileName=isset($param['file_name'])?$param['file_name']:'';
@@ -103,6 +106,25 @@ class Message extends Model
         wsSendMsg($toContactId,$type,$sendData,$is_group);
         $sendData['toContactId']=$param['toContactId'];
         return $sendData;
+    }
+
+    // 群禁言
+    public static function nospeak($group_id,$user_id){
+        $group=Group::find($group_id);
+        if($group->owner_id==$user_id){
+            return true;
+        }
+        if($group->setting){
+            $setting=json_decode($group->setting,true);
+            $nospeak=isset($setting['nospeak'])?$setting['nospeak']:0;
+            $role=GroupUser::where(['group_id'=>$group_id,'user_id'=>$user_id])->value('role');
+            if($nospeak==1 && $role>2){
+                return false;
+            }elseif($nospeak==2 && $role!=1){
+                return false;
+            }
+        }
+        return true;
     }
 
 }

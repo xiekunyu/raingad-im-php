@@ -7,17 +7,27 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>文件预览插件</title>
     <link rel="stylesheet" href="__STATIC__/css/main.css">
+    <link rel="stylesheet" href="__STATIC__/css/viewer.min.css">
     <link rel="stylesheet" href="__STATIC__/elementui/element-ui.css">
 </head>
+<style>
+    ol,
+    li {
+        list-style: none;
+    }
+</style>
 
 <body>
     <div id="el-app">
         <div class="container" v-if="viewer===0">
         </div>
-        <div id="picview" align="center" class="picview" v-if="viewer===1">
-            <img src="__STATIC__/img/none.png" alt="..." name="viewArea" id="viewArea" draggable="false" />
-        </div>
+        <ul id="picview" class="picview" v-if="viewer===1">
+            <li><img id="imgUrl" :src="imgUrl" width="0" height="0"></li>
+        </ul>
         <div id="videoContainer" v-if="viewer===3"></div>
+        <div class="container" v-if="viewer===4">
+            <audio width="500" id="audio" controls :src="audioUrl"></audio>
+        </div>
         <div class="container" v-if="viewer===8">
             不支持该资源！
         </div>
@@ -30,10 +40,12 @@
     <script type="text/javascript" src="__STATIC__/js/pdfobject.js"></script>
     <script type="text/javascript" src="__STATIC__/js/jquery-2.0.3.min.js"></script>
     <script type="text/javascript" src="__STATIC__/js/jquery.mousewheel.min.js"></script>
-    <script type="text/javascript" src="__STATIC__/js/zoom-marker.js"></script>
+    <script type="text/javascript" src="__STATIC__/js/viewer.js"></script>
     <script type="text/javascript" src="__STATIC__/js/superVideo.js"></script>
     <script type="text/javascript" src="__STATIC__/js/vue.js"></script>
     <script type="text/javascript" src="__STATIC__/js/element-ui.js"></script>
+
+
     <script>
         var app = new Vue({
                 delimiters: ['${', '}'],
@@ -42,6 +54,8 @@
                     return {
                         loading: true,
                         viewer: 0,
+                        imgUrl: '',
+                        audioUrl: '',
                         videoExt: ['mp4', 'avi', '3gp', 'rmvb'],
                         imgExt: ['jpeg', 'jpg', 'gif', 'png', 'bmp'],
                         pdfExt: ['pdf'],
@@ -53,7 +67,7 @@
                         lock: true,
                         text: '资源加载中...',
                         spinner: 'el-icon-loading',
-                        background: 'rgba(0, 0, 0, 0.9)'
+                        background: 'rgba(0, 0, 0, 0.5)'
                     });
                     setTimeout(() => {
                         this.openUrl();
@@ -67,10 +81,15 @@
                 methods: {
                     imgView(url) {
                         this.$nextTick(function() {
-                            $('#viewArea').zoomMarker({
-                                src: url,
-                                rate: 0.2,
+                            this.imgUrl = url;
+                            var viewer = new Viewer(document.getElementById('picview'), {
+                                url: url,
+                                navbar: false,
+                                button: false,
+                                backdrop: false,
+                                loop: true
                             });
+                            document.getElementById("imgUrl").click();
                         })
 
                     },
@@ -120,17 +139,17 @@
                             return this.viewer = -1;
                         }
                         if ($.inArray(ext, this.imgExt) >= 0) {
-                            console.log('img：' + ext);
                             this.viewer = 1;
                             this.imgView(url);
                         } else if ($.inArray(ext, this.pdfExt) >= 0) {
-                            console.log('pdf：' + ext);
                             this.viewer = 2;
                             this.pdfView(url);
                         } else if ($.inArray(ext, this.videoExt) >= 0) {
-                            console.log('video：' + ext);
                             this.viewer = 3;
                             this.videoView(url);
+                        } else if ($.inArray(ext, this.audioExt) >= 0) {
+                            this.viewer = 4;
+                            this.audioUrl = url;
                         } else {
                             return this.viewer = 8;
                         }

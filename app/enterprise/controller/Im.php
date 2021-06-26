@@ -87,11 +87,7 @@ class Im extends BaseController
                 $preview = '';
                 if (in_array($v['type'], $this->fileType)) {
                     $content = $ossUrl . $v['content'];
-                    if ($v['type'] == 'image') {
-                        $preview = previewUrl($content);
-                    } else {
-                        $preview = previewUrl($content, 2);
-                    }
+                    $preview = previewUrl($content);
                 }
                 $fromUser = $userList[$v['from_user']];
                 // 处理撤回的消息

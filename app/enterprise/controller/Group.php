@@ -35,6 +35,26 @@ class Group extends BaseController
       }
    }
 
+   // 获取群基本信息
+   public function groupInfo()
+   {
+      $param = $this->request->param();
+      try {
+         $group_id = explode('-', $param['group_id'])[1];
+         $group=GroupModel::find($group_id)->toArray();
+         $userList=User::matchUser($group,false,'owner_id');
+         $userCount=GroupUser::where(['group_id'=>$group_id])->count();
+         $userInfo=$userList[$group['owner_id']];
+         $group['userInfo']=$userInfo;
+         $group['ownerName']=$userInfo['realname'];
+         $group['groupUserCount']=$userCount;
+         $group['setting']=json_decode($group['setting'],true);
+         return success('', $group);
+      } catch (Exception $e) {
+         return error($e->getMessage());
+      }
+   }
+
    // 修改团队名称
    public function editGroupName()
    {
@@ -212,11 +232,26 @@ class Group extends BaseController
             return warning('请输入内容！');
          }
          $role=GroupUser::where(['group_id'=>$group_id,'user_id'=>$uid])->value('role');
-         if($role>2){
-            return warning('您没有操作权限！');
-         }
+         // if($role>2){
+         //    return warning('您没有操作权限！');
+         // }
          GroupModel::update(['notice'=>$param['notice']],['group_id'=>$group_id]);
          wsSendMsg($group_id,"setNotice",['group_id'=>$param['id'],'notice'=>$param['notice']],1);
+         return success();
+      }
+
+      // 群聊设置
+      public function groupSetting(){
+         $param = $this->request->param();
+         $uid=$this->userInfo['user_id'];
+         $group_id = explode('-', $param['id'])[1];
+         $role=GroupUser::where(['group_id'=>$group_id,'user_id'=>$uid])->value('role');
+         if($role!=1){
+            return warning('您没有操作权限！');
+         }
+         $setting=json_encode($param['setting']);
+         GroupModel::update(['setting'=>$setting],['group_id'=>$group_id]);
+         wsSendMsg($group_id,"groupSetting",['group_id'=>$param['id'],'setting'=>$param['setting']],1);
          return success();
       }
 

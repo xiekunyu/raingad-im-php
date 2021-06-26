@@ -60,10 +60,6 @@ class Pub
             //    如果用户已经有设置
                if($userInfo['setting']){
                     $setting=json_decode($userInfo['setting'],true);
-                    $setting['hideMessageName']=false;
-                    $setting['hideMessageTime']=false;
-                    $setting['avatarCricle']=false;
-                    $setting['isVoice']=false;
                     if($setting['hideMessageName']=='true'){
                         $setting['hideMessageName']=true;
                     }

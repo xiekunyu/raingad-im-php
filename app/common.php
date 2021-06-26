@@ -511,12 +511,16 @@ function getMsgType($type,$content){
 }
 
 // 预览文件
-function previewUrl($url,$type=1){
+function previewUrl($url){
     $previewConf=config('preview');
     $preview='';
-    if($type==1 && $previewConf['own']){
+    $suffix=explode('.',$url);
+    $ext=$suffix[count($suffix)-1];
+    $media=['jpg','jpeg','png','bmp','gif','pdf','mp3','wav','wmv','amr','mp4','3gp','avi','m2v','mkv','mov'];
+    $doc=['ppt','pptx','doc','docx','xls','xlsx','pdf'];
+    if(in_array($ext,$media) && $previewConf['own']){
         $preview=$previewConf['own']."view.html?src=".$url;
-    }elseif($type==2 && $previewConf['yzdcs']){
+    }elseif(in_array($ext,$doc) && $previewConf['yzdcs']){
         $preview=$previewConf['yzdcs'].'?k='.$previewConf['keycode'].'&url='.$url;
     }else{
         $preview=request()->domain()."view.html?src=".$url;
