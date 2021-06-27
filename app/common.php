@@ -516,7 +516,7 @@ function previewUrl($url){
     $preview='';
     $suffix=explode('.',$url);
     $ext=$suffix[count($suffix)-1];
-    $media=['jpg','jpeg','png','bmp','gif','pdf','mp3','wav','wmv','amr','mp4','3gp','avi','m2v','mkv','mov'];
+    $media=['jpg','jpeg','png','bmp','gif','pdf','mp3','wav','wmv','amr','mp4','3gp','avi','m2v','mkv','mov','webp'];
     $doc=['ppt','pptx','doc','docx','xls','xlsx','pdf'];
     if(in_array($ext,$media) && $previewConf['own']){
         $preview=$previewConf['own']."view.html?src=".$url;
