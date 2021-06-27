@@ -62,15 +62,23 @@ class Pub
                     $setting=json_decode($userInfo['setting'],true);
                     if($setting['hideMessageName']=='true'){
                         $setting['hideMessageName']=true;
+                    }else{
+                        $setting['hideMessageName']=false;
                     }
                     if($setting['hideMessageTime']=='true'){
                         $setting['hideMessageTime']=true;
+                    }else{
+                        $setting['hideMessageTime']=false;
                     }
                     if($setting['avatarCricle']=='true'){
                         $setting['avatarCricle']=true;
+                    }else{
+                        $setting['avatarCricle']=false;
                     }
                     if($setting['isVoice']=='true'){
                         $setting['isVoice']=true;
+                    }else{
+                        $setting['isVoice']=false;
                     }
                     $setting['sendKey']=(int)$setting['sendKey'];
                 $userInfo['setting']=$setting;
@@ -88,11 +96,14 @@ class Pub
 
 //    退出登录
    public function logout(){
-    // $authToken=$this->request->header('authToken');
-    // echo $authToken;die;
-    // if(Cache::get($authToken)){
-    //     Cache::delete($authToken);
-    // }
+    $authToken=request()->header('authToken');
+    $userInfo=[];
+    if($authToken){
+        $userInfo=Cache::get($authToken);
+    }
+    if($userInfo){
+        wsSendMsg(0,'isOnline',['id'=>$userInfo['user_id'],'is_online'=>0]);
+    }
     return success('退出成功！');
    }
 
@@ -128,6 +139,10 @@ class Pub
     public function bindUid(){
         $client_id=input('client_id');
         $user_id=input('user_id');
+        // 如果当前ID在线，将其他地方登陆挤兑下线
+        if(Gateway::isUidOnline($user_id)){
+            wsSendMsg($user_id,'offline',['id'=>$user_id,'client_id'=>$client_id]);
+        }
         Gateway::bindUid($client_id, $user_id);
         // 查询团队，如果有团队则加入团队
         $group=Group::getMyGroup(['gu.user_id'=>$user_id,'gu.status'=>1]);
@@ -138,8 +153,15 @@ class Pub
                 Gateway::joinGroup($client_id, $v); 
             }
         }
+        wsSendMsg(0,'isOnline',['id'=>$user_id,'is_online'=>1]);
         return success();
         // pushMessage($this->userInfo['uid'],'notice','消息通知','恭喜您，已成功绑定UID','');
+    }
+
+    // 下线通知
+    public function offline(){
+        $user_id=input('user_id');
+        wsSendMsg(0,'isOnline',['id'=>$user_id,'is_online'=>0]);
     }
   
  /**

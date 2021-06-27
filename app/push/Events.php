@@ -47,9 +47,29 @@ class Events
         {
             // 客户端回应服务端的心跳
             case 'pong':
-                return;
+                break;
+            case 'bindUid':
+                $_SESSION['user_id']=$message_data['user_id'];
+                break;
         }
+        return;
    }
 
+    /**
+    * 当断开连接时
+    * @param int $client_id
+    */
+    public static function onClose($client_id)
+    {
+        $user_id=$_SESSION['user_id'];
+        if($user_id){
+            Gateway::sendToAll(json_encode(array(
+            'type'      => 'isOnline',
+            'time' => time(),
+            'data' => ['id'=>$user_id,'is_online'=>0]
+        )));
+        }
+        
+    }
   
 }

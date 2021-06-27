@@ -14,19 +14,19 @@
 use \Workerman\Worker;
 use \GatewayWorker\Gateway;
 use \Workerman\Autoloader;
-$context = array(
-    'ssl' => array(
-        // 使用绝对路径
-        'local_cert'  => '/www/cert/im.pem', // 也可以是crt文件
-        'local_pk'    => '/www/cert/im.key',
-        'verify_peer' => false,
-    )
-);
-// websocket协议(端口任意，只要没有被其它程序占用就行)
-$gateway = new Gateway("websocket://0.0.0.0:8282", $context);
-$gateway->transport = 'ssl';
+// $context = array(
+//     'ssl' => array(
+//         // 使用绝对路径
+//         'local_cert'  => '/www/cert/im.pem', // 也可以是crt文件
+//         'local_pk'    => '/www/cert/im.key',
+//         'verify_peer' => false,
+//     )
+// );
+// // websocket协议(端口任意，只要没有被其它程序占用就行)
+// $gateway = new Gateway("websocket://0.0.0.0:8282", $context);
+// $gateway->transport = 'ssl';
 // gateway 进程
-// $gateway = new Gateway("Websocket://0.0.0.0:8282");
+$gateway = new Gateway("Websocket://0.0.0.0:8282");
 // 设置名称，方便status时查看
 $gateway->name = 'pushMessage';
 // 设置进程数，gateway进程数建议与cpu核数相同

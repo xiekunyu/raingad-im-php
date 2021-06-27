@@ -7,6 +7,7 @@
 
 namespace app\enterprise\model;
 
+use GatewayClient\Gateway;
 use think\Model;
 use think\facade\Db;
 use think\facade\Request;
@@ -95,6 +96,7 @@ class User extends Model
             $group[$k]['index'] = "群聊";
             $group[$k]['realname'] = $v['displayName'] . " [群聊]";
             $group[$k]['is_notice'] = $v['is_notice'];
+            $group[$k]['is_online'] = 1;
             // 是否置顶聊天
             $friend = isset($friendList[$group_id]) ? $friendList[$group_id] : [];
             $is_top = 0;
@@ -113,6 +115,7 @@ class User extends Model
             }
          }
       }
+      $onlineList=Gateway::getAllUidList();
       foreach ($list_chart as $k => $v) {
          $list_chart[$k]['id'] = $v['user_id'];
          $list_chart[$k]['displayName'] = $v['realname'];
@@ -123,6 +126,11 @@ class User extends Model
          $list_chart[$k]['lastSendTime'] = time() * 1000;
          $list_chart[$k]['is_group'] = 0;
          $list_chart[$k]['setting'] = [];
+         $is_online=0;
+         if(isset($onlineList[$v['user_id']])){
+            $is_online=1;
+         }
+         $list_chart[$k]['is_online'] = $is_online;
          // 是否置顶聊天
          $friend = isset($friendList[$v['user_id']]) ? $friendList[$v['user_id']] : [];
          $is_top = 0;

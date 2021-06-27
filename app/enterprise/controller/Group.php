@@ -14,6 +14,7 @@ use think\exception\ValidateException;
 class Group extends BaseController
 {
 
+   protected $setting=['manage' => 0, 'invite' => 1, 'nospeak' => 0];
       // 获取联系人列表
    public function getAllUser(){
       $param=$this->request->param();
@@ -129,12 +130,14 @@ class Group extends BaseController
          // 将自己也加入群聊
          $user_ids[]=$this->userInfo['user_id'];
          Db::startTrans();
+         $setting=$this->setting;
          try{
             $create=[
                'create_user'=>$uid,
                'owner_id'=>$uid,
                'name'=>"群聊",
                'name_py'=>"qunliao",
+               'setting'=>json_encode($setting),
             ];
             $group=new GroupModel();
             $group->save($create);
@@ -163,11 +166,13 @@ class Group extends BaseController
                'role'=>3,
                'name_py'=>$create['name_py'],
                'id'=>'group-'.$group_id,
-               'avatar'=>'https://lvzhe-file.oss-cn-beijing.aliyuncs.com/tools/group.png',
+               'avatar'=>avatarUrl('','群聊',$group_id,120),
                'is_group'=>1,
                'lastContent'=>$this->userInfo['realname'].' 创建了群聊',
                'lastSendTime'=>time()*1000,
-               'index'=>"群聊"
+               'index'=>"群聊",
+               'is_notice'=>1,
+               'setting'=>$setting,
          
             ];
             wsSendMsg($user_ids, 'addGroup', $groupInfo);
