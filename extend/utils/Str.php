@@ -353,3 +353,4 @@ public static function pinyin($str, $ret_format = 'all', $placeholder = '_', $al
         }
         return rtrim($rs, ' ');
     }
+}
