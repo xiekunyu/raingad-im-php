@@ -46,7 +46,7 @@ git clone https://gitee.com/raingad/im-instant-chat.git
 ```
 2.  进入项目目录，执行： 
 ```
-composer intsall
+composer install
 ```
 3.  进入 public\sql\database.sql 将数据库导入自己的数据库。
 
