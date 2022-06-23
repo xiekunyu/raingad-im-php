@@ -110,7 +110,7 @@ CREATE TABLE `yu_message` (
   `file_name` varchar(256) DEFAULT NULL COMMENT '文件名称',
   `extends` text COMMENT '消息扩展内容',
   `status` tinyint(1) NOT NULL DEFAULT '1' COMMENT '状态',
-  `del_user` text DEFAULT null COMMENT '发送者已删除',
+  `del_user` text DEFAULT null COMMENT '发送者已删除'
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 --
