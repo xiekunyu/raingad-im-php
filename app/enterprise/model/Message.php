@@ -7,7 +7,7 @@ namespace app\enterprise\model;
 
 use think\Model;
 use think\facade\Db;
-
+use think\facade\Request;
 class Message extends Model
 {
     protected $pk="msg_id";
@@ -51,7 +51,7 @@ class Message extends Model
         }
         $fileSzie=isset($param['file_size'])?$param['file_size']:'';
         $fileName=isset($param['file_name'])?$param['file_name']:'';
-        $ossUrl=config('oss.ossUrl')?:request()->url().'/';
+        $ossUrl=config('oss.ossUrl')?:Request::domain().'/';
         // 如果是转发图片文件的消息，必须把域名去除掉
         $content=$param['content'];
         if(in_array($param['type'],self::$fileType)){

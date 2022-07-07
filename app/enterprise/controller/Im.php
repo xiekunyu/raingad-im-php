@@ -67,7 +67,7 @@ class Im extends BaseController
     protected function recombileMsg($list)
     {
         $data = [];
-        $ossUrl = config('oss.ossUrl') ?: request()->url() . '/';
+        $ossUrl = config('oss.ossUrl') ?: Request::domain() . '/';
         $userInfo = $this->userInfo;
         if ($list) {
             $listData = $list->toArray()['data'];
