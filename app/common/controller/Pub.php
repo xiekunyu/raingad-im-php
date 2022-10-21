@@ -154,7 +154,7 @@ class Pub
             }
         }
         wsSendMsg(0,'isOnline',['id'=>$user_id,'is_online'=>1]);
-        return success();
+        return success('');
         // pushMessage($this->userInfo['uid'],'notice','消息通知','恭喜您，已成功绑定UID','');
     }
 
