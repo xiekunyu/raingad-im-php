@@ -11,7 +11,9 @@ use think\facade\Request;
 class Message extends Model
 {
     protected $pk="msg_id";
-    protected static $fileType=['file','image'];
+    protected $json      = ["extends"];
+    protected $jsonAssoc = true;
+    protected static $fileType=['file','image','video','voice'];
 
     // 添加聊天记录
     public static function addData($data){
@@ -71,6 +73,7 @@ class Message extends Model
             'is_read'=>$is_read,
             'file_size'=>$fileSzie,
             'file_name'=>$fileName,
+            'extends'=>($param['extends'] ?? null) ? $param['extends'] : null,
         ];
         $message=new self();
         $message->update(['is_last'=>0],['chat_identify'=>$chat_identify]);

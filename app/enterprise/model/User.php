@@ -107,6 +107,7 @@ class User extends Model
             if ($getGroupLastMsg) {
                foreach ($getGroupLastMsg as $val) {
                   if ($val['to_user'] == $v['group_id']) {
+                     $group[$k]['type'] =$val['type'];
                      $group[$k]['lastContent'] = getMsgType($val['type'], $val['lastContent']);
                      $group[$k]['lastSendTime'] = $val['lastSendTime'] * 1000;
                      break;
@@ -160,6 +161,7 @@ class User extends Model
                         $content = "";
                      }
                   }
+                  $list_chart[$k]['type'] = $val['type'];
                   $list_chart[$k]['lastContent'] = $content;
                   $list_chart[$k]['lastSendTime'] = $val['lastSendTime'] * 1000;
 

@@ -505,8 +505,17 @@ function getMsgType($type,$content){
         case 'file':
             return "<span>[文件]</span>";
             break;
-        default:
+        case 'voice':
+            return "<span>[语音]</span>";
+            break;
+        case 'video':
+            return "<span>[视频]</span>";
+            break;
+        case 'text':
             return $content;
+            break;
+        default:
+            return "<span>[不支持的消息]</span>";
     }
 }
 

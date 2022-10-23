@@ -10,7 +10,7 @@ use Exception;
 
 class Im extends BaseController
 {
-    protected $fileType = ['file', 'image'];
+    protected $fileType = ['file', 'image','video','voice'];
     // 获取联系人列表
     public function getContacts()
     {
@@ -114,7 +114,8 @@ class Im extends BaseController
                     'from_user' => $v['from_user'],
                     'fileName' => $v['file_name'],
                     'fileSize' => $v['file_size'],
-                    'fromUser' => $fromUser
+                    'fromUser' => $fromUser,
+                    'extends'=>is_string($v['extends'])?json_decode($v['extends'],true) : $v['extends']
                 ];
             }
         }

@@ -31,6 +31,10 @@ class Upload extends BaseController
         $fileType=getFileType($info['ext']);
         if($fileType==2){
             $filecate="image";
+        }elseif($fileType==3){
+            $filecate="voice";
+        }elseif($fileType==4){
+            $filecate="video";
         }else{
             $filecate="file";
         }
@@ -66,6 +70,12 @@ class Upload extends BaseController
             'user_id'=>$uid,
         ];
         $message=json_decode($data['message'],true);
+        // 自动获取视频第一帧,视频并且是使用的阿里云
+        if($message['type']=='video' && $oss['accessKeyId']){
+            $message['extends']['poster']=$oss['ossUrl'].$ret['src'].'?x-oss-process=video/snapshot,t_1000,m_fast,w_800,f_png';
+        }else{
+            $message['extends']['poster']='https://im.file.raingad.com/static/image/video.png';
+        }
         $message['content']=$ret['src'];
         $message['file_size']=$info['size'];
         $message['file_name']= $name.'.'.$info['ext'];
