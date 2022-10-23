@@ -130,7 +130,7 @@ class Im extends BaseController
         if (!$param['is_group']) {
             wsSendMsg($param['fromUser'], 'isRead', $param['messages'], 0);
         }
-        return success();
+        return success('');
     }
 
     // 设置消息已读
@@ -155,7 +155,7 @@ class Im extends BaseController
         $param = $this->request->param();
         if ($param) {
             User::where(['user_id' => $this->userInfo['user_id']])->update(['setting' => json_encode($param)]);
-            return success();
+            return success('');
         }
         return warning('设置失败');
     }
@@ -182,7 +182,7 @@ class Im extends BaseController
             $data = $message->toArray();
             $data['content'] = $fromUserName . $text;
             wsSendMsg($toContactId, 'undoMessage', $data, $data['is_group']);
-            return success();
+            return success('');
         } else {
             return warning();
         }
@@ -208,9 +208,9 @@ class Im extends BaseController
                 }
             }
             $message->save();
-            return success();
+            return success('');
         } else {
-            return warning();
+            return warning('');
         }
     }
 
@@ -245,7 +245,7 @@ class Im extends BaseController
             }
         }
 
-        return success();
+        return success('');
     }
 
     // 设置聊天置顶
@@ -274,5 +274,21 @@ class Im extends BaseController
         } catch (Exception $e) {
             return error($e->getMessage());
         }
+    }
+    
+    // 删除聊天
+    public function delChat()
+    {
+        $param = $this->request->param();
+        $user_id = $this->userInfo['user_id'];
+        $is_group = $param['is_group'] ?: 0;
+        $id = $param['id'];
+        if(!$is_group){
+            $chat_identify=chat_identify($user_id,$id);
+        }else{
+            return success('');
+        }
+        Message::where(['chat_identify' => $chat_identify])->update(['is_last' => 0]);
+        return success('');
     }
 }

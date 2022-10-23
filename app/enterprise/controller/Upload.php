@@ -25,9 +25,15 @@ class Upload extends BaseController
      */
     public function upload($data,$oss,$prefix = "")
     {
+        $message=json_decode($data['message'],true);
         $uid=$this->userInfo['user_id'];
         $filePath =request()->file('file');
         $info=$this->getFileInfo($filePath);
+        if($info['ext']==''){
+            $pathInfo        = pathinfo($message['fileName']);
+            $info['ext']     = $pathInfo['extension'];
+            $info['name']    =$message['fileName'];
+        }
         $fileType=getFileType($info['ext']);
         if($fileType==2){
             $filecate="image";
@@ -69,7 +75,7 @@ class Upload extends BaseController
             "type"     =>2,
             'user_id'=>$uid,
         ];
-        $message=json_decode($data['message'],true);
+        
         // 自动获取视频第一帧,视频并且是使用的阿里云
         if($message['type']=='video' && $oss['accessKeyId']){
             $message['extends']['poster']=$oss['ossUrl'].$ret['src'].'?x-oss-process=video/snapshot,t_1000,m_fast,w_800,f_png';

@@ -242,7 +242,7 @@ class Group extends BaseController
          // }
          GroupModel::update(['notice'=>$param['notice']],['group_id'=>$group_id]);
          wsSendMsg($group_id,"setNotice",['group_id'=>$param['id'],'notice'=>$param['notice']],1);
-         return success();
+         return success('');
       }
 
       // 群聊设置
@@ -257,7 +257,7 @@ class Group extends BaseController
          $setting=json_encode($param['setting']);
          GroupModel::update(['setting'=>$setting],['group_id'=>$group_id]);
          wsSendMsg($group_id,"groupSetting",['group_id'=>$param['id'],'setting'=>$param['setting']],1);
-         return success();
+         return success('');
       }
 
 }
