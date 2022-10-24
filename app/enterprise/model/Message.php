@@ -105,8 +105,13 @@ class Message extends Model
             }
             $sendData['preview']=previewUrl($sendData['content'],$pre);
         }
+        if($is_group==0){
+            $toContactId=[$toContactId,$param['user_id']];
+        }
+        $sendData['toUser']=$param['toContactId'];
         // 向发送方发送消息
         wsSendMsg($toContactId,$type,$sendData,$is_group);
+        
         $sendData['toContactId']=$param['toContactId'];
         return $sendData;
     }

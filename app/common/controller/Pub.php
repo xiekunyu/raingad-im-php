@@ -140,9 +140,9 @@ class Pub
         $client_id=input('client_id');
         $user_id=input('user_id');
         // 如果当前ID在线，将其他地方登陆挤兑下线
-        if(Gateway::isUidOnline($user_id)){
-            wsSendMsg($user_id,'offline',['id'=>$user_id,'client_id'=>$client_id]);
-        }
+        // if(Gateway::isUidOnline($user_id)){
+        //     wsSendMsg($user_id,'offline',['id'=>$user_id,'client_id'=>$client_id]);
+        // }
         Gateway::bindUid($client_id, $user_id);
         // 查询团队，如果有团队则加入团队
         $group=Group::getMyGroup(['gu.user_id'=>$user_id,'gu.status'=>1]);
