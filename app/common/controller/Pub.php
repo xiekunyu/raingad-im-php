@@ -83,6 +83,11 @@ class Pub
                     $setting['sendKey']=(int)$setting['sendKey'];
                 $userInfo['setting']=$setting;
                }
+                //如果登录信息中含有client——id则自动进行绑定
+               $client_id=$this->request->param('client_id');
+               if($client_id){
+                    $this->doBindUid($userInfo['user_id'],$client_id);
+               }
                $data=[
                    'sessionId'=>Session::getId(),
                    'authToken'=>$authToken,
@@ -137,8 +142,14 @@ class Pub
      * @return \think\response\Json
      */
     public function bindUid(){
-        $client_id=input('client_id');
-        $user_id=input('user_id');
+        $client_id=$this->request->param('client_id');
+        $user_id=$this->request->param('user_id');
+        $this->doBindUid($user_id,$client_id);
+        return success('');
+    }
+
+    // 执行绑定
+    public function doBindUid($user_id,$client_id){
         // 如果当前ID在线，将其他地方登陆挤兑下线
         if(Gateway::isUidOnline($user_id)){
             wsSendMsg($user_id,'offline',['id'=>$user_id,'client_id'=>$client_id,'isMobile'=>$this->request->isMobile()]);
@@ -154,8 +165,6 @@ class Pub
             }
         }
         wsSendMsg(0,'isOnline',['id'=>$user_id,'is_online'=>1]);
-        return success('');
-        // pushMessage($this->userInfo['uid'],'notice','消息通知','恭喜您，已成功绑定UID','');
     }
 
     // 下线通知
