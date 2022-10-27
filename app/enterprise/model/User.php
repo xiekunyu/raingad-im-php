@@ -108,7 +108,7 @@ class User extends Model
                foreach ($getGroupLastMsg as $val) {
                   if ($val['to_user'] == $v['group_id']) {
                      $group[$k]['type'] =$val['type'];
-                     $group[$k]['lastContent'] = getMsgType($val['type'], $val['lastContent']);
+                     $group[$k]['lastContent'] = $val['lastContent'];
                      $group[$k]['lastSendTime'] = $val['lastSendTime'] * 1000;
                      break;
                   }
@@ -153,7 +153,7 @@ class User extends Model
          if ($lasMsgList) {
             foreach ($lasMsgList as $val) {
                if ($val['from_user'] == $v['user_id'] || $val['to_user'] == $v['user_id']) {
-                  $content = getMsgType($val['type'], $val['lastContent']);
+                  $content = $val['lastContent'];
                   // 屏蔽已删除的消息
                   if ($val['del_user']) {
                      $delUser = explode(',', $val['del_user']);

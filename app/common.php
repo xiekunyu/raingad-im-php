@@ -496,28 +496,6 @@ function wsSendMsg($user, $type,  $data, $isGroup=0)
     }
 }
 
-// 获取消息类型
-function getMsgType($type,$content){
-    switch($type){
-        case 'image':
-            return "<span>[图片]</span>";
-            break;
-        case 'file':
-            return "<span>[文件]</span>";
-            break;
-        case 'voice':
-            return "<span>[语音]</span>";
-            break;
-        case 'video':
-            return "<span>[视频]</span>";
-            break;
-        case 'text':
-            return $content;
-            break;
-        default:
-            return "<span>[不支持的消息]</span>";
-    }
-}
 
 // 预览文件
 function previewUrl($url){
