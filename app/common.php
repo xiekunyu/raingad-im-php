@@ -230,7 +230,7 @@ function circleAvatar($str,$s,$uid=0){
     header("content-type:image/png");
     $str =$str?:"律者";
     $uid =$uid?:rand(0,10);
-    $text=msubstr($str,count($str)-3,2);
+    $text=msubstr($str,mb_strlen($str)-3,2);
     $width = $height = $s?:80;
     if($width<40 or $width>120){
         $width = $height =80;
@@ -240,7 +240,7 @@ function circleAvatar($str,$s,$uid=0){
     $size=$width/4;
     $textLeft=($height/2)-$size-$width/10;
     if($width<=80){
-        $text=msubstr($str,count($str)-2,1);
+        $text=msubstr($str,mb_strlen($str)-2,1);
         $size=$width/2;
         $textLeft=$size/3;
     }
