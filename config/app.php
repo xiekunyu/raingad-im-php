@@ -4,6 +4,8 @@
 // +----------------------------------------------------------------------
 
 return [
+    'app_name' =>"Raingad-IM",
+    'app_logo' =>"https://im.file.raingad.com/logo/logo.png",
     // 应用地址
     'app_host'         => env('app.host', ''),
     // 应用的命名空间
@@ -31,5 +33,6 @@ return [
     // 显示错误信息
     'show_error_msg'   => false,
     'auto_multi_app' =>true,
+    
 ];
 
