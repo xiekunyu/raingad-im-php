@@ -68,7 +68,7 @@ composer install
 4.  进入项目根目录，修改 `example.env` 为 `.env` ，并修改数据库相应的参数。
 
 ##### 第二种方式
-1. 下载完整源码放到自己的服务器上[下载地址](https://gitee.com/raingad/im-instant-chat/releases/0.6.14)。
+1. 下载完整源码放到自己的服务器上[下载地址](https://gitee.com/raingad/im-instant-chat/releases/1.12.11)。【这个不是最新版，请在发行版中下载最新发布的版本】
 2. 开启伪静态，下面只展示nginx的，Apache的自己百度
 ``` 
 location / {
