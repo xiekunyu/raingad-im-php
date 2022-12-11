@@ -27,10 +27,9 @@ return [
         'redis'                  => [
             // 驱动方式
             'type'   => 'redis',
-            'host'   =>'127.0.0.1',
-    //        'host'   =>'39.105.186.249',
-            'port'   => '6379',
-            'password' => 'Mm010203@302010mM',
+            'host'   =>env('redis.host', '127.0.0.1'),
+            'port'   => env('redis.port', '6379'),
+            'password' => env('redis.password', ''),
             // 缓存前缀
             'prefix' => '',
         ]

@@ -4,7 +4,7 @@
 <head>
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
-    <title>$Think.config.app.app_name}简易安装向导</title>
+    <title>{$Think.config.app.app_name}简易安装向导</title>
     <link rel="stylesheet" href="__STATIC__/elementui/element-ui.css">
     <script src="__STATIC__/js/vue.js"></script>
     <script src="__STATIC__/js/jquery-2.0.3.min.js"></script>
@@ -53,6 +53,8 @@
                         <li>支持部分Lemon-imui内功能设置</li>
                         <li>支持文件和图片在线预览</li>
                         <li>群聊创建、删除和群成员管理、群公告等</li>
+                        <li>可以置顶联系人，所有联系人可以设置消息免打扰</li>
+                        <li>全新支持增加音视频通话(一对一)</li>
                     </ul>
 
                 </div>
@@ -96,11 +98,15 @@
             </div>
             <div class="step-item" v-if="action==2" align="center">
                 <div class="step-form">
+                    <el-alert
+                        title="如果未设置成功，请将根目录下[example.env]更名为为[.env]，并填写好相关参数"
+                        type="warning">
+                    </el-alert>
                     <h4>请填写数据库信息</h4>
                     <el-form ref="form" :model="form" label-width="120px">
                         <el-form-item label="服务器地址">
                             <el-input v-model="form.hostname">
-                                <template slot="append">数据库地址一般为：172.0.0.1</template>
+                                <template slot="append">数据库地址一般为：127.0.0.1</template>
                             </el-input>
 
                         </el-form-item>
@@ -125,7 +131,24 @@
                                 <template slot="append">数据库端口一般为：3306</template>
                             </el-input>
                         </el-form-item>
+                        <h4>redis配置</h4>
+                        <el-form-item label="服务器地址">
+                            <el-input v-model="form.redishost">
+                                <template slot="append">默认为127.0.0.1</template>
+                            </el-input>
+                        </el-form-item>
+                        <el-form-item label="端口">
+                            <el-input v-model="form.redisport">
+                                <template slot="append">默认为6379</template>
+                            </el-input>
+                        </el-form-item>
+                        <el-form-item label="密码">
+                            <el-input v-model="form.redispass">
+                                <template slot="append">可以为空</template>
+                            </el-input>
+                        </el-form-item>
                     </el-form>
+                    
                 </div>
 
             </div>
@@ -190,7 +213,10 @@
                     username: 'root',
                     password: '',
                     hostport: 3306,
-                    prefix: 'yu_'
+                    prefix: 'yu_',
+                    redishost: '127.0.0.1',
+                    redisport: '6379',
+                    redispass: '',
                 }
 
             }
@@ -285,6 +311,7 @@
                         _this.status = res.data.status;
                     } else {
                         setTimeout(_this.process("<span class='fc-danger'>" + res.msg + "</span>"), 1000);
+                        _this.isDone = true;
                     }
                     _this.loading = false;
                 })
@@ -326,7 +353,6 @@
         flex-wrap: nowrap;
         justify-content: flex-start;
         width: 320px;
-        margin: 0 auto;
     }
     
     .header-logo {

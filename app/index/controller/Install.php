@@ -91,14 +91,8 @@ class Install extends BaseController
             return warning('缺少必要的数据库文件!');     
         } 
         $temp = $this->request->param();
-        $param = $temp['form'];
-        $db_config['type'] = 'mysql';
-        $db_config['hostname'] = $param['hostname'];
-        $db_config['hostport'] = $param['hostport'];
-        $db_config['database'] = $param['database'];
-        $db_config['username'] = $param['username'];
-        $db_config['password'] = $param['password'];        
-        $db_config['prefix'] = $param['prefix'];        
+        $db_config = $temp['form'];
+        $db_config['type'] = 'mysql';      
         // $wkcode = $param['wkcode'];
         if (empty($db_config['hostname'])) {
             return warning('请填写数据库主机!');
@@ -121,19 +115,25 @@ class Install extends BaseController
         if (empty($db_config['prefix'])) {
             return warning('请填写表前缀!');
         }
+        if (empty($db_config['redishost'])) {
+            return warning('请填写redis主机地址!');
+        }
+        if (empty($db_config['redisport'])) {
+            return warning('请填写redis端口!');
+        }
         if (preg_match('/[^a-z0-9_]/i', $db_config['prefix'])) {
             return warning('表前缀只能包含数字、字母和下划线!');
         }
+        
         // 创建数据库配置文件
         self::mkDatabase($db_config);
-        
         // 检测数据库连接
         try{
             $conn=mysqli_connect($db_config['hostname'], $db_config['username'], $db_config['password']);
             // 检测连接
             if ($conn->connect_error) {
                 return warning("连接失败: " . $conn->connect_error);
-            } 
+            }
             // 创建数据库
             $sql = "CREATE DATABASE IF NOT EXISTS `".$db_config['database']."` default collate utf8_general_ci ";
             if ($conn->query($sql) === TRUE) {
@@ -161,6 +161,7 @@ class Install extends BaseController
                     $temp_sql = $v.';';
                     Db::query($temp_sql);
                 } catch(\Exception $e) {
+                    touch(CONF_PATH . "install.lock");
                     return error('数据库sql安装出错，请操作数据库手动导入sql文件'.$e->getMessage());
                 }
             }
@@ -177,8 +178,63 @@ class Install extends BaseController
         return success('',$data);
     }
 
+        //添加database.php文件
+        private function mkDatabase(array $data)
+        {
+            $code = <<<INFO
+APP_DEBUG = true
+
+[APP]
+DEFAULT_TIMEZONE = Asia/Shanghai
+
+[DATABASE]
+TYPE = {$data['type']}
+HOSTNAME = {$data['hostname']}
+DATABASE = {$data['database']}
+USERNAME = {$data['username']}
+PASSWORD = {$data['password']}
+HOSTPORT = {$data['hostport']}
+CHARSET = utf8
+DEBUG = true
+prefix = {$data['prefix']}
+[LANG]
+default_lang = zh-cn
+
+[REDIS]
+HOST = {$data['redishost']}
+PORT = {$data['redisport']}
+PASSWORD ={$data['redispass']}
+
+# 配置阿里云OSS，主要用于聊天文件储存
+[OSS]
+accesskeyid = 
+accesskeysecret = 
+endpoint = 
+bucket = 
+# 自有域名拼接，必须要有最后的/斜杠
+ossurl = 
+
+#配置预览功能，本系统主要使用第三方的预览工具，比如永中云转换，自带预览系统
+[PREVIEW]
+# 自带预览系统URL，主要用于预览媒体文件，已内置，必须要有最后的/斜杠
+own = http://view.riangad.com/
+# 永中云文件预览，主要用于文档预览，必须要有最后的/斜杠
+yzdcs = 
+# 永中云api code
+keycode = 17444844212312
+INFO;
+    
+            @file_put_contents( root_path().'.env', $code);
+            $database=env('database.database');
+            // 判断写入是否成功
+            if (empty($database) || $database != $data['database']) {
+                return warning('[.env]数据库配置写入失败！');
+            }
+            return true;
+        }
+
     //添加database.php文件
-    private function mkDatabase(array $data)
+    private function mkDatabase1(array $data)
     {
         $code = <<<INFO
 <?php
