@@ -14,6 +14,7 @@
 use \Workerman\Worker;
 use \GatewayWorker\Gateway;
 use \Workerman\Autoloader;
+require_once __DIR__ . '/../../vendor/autoload.php';
 // $context = array(
 //     'ssl' => array(
 //         // 使用绝对路径

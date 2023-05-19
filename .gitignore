@@ -1,1 +1,5 @@
 .env
+public/nginx.htaccess
+config/install.lock
+public/.htaccess
+vender/

@@ -413,23 +413,35 @@ INFO;
                     }
                     break;
                 case 'pcntl':
-                    if (!extension_loaded('pcntl')) {
-                        $this->status=0;
-                        $items[$k]['value'] = '未开启';
-                        $status='no';
+                    if (PHP_OS === 'Linux') {
+                        if (!extension_loaded('pcntl')) {
+                            $items[$k]['value'] = '未开启';
+                            $status='no';
+                        }
+                    } else {
+                        $items[$k]['value'] = 'win无需开启';
                     }
                     break;
                 case 'posix':
-                    if (!extension_loaded('posix')) {
-                        $this->status=0;
-                        $items[$k]['value'] = '未开启';
-                        $status='no';
+                    if (PHP_OS === 'Linux') {
+                        if (!extension_loaded('posix')) {
+                            $this->status=0;
+                            $items[$k]['value'] = '未开启';
+                            $status='no';
+                        }
+                    } else {
+                        $items[$k]['value'] = 'win无需开启';
                     }
+                    
                     break;
                 case 'event':
-                    if (!extension_loaded('event')) {
-                        $items[$k]['value'] = '未开启';
-                        $status='no';
+                    if (PHP_OS === 'Linux') {
+                        if (!extension_loaded('event')) {
+                            $items[$k]['value'] = '未开启';
+                            $status='no';
+                        }
+                    } else {
+                        $items[$k]['value'] = 'win无需开启';
                     }
                     break;
             }
