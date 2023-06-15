@@ -291,4 +291,27 @@ class Im extends BaseController
         Message::where(['chat_identify' => $chat_identify])->update(['is_last' => 0]);
         return success('');
     }
+
+    // 向用户发送消息
+    public function sendToMsg(){
+        $param=$this->request->param();
+        $toContactId=$param['toContactId'];
+        $type=$param['type'] ? 'videocall' : 'voicecall';
+        $status=$param['status'];
+        $data=[
+            'id'=>uniqid(),
+            'msg_id'=>uniqid(),
+            'sendTime'=>time()*1000,
+            'toContactId'=>$toContactId,
+            'content'=>'发起通话请求',
+            'type'=>$type,
+            'status'=>'successd',
+            'fromUser'=>$this->userInfo,
+            'extends'=>[
+                'status'=>$status, //通话状态
+            ]
+        ];
+        wsSendMsg($toContactId,'webrtc',$data);
+        return success('');
+    }
 }
