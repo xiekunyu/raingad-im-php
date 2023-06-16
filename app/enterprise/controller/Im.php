@@ -296,19 +296,26 @@ class Im extends BaseController
     public function sendToMsg(){
         $param=$this->request->param();
         $toContactId=$param['toContactId'];
-        $type=$param['type'] ? 'videocall' : 'voicecall';
+        $type=$param['type'];
         $status=$param['status'];
+        $event=$param['event'] ?? 'calling';
+        $sdp=$param['sdp'] ?? '';
+        $iceCandidate=$param['iceCandidate'] ?? '';
         $data=[
             'id'=>uniqid(),
             'msg_id'=>uniqid(),
             'sendTime'=>time()*1000,
             'toContactId'=>$toContactId,
             'content'=>'发起通话请求',
-            'type'=>$type,
+            'type'=>'webrtc',
             'status'=>'successd',
             'fromUser'=>$this->userInfo,
             'extends'=>[
-                'status'=>$status, //通话状态
+                'type'=>$type,    //通话类型，1视频，0语音。
+                'status'=>$status, //通话状态，1拨打方，2接听方
+                'event'=>$event,
+                'sdp'=>$sdp,
+                'iceCandidate'=>$iceCandidate,
             ]
         ];
         wsSendMsg($toContactId,'webrtc',$data);
