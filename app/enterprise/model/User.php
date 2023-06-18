@@ -15,7 +15,7 @@ use think\facade\Request;
 class User extends Model
 {
    protected $pk = "user_id";
-   protected static $defaultField = 'user_id,realname,account,avatar,name_py';
+   protected static $defaultField = 'user_id,realname,account,avatar,name_py,email';
 
    public static $user_id = '';
 
@@ -39,7 +39,7 @@ class User extends Model
       return $data;
    }
    //   获取所有用户列表
-   public static function getAllUser($map, $user_ids = [], $field = 'user_id,realname,avatar,account,name_py')
+   public static function getAllUser($map, $user_ids = [], $field = 'user_id,realname,avatar,account,name_py,email')
    {
       $list = self::where($map)->field($field)->select()->toArray();
       foreach ($list as $k => $v) {

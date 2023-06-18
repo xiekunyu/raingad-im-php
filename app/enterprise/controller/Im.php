@@ -6,6 +6,7 @@ use app\BaseController;
 use think\facade\Request;
 use think\facade\Db;
 use app\enterprise\model\{User, Message, GroupUser, Friend};
+use GatewayClient\Gateway;
 use Exception;
 
 class Im extends BaseController
@@ -296,25 +297,66 @@ class Im extends BaseController
     public function sendToMsg(){
         $param=$this->request->param();
         $toContactId=$param['toContactId'];
+        
         $type=$param['type'];
         $status=$param['status'];
         $event=$param['event'] ?? 'calling';
         $sdp=$param['sdp'] ?? '';
         $iceCandidate=$param['iceCandidate'] ?? '';
+        $callTime=$param['callTime'] ?? '';
+        $msg_id=$param['msg_id'] ?? '';
+        $id=$param['id'] ?? '';
+        $code=$param['code'] ?? 901;
+        // 如果该用户不在线，则发送忙线
+        if(!Gateway::isUidOnline($toContactId)){
+            $toContactId=$this->userInfo['user_id'];
+            $code=907;
+            $event='busy';
+            sleep(1);
+        }
+        switch($code){
+            case 901:
+                $content='发起通话请求';
+                break;
+            case 902:
+                $content='取消通话请求';
+                break;
+            case 903:
+                $content='拒绝通话请求';
+                break;
+            case 904:
+                $content='接听通话请求';
+                break;
+            case 905:
+                $content='未接通';
+                break;
+            case 906:
+                $content='通话时长'.$callTime.'秒';
+                break;
+            case 907:
+                $content='忙线中';
+                break;
+            default:
+                $content='数据交换中';
+                break;
+        }
+        
         $data=[
             'id'=>uniqid(),
-            'msg_id'=>uniqid(),
+            'msg_id'=>$msg_id,
             'sendTime'=>time()*1000,
             'toContactId'=>$toContactId,
-            'content'=>'发起通话请求',
+            'content'=>$content,
             'type'=>'webrtc',
             'status'=>'successd',
             'fromUser'=>$this->userInfo,
             'extends'=>[
                 'type'=>$type,    //通话类型，1视频，0语音。
-                'status'=>$status, //通话状态，1拨打方，2接听方
+                'status'=>$status, //，1拨打方，2接听方
                 'event'=>$event,
+                'callTime'=>$callTime,
                 'sdp'=>$sdp,
+                'code'=>$code,  //通话状态:呼叫901，取消902，拒绝903，接听904，未接通905，接通后挂断906，忙线907
                 'iceCandidate'=>$iceCandidate,
             ]
         ];
