@@ -245,7 +245,7 @@ class Im extends BaseController
                 return error($e->getMessage());
             }
         }
-
+        wsSendMsg($user_id,"setIsNotic",['id'=>$id,'is_notice'=>$param['is_notice'],'is_group'=>$param['is_group']]);
         return success('');
     }
 
@@ -271,6 +271,7 @@ class Im extends BaseController
                 ];
                 Friend::create($info);
             }
+            wsSendMsg($user_id,"setChatTop",['id'=>$id,'is_top'=>$param['is_top'],'is_group'=>$is_group]);
             return success('');
         } catch (Exception $e) {
             return error($e->getMessage());
