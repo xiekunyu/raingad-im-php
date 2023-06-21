@@ -172,6 +172,7 @@ class Group extends BaseController
                'lastSendTime'=>time()*1000,
                'index'=>"群聊",
                'is_notice'=>1,
+               'is_top'=>0,
                'setting'=>$setting,
          
             ];

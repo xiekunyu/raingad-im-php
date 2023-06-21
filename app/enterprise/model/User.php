@@ -177,7 +177,7 @@ class User extends Model
 
    public static function getList($map)
    {
-      return Db::name('user')->field('user_id,realname,account,avatar')->where($map)->select();
+      return self::field(self::$defaultField)->where($map)->select();
    }
 
    // 匹配用户列表信息(返回用户信息)
@@ -223,6 +223,7 @@ class User extends Model
                      'id' => $vv['user_id'],
                      'displayName' => $vv['realname'],
                      'account' => $vv['account'],
+                     'name_py' => $vv['name_py'],
                      'avatar' => avatarUrl($vv['avatar'], $vv['realname'], $vv['user_id'], $cs),
                   ];
                }
@@ -234,6 +235,7 @@ class User extends Model
             'id' => $user['user_id'],
             'displayName' => $user['realname'],
             'account' => $user['account'],
+            'name_py' => $user['name_py'],
             'avatar' => avatarUrl($user['avatar'], $user['realname'], $user['user_id']),
          ];
       }
