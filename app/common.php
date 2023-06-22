@@ -26,9 +26,9 @@ function success($msg = '操作成功', $data = '', $count = 0, $page = 1, $code
 /**
  * 返回警告json信息
  */
-function warning($msg = '操作失败', $data = '', $count = 0, $page = 1)
+function warning($msg = '操作失败', $data = '', $count = 0, $page = 1 , $code = 400)
 {
-    return success($msg, $data, $count, $page, 1);
+    return success($msg, $data, $count, $page, 1,$code);
 }
 
 /**

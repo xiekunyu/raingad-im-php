@@ -245,7 +245,7 @@ class Im extends BaseController
                 return error($e->getMessage());
             }
         }
-        wsSendMsg($user_id,"setIsNotic",['id'=>$id,'is_notice'=>$param['is_notice'],'is_group'=>$param['is_group']]);
+        wsSendMsg($user_id,"setIsNotice",['id'=>$id,'is_notice'=>$param['is_notice'],'is_group'=>$param['is_group']]);
         return success('');
     }
 
