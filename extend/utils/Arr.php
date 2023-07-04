@@ -7,16 +7,16 @@ namespace utils;
 
 class Arr{
 
-    /*
+    /**
      * 节点遍历
-     * @param $list 遍历的数组
+     * @param array $list 遍历的数组
      * @param string $pk 主键id
      * @param string $pid 父id
      * @param string $child 子数组
      * @param int $root 判断是否存在parent
      * @return array
-     */
-    public static function list_to_tree($list, $pk = 'id', $pid = 'pid', $child = '_child', $root = 0)
+     **/
+    public static function listToTree($list, $pk = 'id', $pid = 'pid', $child = '_child', $root = 0)
     {
         // 创建Tree
         $tree = [];
@@ -35,6 +35,8 @@ class Arr{
                     if (isset($refer[$parentId])) {
                         $parent =& $refer[$parentId];
                         $parent[$child][] =& $list[$key];
+                    }else {
+                        $tree[] =& $list[$key];
                     }
                 }
             }
@@ -149,17 +151,17 @@ class Arr{
      * $title 作为新数组的标题
      * $array 需要处理的数组
      * */
-    public static function recombine_array($field, $title, $array)
-    {
-        $data = [];
+    //将相同值的二维数组重组一个新的数组。
+    public static function recombine_array($field,$title,$array,$name='name',$list='dataList'){
+        $data=[];
         foreach ($array as $k => $v) {
-            $arr[] = $v[$field];
-            $arr = array_unique($arr);
-            $num = 0;
-            foreach ($arr as $key => $val) {
-                if ($v[$field] == $val) {
-                    $data[$num]['name'] = $v[$title];
-                    $data[$num]['dataList'][] = $v;
+            $arr[]=$v[$field];
+            $arr=array_unique($arr);
+            $num=0;
+            foreach($arr as $key=>$val){
+                if($v[$field]==$val){
+                    $data[$num][$name] = $v[$title];
+                    $data[$num][$list][] = $v;
                 }
                 ++$num;
             }
@@ -209,13 +211,16 @@ class Arr{
     $condition 匹配条件
     return array
     */
-    public static function query_array($array, $name, $condition)
+    public static function query_array($array, $name, $condition,$key='')
     {
         if (!is_array($array)) {
             return false;
         }
         foreach ($array as $item) {
             if ($item[$name] == $condition) {
+                if($key){
+                    return $item[$key];
+                }
                 return $item;
             }
         }
@@ -261,6 +266,44 @@ class Arr{
             $array[] = $x.$str;
         }
         return $array;
+    }
+
+            //数组中获取ID字符串
+    public static function arrayToString($array, $field, $isStr = true)
+    {
+        $idArr = [];
+        foreach ($array as $k => $v) {
+            if(is_array($field)){
+                foreach($field as $val){
+                    $idArr[]=$v[$val];
+                }
+            }else{
+                $idArr[] = $v[$field];
+            }
+        }
+        if ($isStr) {
+            $idStr = implode(',', $idArr);
+            return $idStr;
+        } else {
+            return $idArr;
+        }
+    }
+
+    /**
+     * 用数组中某个字段的值 作为数组的键
+     * @param array $arr 需要处理的数组
+     * @param string $keyValue 作为键的值
+     * @return array
+     */
+    public static function array_value_key($arr, $keyValue)
+    {
+        $temp = [];
+        foreach ($arr as $item) {
+            if (isset($item[$keyValue])){
+                $temp[$item[$keyValue]] = $item;
+            }
+        }
+        return $temp;
     }
 
 }

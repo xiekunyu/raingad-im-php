@@ -10,6 +10,7 @@ use app\enterprise\model\{File,Message};
 use OSS\OssClient;
 use think\facade\Db;
 use OSS\Core\OssException;
+use think\facade\Request;
 class Upload extends BaseController
 {
     protected $middleware = ['checkAuth'];
@@ -25,14 +26,17 @@ class Upload extends BaseController
      */
     public function upload($data,$oss,$prefix = "")
     {
-        $message=json_decode($data['message'],true);
+        $message=$data['message'] ?? '';
+        if($message){
+            $message=json_decode($message,true);
+        }
         $uid=$this->userInfo['user_id'];
         $filePath =request()->file('file');
         $info=$this->getFileInfo($filePath);
-        if($info['ext']==''){
-            $pathInfo        = pathinfo($message['fileName']);
+        if($info['ext']=='' && $message){
+            $pathInfo        = pathinfo($message['fileName'] ?? '');
             $info['ext']     = $pathInfo['extension'];
-            $info['name']    =$message['fileName'];
+            $info['name']    =$message['fileName'] ?? '';
         }
         $fileType=getFileType($info['ext']);
         if($fileType==2){
@@ -75,21 +79,25 @@ class Upload extends BaseController
             "type"     =>2,
             'user_id'=>$uid,
         ];
-        
-        // 自动获取视频第一帧,视频并且是使用的阿里云
-        if($message['type']=='video' && $oss['accessKeyId']){
-            $message['extends']['poster']=$oss['ossUrl'].$ret['src'].'?x-oss-process=video/snapshot,t_1000,m_fast,w_800,f_png';
+        if($message){
+            // 自动获取视频第一帧,视频并且是使用的阿里云
+            if($message['type']=='video' && $oss['accessKeyId']){
+                $message['extends']['poster']=$oss['ossUrl'].$ret['src'].'?x-oss-process=video/snapshot,t_1000,m_fast,w_800,f_png';
+            }else{
+                $message['extends']['poster']='https://im.file.raingad.com/static/image/video.png';
+            }
+            $message['content']=$ret['src'];
+            $message['file_size']=$info['size'];
+            $message['file_name']= $name.'.'.$info['ext'];
+            $message['user_id']= $uid;
+            $data=Message::sendMessage($message);
+            $newFile=new File;
+            $newFile->save($ret);
+            return $data;
         }else{
-            $message['extends']['poster']='https://im.file.raingad.com/static/image/video.png';
+            return $ret;
         }
-        $message['content']=$ret['src'];
-        $message['file_size']=$info['size'];
-        $message['file_name']= $name.'.'.$info['ext'];
-        $message['user_id']= $uid;
-        $data=Message::sendMessage($message);
-        $newFile=new File;
-        $newFile->save($ret);
-        return $data;
+        
     }
 
     // 上传一般文件
@@ -115,6 +123,19 @@ class Upload extends BaseController
             'ext'=>$file->extension(),
             'md5'=>$file->md5(),
         ];
+    }
+
+    // 上传图片
+    public function uploadImage(){
+        $param=$this->request->param();
+        try{
+            $oss=config('oss');
+            $info=$this->upload($param,$oss,'image/'.date('Y-m-d').'/');
+            $url=(config('oss.ossUrl')?:Request::domain().'/').$info['src'];
+            return success("上传成功",$url);
+        } catch(OssException $e) {
+            return error($e->getMessage());
+        }
     }
 
     //    删除文档库文件

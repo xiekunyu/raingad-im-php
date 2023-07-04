@@ -1,0 +1,105 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN""http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" lang="zh-CN">
+<head>
+    <style type="text/css">
+        @media (max-width: 550px) {
+            .invite_containerWrap {
+                padding: 10px 10px 0 !important;
+            }
+
+            .invite_container {
+                width: 100% !important;
+            }
+
+            .text_td {
+                padding: 50px 15px 20px 15px !important;
+            }
+
+
+            .mb_invite_text {
+                display: inherit !important;
+            }
+
+            .pc {
+                display: none !important;
+            }
+
+        }
+
+        .ww_envelop_counter img {
+            width: 30px;
+            height: 30px;
+            border-radius: 15px;
+            margin: 0 2.5px;
+        }
+
+        .no_red_envelop a {
+            color: #fefefe !important;
+        }
+    </style>
+</head>
+
+<body style="margin: 0; padding: 0;">
+<div class="qmbox ch-height">
+    <table cellspacing="0" cellpadding="0" border="0" style="width: 100%; background-color: #F8F8F8;">
+        <tbody>
+        <tr>
+            <td class="invite_containerWrap" align="center" style="text-align: center;padding: 32px 20px 0">
+                <table class="invite_container" cellspacing="0" cellpadding="0" border="0"
+                       style="width:750px;table-layout:fixed;margin:0 auto; margin-bottom:50px;background-color:#fff;border-radius: 4px;">
+                    <tbody>
+                    <tr>
+                        <th class="qmeml_header" valign="middle"
+                            style="height:40px;color:#fff; font-size:20px;line-height:40px; font-weight:bold;text-align:left;padding:10px 24px;background:#e5e5e5;border-radius:5px 5px 0 0;">
+                            <img class="logo" style="float:left; height: 40px;margin-right: 10px;border-radius: 5px;" src="{$data.logo}">
+                        </th>
+                    </tr>
+                    <tr>
+                        <td class="text_td" style="padding: 50px 40px 20px 40px;">
+                            <table class="text_container" cellspacing="0" cellpadding="0" border="0"
+                                   style="width: 100%; table-layout: fixed;">
+                                <tbody>
+                                <tr>
+                                    <td style="text-align: left">
+                                        <p style="font-weight: bold; font-size: 16px; margin: 0;">{$data.title}</p>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td style="text-align: left">
+                                        <p class="pc pc_invite_text"
+                                           style="font-size: 16px; margin: 0; padding: 15px 0;">
+                                            {$data.content}
+                                        </p>
+                                        <p class="mb_invite_text"
+                                           style="padding: 15px 0px; font-size: 16px; display:none">
+                                            {$data.content}
+                                        </p>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td style="text-align: right">
+                                        <p style="display: inline-block; width: 30px; height: 2px; background-color: #000; margin: 4px 0;"></p>
+                                        <span style="font-weight: bold; font-size: 14px;">{$data.name}</span>
+                                        <br>
+                                        <span style="font-size: 12px;">{$data.time}</span>
+                                    </td>
+
+                                </tr>
+                                <tr>
+                                    <td style="text-align: center">
+                                        <div style="font-size: 12px;padding-top: 15px">此为系统邮件，请勿回复。</div>
+                                    </td>
+                                </tr>
+                                </tbody>
+                            </table>
+                        </td>
+                    </tr>
+                    </tbody>
+                </table>
+            </td>
+        </tr>
+        </tbody>
+    </table>
+</div>
+</body>
+</html>

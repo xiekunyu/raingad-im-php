@@ -66,6 +66,7 @@ abstract class BaseController
     protected function initialize()
     {
        $this->userInfo=$this->request->userInfo;
+       $this->uid=$this->userInfo['user_id'];
     }
 
     /**

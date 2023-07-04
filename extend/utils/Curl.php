@@ -23,6 +23,7 @@ class Curl{
         }
         // 创建连接
         $curl = curl_init($url);
+        curl_setopt($curl, CURLOPT_SSL_VERIFYPEER, false);//跳过证书检查
         curl_setopt($curl, CURLOPT_CUSTOMREQUEST, $method);
         curl_setopt($curl, CURLOPT_HTTPHEADER, $headers);
         curl_setopt($curl, CURLOPT_FAILONERROR, false);
@@ -32,6 +33,9 @@ class Curl{
         curl_setopt($curl, CURLOPT_POSTFIELDS, $bodys);
         // 发送请求
         $response = curl_exec($curl);
+        if($json && is_string($response)){
+            $response=json_decode($response,true);
+        }
         curl_close($curl);
         return $response;
     }
@@ -44,6 +48,7 @@ class Curl{
     public static function curl_get($url,$json=true)
     {
         $curl = curl_init();
+        curl_setopt($curl, CURLOPT_SSL_VERIFYPEER, false);//跳过证书检查、
         curl_setopt($curl, CURLOPT_CUSTOMREQUEST, "GET");
         curl_setopt($curl, CURLOPT_URL, $url);
         curl_setopt($curl, CURLOPT_HTTPHEADER, array("Expect:"));
@@ -67,7 +72,7 @@ class Curl{
     $rj -boolean 对返回值进行json_decode处理，默认true进行处理成array
     $headers -string 请求头
     */
-    function curl_post($url,$params,$rj=true,$headers=''){
+    public static function curl_post($url,$params,$rj=true,$headers=''){
         if(!$headers){
             $headers=array(
                 "Content-Type:application/x-www-form-urlencoded",
