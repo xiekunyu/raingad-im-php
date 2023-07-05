@@ -87,7 +87,7 @@ class User extends Model
             $setting = $v['setting'] ? json_decode($v['setting'], true) : ['manage' => 0, 'invite' => 1, 'nospeak' => 0];
             $group_id = 'group-' . $v['group_id'];
             $group[$k]['id'] = $group_id;
-            $group[$k]['avatar'] = avatarUrl('', $v['displayName'], $v['group_id'], 120);
+            $group[$k]['avatar'] = avatarUrl($v['avatar'], $v['displayName'], $v['group_id'], 120);
             $group[$k]['name_py'] = $v['name_py'];
             $group[$k]['owner_id'] = $v['owner_id'];
             $group[$k]['role'] = $v['role'];
@@ -96,14 +96,8 @@ class User extends Model
             $group[$k]['index'] = "群聊";
             $group[$k]['realname'] = $v['displayName'] . " [群聊]";
             $group[$k]['is_notice'] = $v['is_notice'];
+            $group[$k]['is_top'] = $v['is_top'];
             $group[$k]['is_online'] = 1;
-            // 是否置顶聊天
-            $friend = isset($friendList[$group_id]) ? $friendList[$group_id] : [];
-            $is_top = 0;
-            if ($friend) {
-               $is_top = $friend['is_top'];
-            }
-            $group[$k]['is_top'] = $is_top;
             if ($getGroupLastMsg) {
                foreach ($getGroupLastMsg as $val) {
                   if ($val['to_user'] == $v['group_id']) {

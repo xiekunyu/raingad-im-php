@@ -5,11 +5,8 @@ namespace app\enterprise\controller;
 use app\BaseController;
 use app\enterprise\model\{User,Group as GroupModel,GroupUser};
 use think\Exception;
-use think\facade\View;
-use think\facade\Session;
 use think\facade\Db;
-use think\facade\Cache;
-use think\exception\ValidateException;
+use app\common\controller\Upload;
 
 class Group extends BaseController
 {
@@ -65,7 +62,7 @@ class Group extends BaseController
       if($role>2){
          return warning('你没有操作权限，只有群主和群管理员才可以修改！');
       }
-      GroupModel::where(['group_id' => $group_id])->update(['name' => $param['displayName']]);
+      GroupModel::where(['group_id' => $group_id])->update(['name' => $param['displayName'],'name_py'=>pinyin_sentence($param['displayName'])]);
       $param['editUserName'] = $this->userInfo['realname'];
       wsSendMsg($group_id, 'editGroupName', $param, 1);
       return success('修改成功');
@@ -160,13 +157,14 @@ class Group extends BaseController
             }
             $groupUser=new GroupUser();
             $groupUser->saveAll($data);
+            $url=$this->setGroupAvatar($group_id);
             $groupInfo=[
                'displayName'=>$create['name'],
                'owner_id'=>$create['owner_id'],
                'role'=>3,
                'name_py'=>$create['name_py'],
                'id'=>'group-'.$group_id,
-               'avatar'=>avatarUrl('','群聊',$group_id,120),
+               'avatar'=>avatarUrl($url,'群聊',$group_id,120),
                'is_group'=>1,
                'lastContent'=>$this->userInfo['realname'].' 创建了群聊',
                'lastSendTime'=>time()*1000,
@@ -176,6 +174,7 @@ class Group extends BaseController
                'setting'=>$setting,
          
             ];
+            
             wsSendMsg($user_ids, 'addGroup', $groupInfo);
             Db::commit();
             return success('',$groupInfo);
@@ -261,4 +260,40 @@ class Group extends BaseController
          return success('');
       }
 
+      //生成群聊头像
+      protected function setGroupAvatar($group_id){
+         $userList=GroupUser::where('group_id',$group_id)->limit(9)->column('user_id');
+         $userList=User::where('user_id','in',$userList)->select()->toArray();
+         $imgList=[];
+         $dirPath=app()->getRootPath().'public/temp';
+         foreach($userList as $k=>$v){
+            if($v['avatar']){
+               $imgList[]=avatarUrl($v['avatar'],$v['realname'],$v['user_id']);
+            }else{
+               $imgList[]=circleAvatar($v['realname'],80,$v['user_id'],1,$dirPath);
+            }
+         }
+         $groupId='group_'.$group_id;
+         $is_group=1;
+         $path=$dirPath.'/'.$groupId.'.jpg';
+         $a = getGroupAvatar($imgList,1,$path);
+         $url='';
+         if($a){
+            $upload=new Upload();
+            $newPath=$upload->uploadLocalAvatar($path,[],$groupId);
+            if($newPath){
+               GroupModel::where('group_id',$group_id)->update(['avatar'=>$newPath]);
+               $url=avatarUrl($newPath);
+               wsSendMsg($groupId,'updateGroupAvatar',['id'=>$groupId,'avatar'=>$url,'is_group'=>$is_group],$is_group);
+            }
+         }
+         // 删除目录下的所有文件
+         $files = glob($dirPath . '/*'); // 获取目录下所有文件路径
+         foreach ($files as $file) {
+            if (is_file($file)) { // 如果是文件则删除
+               unlink($file);
+            }
+         }
+         return $url;
+      }
 }

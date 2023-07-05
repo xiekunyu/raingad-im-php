@@ -39,7 +39,7 @@ class Upload extends BaseController
         }else{
             $filePath = new File($path);
         }
-        $info=$this->getFileInfo($filePath);
+        $info=$this->getFileInfo($filePath,$path);
         if($info['ext']=='' && $message){
             $pathInfo        = pathinfo($message['fileName'] ?? '');
             $info['ext']     = $pathInfo['extension'];
@@ -118,15 +118,22 @@ class Upload extends BaseController
 
 
     // 获取上传文件的信息
-    protected function getFileInfo($file){
-        return [
-            'name'=>$file->getOriginalName(),
+    protected function getFileInfo($file,$path=false){
+        $info= [
             'path'=>$file->getRealPath(),
             'size'=>$file->getSize(),
             'mime'=>$file->getMime(),
             'ext'=>$file->extension(),
             'md5'=>$file->md5(),
         ];
+        if(!$path){
+            $info['name']=$file->getOriginalName();
+        }else{
+            // 根据路径获取文件名
+            $pathInfo        = pathinfo($path);
+            $info['name']    = $pathInfo['basename'];
+        }
+        return $info;
         
     }
 

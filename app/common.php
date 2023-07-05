@@ -5,7 +5,7 @@ use AlibabaCloud\Client\Exception\ClientException;
 use AlibabaCloud\Client\Exception\ServerException;
 use think\facade\Cache;
 use GatewayClient\Gateway;
-
+use \utils\Str;
 /**
  * 框架内部默认ajax返回
  * @param string $msg      提示信息
@@ -225,12 +225,12 @@ function getHost($url){
 }
 
 //根据姓名画头像
-function circleAvatar($str,$s,$uid=0){
+function circleAvatar($str,$s,$uid=0,$is_save=0,$save_path=''){
     //定义输出为图像类型
     header("content-type:image/png");
     $str =$str?:"律者";
     $uid =$uid?:rand(0,10);
-    $text=msubstr($str,mb_strlen($str)-3,2);
+    $text=\utils\Str::getLastName($str,2);
     $width = $height = $s?:80;
     if($width<40 or $width>120){
         $width = $height =80;
@@ -240,7 +240,7 @@ function circleAvatar($str,$s,$uid=0){
     $size=$width/4;
     $textLeft=($height/2)-$size-$width/10;
     if($width<=80){
-        $text=msubstr($str,mb_strlen($str)-2,1);
+        $text=\utils\Str::getLastName($str,1);
         $size=$width/2;
         $textLeft=$size/3;
     }
@@ -254,59 +254,46 @@ function circleAvatar($str,$s,$uid=0){
     $font=root_path()."/public/static/fonts/PingFangHeavy.ttf";
     //写 TTF 文字到图中
     imagettftext($pic,$size,0,$textLeft,($height/2)+$size/2,$textColor,$font,$text);
-//建立 GIF 图型
-    imagepng($pic);
-//结束图形，释放内存空间
-    imagedestroy($pic);
-    return $pic;
+    if($is_save){
+        $path=$save_path."/".$uid.".png";
+        $dir = pathinfo($path,PATHINFO_DIRNAME);
+        if(!is_dir($dir)){
+            $file_create_res = mkdir($dir,0777,true);
+            if(!$file_create_res){
+                return false;//没有创建成功
+            }
+        }
+        imagepng($pic,$path);
+        imagedestroy($pic);
+        return $path;
+    }else{
+        //输出图象
+        imagepng($pic);
+        //结束图形，释放内存空间
+        imagedestroy($pic);
+        return $pic;
+    }
 }
 
 //头像拼接
-function avatarUrl($path, $str = "语",$uid=0,$s=80)
+function avatarUrl($path, $str = "雨",$uid=0,$s=80)
 {
+    $str = Str::strFilter($str);
     if ($path) {
-        $url = $path;
+        // 判断头像路径中是否有http
+        if (strpos($path, 'http') !== false) {
+            $url = $path;
+        } else {
+            $url = getDiskUrl() .'/'. ltrim($path,'/') ;
+        }
     }else {
         if($str){
             $url=request()->domain()."/avatar/".$str.'/'.$s.'/'.$uid;
         }else{
             $url='';
         }
-
     }
     return $url;
-}
-
-//字符串截取函数
-function msubstr($str, $start, $length, $charset = "utf-8", $suffix = true)
-{
-    if (strlen($str) / 3 > $length) {
-        if (function_exists("mb_substr")) {
-            if ($suffix == false) {
-                return mb_substr($str, $start, $length, $charset) . '&nbsp;...';
-            } else {
-                return mb_substr($str, $start, $length, $charset);
-            }
-        } elseif (function_exists('iconv_substr')) {
-            if ($suffix == false) {
-                return iconv_substr($str, $start, $length, $charset) . '&nbsp;...';
-            } else {
-                return iconv_substr($str, $start, $length, $charset);
-            }
-        }
-        $re['utf-8'] = "/[\x01-\x7f]|[\xc2-\xdf][\x80-\xbf]|[\xe0-\xef][\x80-\xbf]{2}|[\xf0-\xff][\x80-\xbf]{3}/";
-        $re['gb2312'] = "/[\x01-\x7f]|[\xb0-\xf7][\xa0-\xfe]/";
-        $re['gbk'] = "/[\x01-\x7f]|[\x81-\xfe][\x40-\xfe]/";
-        $re['big5'] = "/[\x01-\x7f]|[\x81-\xfe]([\x40-\x7e]|\xa1-\xfe])/";
-        preg_match_all($re[$charset], $str, $match);
-        $slice = join("", array_slice($match[0], $start, $length));
-        if ($suffix) {
-            return $slice;
-        } else {
-            return $slice;
-        }
-    }
-    return $str;
 }
 
 /**
@@ -588,5 +575,218 @@ function parse_sql($sql = '', $limit = 0, $prefix = []) {
         return $pure_sql;
     } else {
         return $limit == 1 ? '' : [];
+    }
+}
+
+/**
+ * 更新或添加环境变量
+ *
+ * @param string $key 环境变量的键
+ * @param string $value 环境变量的值
+ * @return bool 成功返回 true，失败返回 false
+ */
+function updateEnv($key, $value)
+{
+    $envFile = app()->getRootPath() . '.env';
+    if (!file_exists($envFile) || !is_writable($envFile)){
+        return false;
+    }
+
+    // 读取 .env 文件内容
+    $envContent = file_get_contents($envFile);
+    $keyPattern = preg_quote($key, '/');
+    $pattern = "/^{$keyPattern}=(.*)\$/m";
+
+    if (preg_match($pattern, $envContent)) {
+        // 如果找到了键值对，替换其值
+        $replacement = "{$key}={$value}";
+        $newEnvContent = preg_replace($pattern, $replacement, $envContent);
+    } else {
+        // 如果没有找到键值对，添加新的键值对
+        $newEnvContent = $envContent . PHP_EOL . "{$key}={$value}";
+    }
+    // 保存更新后的 .env 文件内容
+    return file_put_contents($envFile, $newEnvContent) !== false;
+}
+
+// 获取文件的域名
+function getDiskUrl(){
+    $disk=env('filesystem.driver','local');
+    $url=request()->domain();
+    if($disk=='aliyun'){
+        $url=env('filesystem.aliyun_url','');
+    }elseif($disk=='qiniu'){
+        $url=env('filesystem.qiniu_url','');
+    }elseif($disk=='qcloud'){
+        $url=env('filesystem.qcloud_cdn','');
+    }
+    $url=rtrim($url,'/');
+    return $url;
+}
+
+/**
+ * 合成图片
+ * @param  array   $pic_list  [图片列表数组]
+ * @param  boolean $is_save   [是否保存，true保存，false输出到浏览器]
+ * @param  string  $save_path [保存路径]
+ * @return boolean|string
+ */
+function getGroupAvatar($pic_list=array(),$is_save=false,$save_path=''){
+    //验证参数
+    if(empty($pic_list) || empty($save_path)){
+        return false;
+    }
+    if($is_save){
+        //如果需要保存，需要传保存地址
+        if(empty($save_path)){
+            return false;
+        }
+    }
+    // 只操作前9个图片
+    $pic_list = array_slice($pic_list, 0, 9);
+    //设置背景图片宽高
+    $bg_w = 150; // 背景图片宽度
+    $bg_h = 150; // 背景图片高度
+    //新建一个真彩色图像作为背景
+    $background = imagecreatetruecolor($bg_w,$bg_h);
+    //为真彩色画布创建白灰色背景，再设置为透明
+    $color = imagecolorallocate($background, 202, 201, 201);
+    imagefill($background, 0, 0, $color);
+    imageColorTransparent($background, $color);
+    //根据图片个数设置图片位置
+    $pic_count = count($pic_list);
+    $lineArr = array();//需要换行的位置
+    $space_x = 3;
+    $space_y = 3;
+    $line_x = 0;
+    switch($pic_count) {
+        case 1: // 正中间
+            $start_x = intval($bg_w/4); // 开始位置X
+            $start_y = intval($bg_h/4); // 开始位置Y
+            $pic_w = intval($bg_w/2); // 宽度
+            $pic_h = intval($bg_h/2); // 高度
+            break;
+        case 2: // 中间位置并排
+            $start_x = 2;
+            $start_y = intval($bg_h/4) + 3;
+            $pic_w = intval($bg_w/2) - 5;
+            $pic_h = intval($bg_h/2) - 5;
+            $space_x = 5;
+            break;
+        case 3:
+            $start_x = 40; // 开始位置X
+            $start_y = 5; // 开始位置Y
+            $pic_w = intval($bg_w/2) - 5; // 宽度
+            $pic_h = intval($bg_h/2) - 5; // 高度
+            $lineArr = array(2);
+            $line_x = 4;
+            break;
+        case 4:
+            $start_x = 4; // 开始位置X
+            $start_y = 5; // 开始位置Y
+            $pic_w = intval($bg_w/2) - 5; // 宽度
+            $pic_h = intval($bg_h/2) - 5; // 高度
+            $lineArr = array(3);
+            $line_x = 4;
+            break;
+        case 5:
+            $start_x = 30; // 开始位置X
+            $start_y = 30; // 开始位置Y
+            $pic_w = intval($bg_w/3) - 5; // 宽度
+            $pic_h = intval($bg_h/3) - 5; // 高度
+            $lineArr = array(3);
+            $line_x = 5;
+            break;
+        case 6:
+            $start_x = 5; // 开始位置X
+            $start_y = 30; // 开始位置Y
+            $pic_w = intval($bg_w/3) - 5; // 宽度
+            $pic_h = intval($bg_h/3) - 5; // 高度
+            $lineArr = array(4);
+            $line_x = 5;
+            break;
+        case 7:
+            $start_x = 53; // 开始位置X
+            $start_y = 5; // 开始位置Y
+            $pic_w = intval($bg_w/3) - 5; // 宽度
+            $pic_h = intval($bg_h/3) - 5; // 高度
+            $lineArr = array(2,5);
+            $line_x = 5;
+            break;
+        case 8:
+            $start_x = 30; // 开始位置X
+            $start_y = 5; // 开始位置Y
+            $pic_w = intval($bg_w/3) - 5; // 宽度
+            $pic_h = intval($bg_h/3) - 5; // 高度
+            $lineArr = array(3,6);
+            $line_x = 5;
+            break;
+        case 9:
+            $start_x = 5; // 开始位置X
+            $start_y = 5; // 开始位置Y
+            $pic_w = intval($bg_w/3) - 5; // 宽度
+            $pic_h = intval($bg_h/3) - 5; // 高度
+            $lineArr = array(4,7);
+            $line_x = 5;
+            break;
+    }
+    foreach( $pic_list as $k=>$pic_path ) {
+        $kk = $k + 1;
+        if ( in_array($kk, $lineArr) ) {
+            $start_x = $line_x;
+            $start_y = $start_y + $pic_h + $space_y;
+        }
+        //获取图片文件扩展类型和mime类型，判断是否是正常图片文件
+        //非正常图片文件，相应位置空着，跳过处理
+        $image_mime_info = @getimagesize($pic_path);
+        if($image_mime_info && !empty($image_mime_info['mime'])){
+            $mime_arr = explode('/',$image_mime_info['mime']);
+            if(is_array($mime_arr) && $mime_arr[0] == 'image' && !empty($mime_arr[1])){
+                switch($mime_arr[1]) {
+                    case 'jpg':
+                    case 'jpeg':
+                        $imagecreatefromjpeg = 'imagecreatefromjpeg';
+                        break;
+                    case 'png':
+                        $imagecreatefromjpeg = 'imagecreatefrompng';
+                        break;
+                    case 'gif':
+                    default:
+                        $imagecreatefromjpeg = 'imagecreatefromstring';
+                        $pic_path = file_get_contents($pic_path);
+                        break;
+                }
+                //创建一个新图像
+                $resource = $imagecreatefromjpeg($pic_path);
+                //将图像中的一块矩形区域拷贝到另一个背景图像中
+                // $start_x,$start_y 放置在背景中的起始位置
+                // 0,0 裁剪的源头像的起点位置
+                // $pic_w,$pic_h copy后的高度和宽度
+                imagecopyresized($background,$resource,$start_x,$start_y,0,0,$pic_w,$pic_h,imagesx($resource),imagesy($resource));
+            }
+        }
+        // 最后两个参数为原始图片宽度和高度，倒数两个参数为copy时的图片宽度和高度
+        $start_x = $start_x + $pic_w + $space_x;
+    }
+    if($is_save){
+        $dir = pathinfo($save_path,PATHINFO_DIRNAME);
+        if(!is_dir($dir)){
+            $file_create_res = mkdir($dir,0777,true);
+            if(!$file_create_res){
+                return false;//没有创建成功
+            }
+        }
+        $res = imagejpeg($background,$save_path);
+        imagedestroy($background);
+        if($res){
+            return true;
+        }else{
+            return false;
+        }
+    }else{
+        //直接输出
+        header("Content-type: image/jpg");
+        imagejpeg($background);
+        imagedestroy($background);
     }
 }

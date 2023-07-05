@@ -5,6 +5,22 @@
 -- --------------------------------------------------------
 
 --
+-- 表的结构 `yu_config`
+--
+
+CREATE TABLE `yu_config` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `name` varchar(128) DEFAULT NULL,
+  `value` json DEFAULT NULL,
+  `create_user` int(11) NOT NULL DEFAULT '0',
+  `update_time` int(11) NOT NULL DEFAULT '0',
+  `create_time` int(11) NOT NULL DEFAULT '0',
+  `remark` varchar(255) DEFAULT NULL,
+  `status` tinyint(1) NOT NULL DEFAULT '1',
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8 COMMENT='配置表';
+
+--
 -- 表的结构 `yu_file`
 --
 
@@ -57,6 +73,7 @@ CREATE TABLE IF NOT EXISTS `yu_group` (
   `group_id` int(11) NOT NULL AUTO_INCREMENT,
   `name` varchar(64) NOT NULL COMMENT '团队名称',
   `name_py` varchar(64) DEFAULT NULL COMMENT '团队的拼音',
+  `avatar` varchar(255) DEFAULT NULL COMMENT '群聊头像',
   `level` tinyint(1) NOT NULL DEFAULT '1' COMMENT '等级',
   `create_user` int(11) NOT NULL DEFAULT '0' COMMENT '创建人',
   `create_time` int(11) NOT NULL DEFAULT '0' COMMENT '创建时间',
@@ -74,7 +91,7 @@ CREATE TABLE IF NOT EXISTS `yu_group` (
 -- 表的结构 `yu_group_user`
 --
 
-CREATE TABLE IF NOT EXISTS `yu_group_user` (
+CREATE TABLE `yu_group_user` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
   `group_id` int(11) NOT NULL DEFAULT '0' COMMENT 't团队Id',
   `user_id` int(11) NOT NULL DEFAULT '0' COMMENT '用户Id',
@@ -83,9 +100,10 @@ CREATE TABLE IF NOT EXISTS `yu_group_user` (
   `create_time` int(11) NOT NULL DEFAULT '0' COMMENT '创建时间',
   `unread` int(11) NOT NULL DEFAULT '0' COMMENT '群未读消息',
   `is_notice` tinyint(1) NOT NULL DEFAULT '1' COMMENT '1是否提醒',
+  `is_top` tinyint(1) NOT NULL DEFAULT '0' COMMENT '是否置顶',
   `status` tinyint(1) NOT NULL DEFAULT '1' COMMENT '状态 0 ，未同意邀请，1，同意',
   `isdelete` tinyint(1) NOT NULL DEFAULT '0' COMMENT '是否删除',
-  PRIMARY KEY (`id`)
+  PRIMARY KEY (`id`);
 ) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8;
 
 -- --------------------------------------------------------

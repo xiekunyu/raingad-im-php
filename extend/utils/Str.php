@@ -529,6 +529,23 @@ class Str{
         }
     }
 
+    /**
+     * 获取人名的最后一个字或者两个字
+     * @param string $str 需要处理的字符串
+     * @return string 处理后的字符串
+     */
+    public static function getLastName($str,$i=1) {
+        // 获取字符串长度
+        $len = self::get_string_length($str);
+        
+        // 如果数组长度小于等于2，则只将第二个字符替换为*
+        if ($len < 2) {
+            return self::msubstr($str,0,1);
+        }else{
+            return self::msubstr($str,-$i,$i);
+        }
+    }
+
     public static function get_string_length($str) {
         // 将字符串转换为 UTF-8 编码
         $str = mb_convert_encoding($str, 'UTF-8', mb_detect_encoding($str));

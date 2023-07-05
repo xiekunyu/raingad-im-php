@@ -68,7 +68,7 @@ class Im extends BaseController
     protected function recombileMsg($list)
     {
         $data = [];
-        $ossUrl = config('oss.ossUrl') ?: Request::domain() . '/';
+        $ossUrl = getDiskUrl(). '/';
         $userInfo = $this->userInfo;
         if ($list) {
             $listData = $list->toArray()['data'];
@@ -256,20 +256,26 @@ class Im extends BaseController
         $user_id = $this->userInfo['user_id'];
         $is_group = $param['is_group'] ?: 0;
         $id = $param['id'];
-        $map = ['create_user' => $user_id, 'friend_user_id' => $id, 'is_group' => $is_group];
-        $friend = Friend::where($map)->find();
+        
         try {
-            if ($friend) {
-                $friend->is_top = $param['is_top'];
-                $friend->save();
+            if ($is_group == 1) {
+                $group_id = explode('-', $param['id'])[1];
+                GroupUser::update(['is_top' => $param['is_top']], ['user_id' => $user_id, 'group_id' => $group_id]);
             } else {
-                $info = [
-                    'create_user' => $user_id,
-                    'friend_user_id' => $id,
-                    'is_group' => $is_group,
-                    'is_top' => $param['is_top']
-                ];
-                Friend::create($info);
+                $map = ['create_user' => $user_id, 'friend_user_id' => $id, 'is_group' => $is_group];
+                $friend = Friend::where($map)->find();
+                if ($friend) {
+                    $friend->is_top = $param['is_top'];
+                    $friend->save();
+                } else {
+                    $info = [
+                        'create_user' => $user_id,
+                        'friend_user_id' => $id,
+                        'is_group' => $is_group,
+                        'is_top' => $param['is_top']
+                    ];
+                    Friend::create($info);
+                }
             }
             wsSendMsg($user_id,"setChatTop",['id'=>$id,'is_top'=>$param['is_top'],'is_group'=>$is_group]);
             return success('');

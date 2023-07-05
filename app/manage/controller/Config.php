@@ -11,7 +11,7 @@ namespace app\manage\controller;
 
 use app\BaseController;
 use app\manage\model\{Config as Conf};
-
+use think\facade\Env;
 class Config extends BaseController
 {
     /**
@@ -48,6 +48,24 @@ class Config extends BaseController
             Conf::where(['name'=>$name])->update(['value'=>$value]);
         }else{
             Conf::create(['name'=>$name,'value'=>$value]);
+        }
+        if($name=='fileUpload'){
+            updateEnv('driver',$value['disk']);
+            foreach ($value['aliyun'] as $k=>$v){
+                if($v){
+                    updateEnv('aliyun_'.$k,$v);
+                }
+            }
+            foreach ($value['qiniu'] as $k=>$v){
+                if($v){
+                    updateEnv('qiniu_'.$k,$v);
+                }
+            }
+            foreach ($value['qcloud'] as $k=>$v){
+                if($v){
+                    updateEnv('qcloud_'.$k,$v);
+                }
+            }
         }
         return success('保存成功');
     }
