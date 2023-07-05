@@ -36,7 +36,7 @@ class Mail
         $this->Config = array_merge($this->Config, $config);
         //默认模板
         $this->Config['temp'] = $this->Config['temp'] ?: 'temp';
-        $this->Config['logo'] = $this->Config['logo'] ?: 'https://file.lcoce.com/logo/lzoa.png';
+        $this->Config['logo'] = $this->Config['logo'] ?: 'https://im.file.raingad.com/logo/logo.png';
     }
 
     public function sendEmail(array $toEmails, $title, $content)

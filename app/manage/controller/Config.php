@@ -42,6 +42,9 @@ class Config extends BaseController
      */
     public function setConfig()
     {
+        if($this->request->demonMode){
+            return warning('演示模式下无法修改配置');
+        }
         $name = $this->request->param('name');
         $value = $this->request->param('value');
         if(Conf::where(['name'=>$name])->find()){
@@ -51,6 +54,7 @@ class Config extends BaseController
         }
         if($name=='fileUpload'){
             updateEnv('driver',$value['disk']);
+            updateEnv('own',$value['preview']);
             foreach ($value['aliyun'] as $k=>$v){
                 if($v){
                     updateEnv('aliyun_'.$k,$v);
@@ -81,4 +85,17 @@ class Config extends BaseController
         $url=request()->domain().'/index.html/#/register?code='.$code;
         return success('',$url);
     }
+
+    // 发送测试邮件
+    public function sendTestEmail(){
+        $email=$this->request->param('email');
+        if(!$email || !(\utils\Regular::is_email($email))){
+            return warning('请输入正确的邮箱');
+        }
+        $conf=Conf::where(['name'=>'smtp'])->value('value');
+        $mail=new \mail\Mail($conf);
+        $mail->sendEmail([$email],'测试邮件','这是一封测试邮件，当您收到之后表明您的所有配置都是正确的！');
+        return success('发送成功');
+
+    } 
 }

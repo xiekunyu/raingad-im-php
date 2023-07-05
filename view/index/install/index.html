@@ -38,7 +38,7 @@
             <div class="step-item" v-if="action==0">
                 <div class="setting-version">
                     <b> 免责申明：</b>
-                    <p><span class="main-color"> $Think.config.app.app_name} </span>是由个人开发者《<a href="https://gitee.com/lvzhe-lcoce" target="_blank">raingad@foxmail.com</a>》开发，以下简称“本软件”，用户出于自愿而使用本软件，必须了解使用本软件的风险，本软件只用作学习交流使用，我们不承诺对免费用户提供任何形式的技术支持， 并且不能作为商业用途使用，若因为使用本软件产生的侵权行为一律与作者无关。如果本软件有侵权行为，请联系作者删除！
+                    <p><span class="main-color"> {$Think.config.app.app_name} </span>是由个人开发者《<a href="https://gitee.com/lvzhe-lcoce" target="_blank">raingad@foxmail.com</a>》开发，以下简称“本软件”，用户出于自愿而使用本软件，必须了解使用本软件的风险，本软件只用作学习交流使用，我们不承诺对免费用户提供任何形式的技术支持， 并且不能作为商业用途使用，若因为使用本软件产生的侵权行为一律与作者无关。如果本软件有侵权行为，请联系作者删除！
                     </p>
                     <b> 软件地址：</b>
                     <p>前端地址：<a href="https://gitee.com/raingad/im-chat-front" target="_blank">https://gitee.com/raingad/im-chat-front</a></p>
@@ -46,20 +46,12 @@
 
                     <b> 支持功能：</b>
                     <ul>
-                        <li>单聊和群聊</li>
-                        <li>支持发送表情、图片和文件</li>
-                        <li>单聊支持消息已读未读的状态显示</li>
-                        <li>支持设置新消息提醒</li>
-                        <li>支持部分Lemon-imui内功能设置</li>
-                        <li>支持文件和图片在线预览</li>
-                        <li>群聊创建、删除和群成员管理、群公告等</li>
-                        <li>可以置顶联系人，所有联系人可以设置消息免打扰</li>
-                        <li>全新支持增加音视频通话(一对一)</li>
+                        <li v-for="item in funcList">${item.text}</li>
                     </ul>
 
                 </div>
                 <div class="setting-version" style="color: #a6a6a6">
-                    <p>后端技术栈：thinkphp6+workerman</p>
+                    <p>后端技术栈：thinkphp6+workerman+redis</p>
                     <p>前端技术栈：vue+Lemon-IMUI+element-UI</p>
                 </div>
             </div>
@@ -217,8 +209,38 @@
                     redishost: '127.0.0.1',
                     redisport: '6379',
                     redispass: '',
-                }
+                },
+                funcList:[
+                    {
+                        icon:'el-icon-chat-line-round',
+                        text:'支持单聊和群聊，支持发送表情、图片、语音、视频和文件消息',
+                    },
+                    {
+                        icon:'el-icon-potato-strips',
+                        text:'单聊支持消息已读未读的状态显示，在线状态显示',
+                    },
+                    {
+                        icon:'el-icon-user',
+                        text:'群聊创建、删除和群成员管理、群公告、群禁言等',
+                    },
+                    {
+                        icon:'el-icon-ice-cream-round',
+                        text:'支持置顶联系人，消息免打扰；支持设置新消息声音提醒，浏览器通知',
+                    },
+                    {
+                        icon:'el-icon-video-camera',
+                        text:'支持一对一音视频通话（和移动端不互通）',
+                    },
+                    {
+                        icon:'el-icon-milk-tea',
+                        text:'支持文件、图片和绝大部分媒体文件在线预览',
+                    },
+                    {
+                        icon:'el-icon-mobile-phone',
+                        text:'支持移动端（H5和APP），支持简易后台管理',
+                    }
 
+                ]
             }
         },
         watch: {

@@ -86,7 +86,8 @@ class Group extends BaseController
          }
          $groupUser=new GroupUser;
          $groupUser->saveAll($data);
-         wsSendMsg($group_id,"addGroupUser",['group_id'=>$param['id']],1);
+         $url=$this->setGroupAvatar($group_id);
+         wsSendMsg($group_id,"addGroupUser",['group_id'=>$param['id'],'avatar'=>$url],1);
          return success('添加成功');
       }catch(Exception $e){
          return error($e->getMessage());
@@ -200,7 +201,8 @@ class Group extends BaseController
          }else{
             return warning('您的权限不够！');
          }
-         wsSendMsg($group_id,"removeUser",['group_id'=>$param['id']],1);
+         $url=$this->setGroupAvatar($group_id);
+         wsSendMsg($group_id,"removeUser",['group_id'=>$param['id'],'avatar'=>$url],1);
          return success('删除成功');
       }
 
@@ -274,7 +276,6 @@ class Group extends BaseController
             }
          }
          $groupId='group_'.$group_id;
-         $is_group=1;
          $path=$dirPath.'/'.$groupId.'.jpg';
          $a = getGroupAvatar($imgList,1,$path);
          $url='';
@@ -284,7 +285,6 @@ class Group extends BaseController
             if($newPath){
                GroupModel::where('group_id',$group_id)->update(['avatar'=>$newPath]);
                $url=avatarUrl($newPath);
-               wsSendMsg($groupId,'updateGroupAvatar',['id'=>$groupId,'avatar'=>$url,'is_group'=>$is_group],$is_group);
             }
          }
          // 删除目录下的所有文件

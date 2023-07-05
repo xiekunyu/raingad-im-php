@@ -28,7 +28,7 @@ function success($msg = '操作成功', $data = '', $count = 0, $page = 1, $code
  */
 function warning($msg = '操作失败', $data = '', $count = 0, $page = 1 , $code = 400)
 {
-    return success($msg, $data, $count, $page, 1,$code);
+    return success($msg, $data, $count, $page, $code);
 }
 
 /**

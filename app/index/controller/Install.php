@@ -205,23 +205,34 @@ HOST = {$data['redishost']}
 PORT = {$data['redisport']}
 PASSWORD ={$data['redispass']}
 
-# 配置阿里云OSS，主要用于聊天文件储存
-[OSS]
-accesskeyid = 
-accesskeysecret = 
-endpoint = 
-bucket = 
-# 自有域名拼接，必须要有最后的/斜杠
-ossurl = 
-
 #配置预览功能，本系统主要使用第三方的预览工具，比如永中云转换，自带预览系统
 [PREVIEW]
 # 自带预览系统URL，主要用于预览媒体文件，已内置，必须要有最后的/斜杠
-own = http://view.riangad.com/
+own=http://view.riangad.com/
 # 永中云文件预览，主要用于文档预览，必须要有最后的/斜杠
-yzdcs = 
+yzdcs= 
 # 永中云api code
-keycode = 17444844212312
+keycode=17444844212312
+
+# 配置对象储存，主要用于聊天文件储存，可以通过后台进行配置
+
+[FILESYSTEM]
+driver=local
+aliyun_accessId=false
+aliyun_accessSecret=false
+aliyun_bucket=false
+aliyun_endpoint=false
+aliyun_url=false
+qiniu_accessKey=false
+qiniu_secretKey=false
+qiniu_bucket=false
+qiniu_url=false
+qcloud_region=false
+qcloud_appId=false
+qcloud_secretId=false
+qcloud_secretKey=false
+qcloud_bucket=false
+qcloud_cdn=false
 INFO;
     
             @file_put_contents( root_path().'.env', $code);
