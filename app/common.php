@@ -790,3 +790,12 @@ function getGroupAvatar($pic_list=array(),$is_save=false,$save_path=''){
         imagedestroy($background);
     }
 }
+
+/**
+ * 获取一个唯一token
+ * @return string
+ */
+function getOnlyToken()
+{
+    return md5(uniqid(md5(microtime(true)), true));
+}

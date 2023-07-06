@@ -27,7 +27,7 @@ class Upload extends BaseController
     /**
      * 文件上传
      */
-    public function upload($data,$path,$prefix = "",$fileObj = false)
+    public function upload($data,$path,$prefix = "",$fileObj = true)
     {
         $message=$data['message'] ?? '';
         if($message){

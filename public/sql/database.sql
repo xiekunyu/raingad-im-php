@@ -103,7 +103,7 @@ CREATE TABLE `yu_group_user` (
   `is_top` tinyint(1) NOT NULL DEFAULT '0' COMMENT '是否置顶',
   `status` tinyint(1) NOT NULL DEFAULT '1' COMMENT '状态 0 ，未同意邀请，1，同意',
   `isdelete` tinyint(1) NOT NULL DEFAULT '0' COMMENT '是否删除',
-  PRIMARY KEY (`id`);
+  PRIMARY KEY (`id`)
 ) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8;
 
 -- --------------------------------------------------------

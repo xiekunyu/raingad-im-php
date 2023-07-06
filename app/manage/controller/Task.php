@@ -24,8 +24,8 @@ class Task extends BaseController
     protected $rootPath;
 
     protected $taskNames = [
-        'schedule' => '自动回收客户',
-        'queue' => '律者队列',
+        'schedule' => '计划任务',
+        'queue' => '消息队列',
         'worker' => '消息推送'
     ];
 
@@ -70,7 +70,6 @@ class Task extends BaseController
 
         // 启动
         $out = Terminal::instance(2)->exec('php think task start');
-
         if (!count($this->analysisMsg($out))) {
             return warning('启动失败');
         }
@@ -102,7 +101,7 @@ class Task extends BaseController
     {
         $name = $this->request->param('name');
 
-        $baseName = basename($this->rootPath) . '_task';
+        $baseName = \utils\Str::strFilter(basename($this->rootPath)) . '_task';
 
         $path = $this->rootPath . 'runtime' . DIRECTORY_SEPARATOR . $baseName . DIRECTORY_SEPARATOR . 'Std' . DIRECTORY_SEPARATOR;
 
@@ -125,7 +124,7 @@ class Task extends BaseController
     {
         $name = $this->request->param('name');
 
-        $baseName = basename($this->rootPath) . '_task';
+        $baseName = \utils\Str::strFilter(basename($this->rootPath)) . '_task';
 
         $path = $this->rootPath . 'runtime' . DIRECTORY_SEPARATOR . $baseName . DIRECTORY_SEPARATOR . 'Std' . DIRECTORY_SEPARATOR;
 
