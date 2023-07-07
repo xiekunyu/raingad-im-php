@@ -5,10 +5,10 @@
  */
 namespace app\enterprise\model;
 
-use think\Model;
+use app\BaseModel;
 use think\facade\Db;
 use think\facade\Request;
-class Message extends Model
+class Message extends BaseModel
 {
     protected $pk="msg_id";
     protected $json      = ["extends"];

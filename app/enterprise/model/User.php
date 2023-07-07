@@ -8,18 +8,25 @@
 namespace app\enterprise\model;
 
 use GatewayClient\Gateway;
-use think\Model;
+use app\BaseModel;
 use think\facade\Db;
 use think\facade\Request;
+use think\model\concern\SoftDelete;
 
-class User extends Model
+class User extends BaseModel
 {
+   use SoftDelete;
+
    protected $pk = "user_id";
+   
    protected static $defaultField = 'user_id,realname,account,avatar,name_py,email';
 
    public static $user_id = '';
 
    public static $user_info = [];
+
+   protected $json = ['setting'];
+   protected $jsonAssoc = true;
 
    // 模型初始化
    protected static function init()

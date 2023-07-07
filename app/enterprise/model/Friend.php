@@ -5,10 +5,10 @@
  */
 namespace app\enterprise\model;
 
-use think\Model;
+use app\BaseModel;
 use think\facade\Db;
 
-class Friend extends Model
+class Friend extends BaseModel
 {
     protected $pk="friend_id";
     

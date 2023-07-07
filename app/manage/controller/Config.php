@@ -43,7 +43,7 @@ class Config extends BaseController
     public function setConfig()
     {
         if($this->request->demonMode){
-            return warning('演示模式下无法修改配置');
+            // return warning('演示模式下无法修改配置');
         }
         $name = $this->request->param('name');
         $value = $this->request->param('value');
@@ -70,6 +70,9 @@ class Config extends BaseController
                     updateEnv('qcloud_'.$k,$v);
                 }
             }
+        }else{
+            // 更新系统缓存
+            Conf::getSystemInfo(true);
         }
         return success('保存成功');
     }

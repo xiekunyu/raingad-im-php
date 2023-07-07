@@ -5,10 +5,10 @@
  */
 namespace app\enterprise\model;
 
-use think\Model;
+use app\BaseModel;
 use think\facade\Db;
 
-class GroupUser extends Model
+class GroupUser extends BaseModel
 {
     protected $pk="id";
 

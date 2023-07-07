@@ -106,4 +106,16 @@ abstract class BaseController
         return $v->failException(true)->check($data);
     }
 
+    
+    /**
+     * 自动获取前端传递的分页数量
+     * @param \think\Model|\think\model\relation\HasMany $model
+     * @return \think\Paginator
+     */
+    protected function paginate($model)
+    {
+        $limit = $this->request->param('limit', 20);
+        return $model->paginate($limit);
+    }
+
 }

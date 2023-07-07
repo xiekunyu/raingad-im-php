@@ -155,7 +155,7 @@ class Im extends BaseController
     {
         $param = $this->request->param();
         if ($param) {
-            User::where(['user_id' => $this->userInfo['user_id']])->update(['setting' => json_encode($param)]);
+            User::where(['user_id' => $this->userInfo['user_id']])->update(['setting' => $param]);
             return success('');
         }
         return warning('设置失败');
@@ -225,7 +225,7 @@ class Im extends BaseController
             $group_id = explode('-', $param['id'])[1];
             GroupUser::update(['is_notice' => $param['is_notice']], ['user_id' => $user_id, 'group_id' => $group_id]);
         } else {
-            $map = ['create_user' => $user_id, 'friend_user_id' => $id, 'is_group' => 0];
+            $map = ['create_user' => $user_id, 'friend_user_id' => $id];
             $friend = Friend::where($map)->find();
             try {
                 if ($friend) {
@@ -235,7 +235,6 @@ class Im extends BaseController
                     $info = [
                         'create_user' => $user_id,
                         'friend_user_id' => $id,
-                        'is_group' => 0,
                         'is_notice' => $param['is_notice']
                     ];
                     Friend::create($info);
@@ -262,7 +261,7 @@ class Im extends BaseController
                 $group_id = explode('-', $param['id'])[1];
                 GroupUser::update(['is_top' => $param['is_top']], ['user_id' => $user_id, 'group_id' => $group_id]);
             } else {
-                $map = ['create_user' => $user_id, 'friend_user_id' => $id, 'is_group' => $is_group];
+                $map = ['create_user' => $user_id, 'friend_user_id' => $id];
                 $friend = Friend::where($map)->find();
                 if ($friend) {
                     $friend->is_top = $param['is_top'];
@@ -271,7 +270,6 @@ class Im extends BaseController
                     $info = [
                         'create_user' => $user_id,
                         'friend_user_id' => $id,
-                        'is_group' => $is_group,
                         'is_top' => $param['is_top']
                     ];
                     Friend::create($info);

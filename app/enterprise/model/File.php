@@ -5,9 +5,8 @@
  */
 namespace app\enterprise\model;
 
-use think\Model;
-
-class File extends Model
+use app\BaseModel;
+class File extends BaseModel
 {
     protected $pk="file_id";
 

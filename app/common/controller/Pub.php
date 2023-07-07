@@ -6,7 +6,9 @@ use think\App;
 use app\enterprise\model\{User,Group};
 use think\facade\Session;
 use think\facade\Cache;
+use think\facade\Db;
 use GatewayClient\Gateway;
+use app\manage\model\Config;
 
 /**
  * 控制器基础类
@@ -41,10 +43,6 @@ class Pub
 
    public function login(){
        $post=input('post.');
-    //    if(!isset($post['account'])){
-    //     $post['account']='admin';
-    //     $post['password']='123456';
-    //    }
        $userInfo=User::getUserInfo(['account'=>$post['username']]);
        if($userInfo==null){
             return error('当前用户不存在！');
@@ -55,46 +53,36 @@ class Pub
            if($password!=$userInfo['password']){
                 return error('密码错误！');
            }else{
-               $authToken=ssoTokenEncode($userInfo['user_id'],"raingadIm",300);
-               $userInfo['avatar']=avatarUrl($userInfo['avatar'],$userInfo['realname'],$userInfo['user_id']);
-            //    如果用户已经有设置
-               if($userInfo['setting']){
-                    $setting=json_decode($userInfo['setting'],true);
-                    if($setting['hideMessageName']=='true'){
-                        $setting['hideMessageName']=true;
-                    }else{
-                        $setting['hideMessageName']=false;
-                    }
-                    if($setting['hideMessageTime']=='true'){
-                        $setting['hideMessageTime']=true;
-                    }else{
-                        $setting['hideMessageTime']=false;
-                    }
-                    if($setting['avatarCricle']=='true'){
-                        $setting['avatarCricle']=true;
-                    }else{
-                        $setting['avatarCricle']=false;
-                    }
-                    if($setting['isVoice']=='true'){
-                        $setting['isVoice']=true;
-                    }else{
-                        $setting['isVoice']=false;
-                    }
+                $authToken=ssoTokenEncode($userInfo['user_id'],"raingadIm",300);
+                $userInfo['avatar']=avatarUrl($userInfo['avatar'],$userInfo['realname'],$userInfo['user_id']);
+                //    如果用户已经有设置
+                $setting=$userInfo['setting'] ?: '';
+                if($setting){
+                    $setting['hideMessageName']= $setting['hideMessageName']=='true' ? true : false;
+                    $setting['hideMessageTime']= $setting['hideMessageTime']=='true' ? true : false;
+                    $setting['avatarCricle']= $setting['avatarCricle']=='true' ? true : false;
+                    $setting['isVoice']= $setting['isVoice']=='true' ? true : false;
                     $setting['sendKey']=(int)$setting['sendKey'];
-                $userInfo['setting']=$setting;
-               }
+                    $userInfo['setting']=$setting;
+                }
                 //如果登录信息中含有client——id则自动进行绑定
-               $client_id=$this->request->param('client_id');
-               if($client_id){
+                $client_id=$this->request->param('client_id');
+                if($client_id){
                     $this->doBindUid($userInfo['user_id'],$client_id);
-               }
-               $data=[
+                }
+                $update=[
+                   'last_login_time'=>time(),
+                   'last_login_ip'=>$this->request->ip(),
+                   'login_count'=>Db::raw('login_count+1')
+                ];
+                User::where('user_id',$userInfo['user_id'])->update($update);
+                $data=[
                    'sessionId'=>Session::getId(),
                    'authToken'=>$authToken,
                    'userInfo'=>$userInfo
-               ];
-               Cache::set($authToken,$userInfo);
-               return success('登录成功！',$data);
+                ];
+                Cache::set($authToken,$userInfo);
+                return success('登录成功！',$data);
            }
        }
    }
@@ -183,6 +171,12 @@ class Pub
         $group_id = explode('-', $group_id)[1];
         Gateway::joinGroup($client_id, $group_id); 
         return success();
+    }
+
+    // 获取系统配置信息
+    public function getSystemInfo(){
+        $systemInfo=Config::getSystemInfo();
+        return success('',$systemInfo);
     }
     
 }
