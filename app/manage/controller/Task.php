@@ -64,6 +64,9 @@ class Task extends BaseController
      */
     public function startTask()
     {
+        if($this->request->demonMode){
+            return warning('演示模式下无法操作！');
+        }
         if (count($this->taskMsg())) {
             return warning('进程已启动');
         }
@@ -83,6 +86,9 @@ class Task extends BaseController
      */
     public function stopTask()
     {
+        if($this->request->demonMode){
+            return warning('演示模式下无法操作！');
+        }
         if (!count($this->taskMsg())) {
             return warning('进程未启动');
         }

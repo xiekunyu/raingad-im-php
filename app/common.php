@@ -799,3 +799,15 @@ function getOnlyToken()
 {
     return md5(uniqid(md5(microtime(true)), true));
 }
+
+// 设置排序规则
+function orderBy($field, $type, $prefix = '', $default = 'update_time')
+{
+    $type=is_numeric($type)?($type==1?'asc':'desc'):$type;
+    if ($field) {
+        $order = $prefix . $field . ' ' . $type;
+    } else {
+        $order = $prefix . $default . ' desc';
+    }
+    return $order;
+}
