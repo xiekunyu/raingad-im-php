@@ -33,6 +33,24 @@ class Im extends BaseController
         }
     }
 
+    // 获取用户信息
+    public function getUserInfo()
+    {
+        $user_id = $this->request->param('user_id');
+        $user=User::find($user_id);
+        if(!$user){
+            return error('用户不存在');
+        }
+        $user->avatar=avatarUrl($user->avatar,$user->realname,$user->user_id,120);
+        $location='';
+        if($user->last_login_ip){
+            $location=implode(" ", \Ip::find($user->last_login_ip));
+        }
+        $user->location=$location;
+        $user->password='';
+        return success('', $user);
+    }
+
     // 获取聊天记录
     public function getMessageList()
     {
