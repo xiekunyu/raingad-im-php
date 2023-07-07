@@ -170,7 +170,7 @@ CREATE TABLE `yu_user` (
 --
 
 INSERT INTO `yu_user` (`user_id`, `account`, `realname`, `password`, `salt`, `avatar`, `email`, `sex`, `role`, `motto`, `remark`, `name_py`, `setting`, `create_time`, `update_time`, `login_count`, `last_login_time`, `last_login_ip`, `delete_time`, `status`) VALUES
-(1, 'administrator', '管理员', '2cb4ecb7fd5295685e275edc7d44e02e', 'wwww', NULL, 'service@kaishanlaw.com', 2, 1, NULL, '', 'guanliyuan', NULL, 1222907803, 1451033528, 1, 0, NULL, 0, 1),
+(1, 'administrator', '管理员', '2cb4ecb7fd5295685e275edc7d44e02e', 'srww', NULL, 'service@kaishanlaw.com', 2, 1, NULL, '', 'guanliyuan', NULL, 1222907803, 1451033528, 1, 0, NULL, 0, 1),
 (2, '13800000002', '熊大', '2cb4ecb7fd5295685e275edc7d44e02e', 'srww', NULL, 'xiongda@kaishanlaw.com', 2, 0, NULL, '', 'xiongda', NULL, 1555341865, 1558019786, 1, 0, NULL, 0, 1),
 (3, '13800000003', '熊二', '2cb4ecb7fd5295685e275edc7d44e02e', 'srww', NULL, 'xionger@163.com', 2, 0, NULL, '', 'xionger', NULL, 1557933999, 1604587104, 0, 0, NULL, 0, 1),
 (4, '13800000004', '喜洋洋', '2cb4ecb7fd5295685e275edc7d44e02e', 'srww', NULL, 'xiyangyang@qq.com', 2, 0, NULL, '', 'xiyangyang', NULL, 1604587165, 1604587250, 0, 0, NULL, 0, 1),
