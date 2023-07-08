@@ -40,9 +40,6 @@ class User extends BaseController
     // 添加用户
     public function add()
     {
-        if($this->request->demonMode){
-            return warning('演示模式下无法操作！');
-        }
         try{
             $data = $this->request->param();
             $user=UserModel::where('account',$data['account'])->find();
@@ -69,9 +66,6 @@ class User extends BaseController
     // 修改用户    
     public function edit()
     {
-        if($this->request->demonMode){
-            return warning('演示模式下无法操作！');
-        }
         try{
             $data = $this->request->param();
             // 验证账号是否为手机号或者邮箱
@@ -110,12 +104,9 @@ class User extends BaseController
     // 删除用户
     public function del()
     {
-        if($this->request->demonMode){
-            return warning('演示模式下无法操作！');
-        }
         $user_id = $this->request->param('user_id');
         $user=UserModel::find($user_id);
-        if(!$user){
+        if(!$user || $user->user_id==1){
             return warning('用户不存在');
         }
         Db::startTrans();
@@ -136,9 +127,6 @@ class User extends BaseController
     // 修改用户状态
     public function setStatus()
     {
-        if($this->request->demonMode){
-            return warning('演示模式下无法操作！');
-        }
         $user_id = $this->request->param('user_id');
         $user=UserModel::find($user_id);
         if(!$user){
@@ -174,9 +162,6 @@ class User extends BaseController
     // 设置用户角色
     public function setRole()
     {
-        if($this->request->demonMode){
-            return warning('演示模式下无法操作！');
-        }
         $user_id = $this->request->param('user_id');
         $user=UserModel::find($user_id);
         if(!$user){
@@ -194,9 +179,6 @@ class User extends BaseController
     // 修改密码
     public function editPassword()
     {
-        if($this->request->demonMode){
-            return warning('演示模式下无法操作！');
-        }
         $user_id = $this->request->param('user_id');
         $user=UserModel::find($user_id);
         if(!$user){

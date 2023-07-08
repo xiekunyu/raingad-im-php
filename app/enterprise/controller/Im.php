@@ -72,8 +72,8 @@ class Im extends BaseController
         if ($keywords && in_array($type, ['text', 'all'])) {
             $where[] = ['content', 'like', '%' . $keywords . '%'];
         }
-        $listRows = input('listRows') ?: 20;
-        $pageSize = input('pageSize');
+        $listRows = input('limit') ?: 20;
+        $pageSize = input('page');
         $list = Message::getList($map, $where, 'msg_id desc', $listRows, $pageSize);
         $data = $this->recombileMsg($list);
         // 如果是消息管理器则不用倒序

@@ -48,6 +48,8 @@ abstract class BaseController
      */
     protected $postData = [];
 
+    protected $uid = 0;
+
     /**
      * 构造方法
      * @access public

@@ -16,7 +16,7 @@ class Group extends BaseController
    public function getAllUser(){
       $param=$this->request->param();
       $user_ids=isset($param['user_ids'])?$param['user_ids']:[];
-      $data=User::getAllUser([['status','=',1],['isdelete','=',0],['user_id','<>',$this->userInfo['user_id']]],$user_ids);
+      $data=User::getAllUser([['status','=',1],['user_id','<>',$this->userInfo['user_id']]],$user_ids);
       return success('',$data);
    }
 
@@ -137,6 +137,11 @@ class Group extends BaseController
                'name_py'=>"qunliao",
                'setting'=>json_encode($setting),
             ];
+            $name=$param['name'] ?? '';
+            if($name){
+               $create['name']=$name;
+               $create['name_py']=pinyin_sentence($name);
+            }
             $group=new GroupModel();
             $group->save($create);
             $group_id=$group->group_id;
@@ -165,7 +170,7 @@ class Group extends BaseController
                'role'=>3,
                'name_py'=>$create['name_py'],
                'id'=>'group-'.$group_id,
-               'avatar'=>avatarUrl($url,'群聊',$group_id,120),
+               'avatar'=>avatarUrl($url,$create['name'],$group_id,120),
                'is_group'=>1,
                'lastContent'=>$this->userInfo['realname'].' 创建了群聊',
                'lastSendTime'=>time()*1000,

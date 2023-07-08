@@ -42,9 +42,6 @@ class Config extends BaseController
      */
     public function setConfig()
     {
-        if($this->request->demonMode){
-            return warning('演示模式下无法修改配置');
-        }
         $name = $this->request->param('name');
         $value = $this->request->param('value');
         if(Conf::where(['name'=>$name])->find()){
