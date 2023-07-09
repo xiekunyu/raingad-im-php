@@ -296,6 +296,11 @@ function avatarUrl($path, $str = "雨",$uid=0,$s=80)
     return $url;
 }
 
+// 获取文件的地址
+function getFileUrl($path){
+    return getDiskUrl() .'/'. ltrim($path,'/') ;
+}
+
 /**
  * 十六进制 转 RGB
  */
@@ -810,4 +815,21 @@ function orderBy($field, $type, $prefix = '', $default = 'update_time')
         $order = $prefix . $default . ' desc';
     }
     return $order;
+}
+
+// 获取文件后缀图片
+function getExtUrl($path){
+    $ext=explode('.',$path);
+    $ext=end($ext);
+    // 如果是图片文件，就直接返回图片地址
+    $image=['jpg','jpeg','png','bmp','gif','webp'];
+    if(in_array($ext,$image)){
+        return getFileUrl($path);
+    }
+    $extUrl='/static/img/ext/'.strtoupper($ext).'.png';
+    // 判断文件是否存在
+    if(!file_exists(public_path().$extUrl)){
+        $extUrl='/static/img/ext/folder.png';
+    }
+    return request()->domain().$extUrl;
 }

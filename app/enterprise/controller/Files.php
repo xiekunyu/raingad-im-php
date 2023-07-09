@@ -1,0 +1,79 @@
+<?php
+
+namespace app\enterprise\controller;
+
+use app\BaseController;
+
+use app\enterprise\model\{File,User,Message};
+
+class Files extends BaseController
+{
+    // 文件列表
+    public function index()
+    {
+        $param = $this->request->param();
+        $is_all = $param['is_all'] ?? 0;
+        $map = [];
+        $data=[];
+        // 如果是查询全部，就查询file表，否则查询message表
+        if ($is_all) {
+            if ($param['cate'] ?? 0) {
+                $map[] = ['cate', '=', $param['cate']];
+            }
+            $model = new File();
+            if ($param['keywords'] ?? '') {
+                $model = $model->where('name', 'like', '%' . $param['keywords'] . '%');
+            }
+            $list = $this->paginate($model->where($map)->order('file_id desc'));
+            
+            if ($list) {
+                $data = $list->toArray()['data'];
+                $userList = User::matchUser($data, true, 'user_id', 120);
+                foreach ($data as $k => $v) {
+                    $data[$k]['src'] = getFileUrl($v['src']);
+                    $data[$k]['extUrl'] = getExtUrl($v['src']);
+                    $data[$k]['user_id_info'] = $userList[$v['user_id']] ?? [];
+                }
+                
+            }
+        } else {
+            $map = [
+               ['file_id', '>', 0],
+               ['type', '<>', 'voice'],
+               ['is_group', '=', 0]
+            ];
+            if ($param['cate'] ?? 0) {
+                $map[] = ['file_cate', '=', $param['cate']];
+            }
+            $user_id = $this->uid;
+            $model = new Message();
+            if ($param['keywords'] ?? '') {
+               $map[] = ['file_name', 'like', '%' . $param['keywords'] . '%'];
+            }
+            $role = $param['role'] ?? 0;
+            if($role==1){
+               $map[] = ['from_user', '=', $user_id];
+            }elseif($role==2){
+               $map[] = ['to_user', '=', $user_id];
+            }else{
+               $model = $model->where(['from_user'=> $user_id]);
+            }
+            $list = $this->paginate($model->where($map)->order('create_time desc'));
+            if ($list) {
+                $data = $list->toArray()['data'];
+                $userList = User::matchUser($data, true, 'from_user', 120);
+                foreach ($data as $k => $v) {
+                    $data[$k]['src'] = getFileUrl($v['content']);
+                    $data[$k]['extUrl'] = getExtUrl($v['content']);
+                    $data[$k]['cate'] = $v['file_cate'];
+                    $data[$k]['name'] = $v['file_name'];
+                    $data[$k]['size'] = $v['file_size'];
+                    $ext=explode('.',$v['content']);
+                    $data[$k]['ext'] = end($ext);
+                    $data[$k]['user_id_info'] = $userList[$v['from_user']] ?? [];
+                }
+            }
+        }
+        return success('', $data, $list->total(), $list->currentPage());
+    }
+}

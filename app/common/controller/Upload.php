@@ -39,7 +39,8 @@ class Upload extends BaseController
         }else{
             $filePath = new File($path);
         }
-        $info=$this->getFileInfo($filePath,$path);
+        
+        $info=$this->getFileInfo($filePath,$path,$fileObj);
         if($info['ext']=='' && $message){
             $pathInfo        = pathinfo($message['fileName'] ?? '');
             $info['ext']     = $pathInfo['extension'];
@@ -71,7 +72,8 @@ class Upload extends BaseController
         }else{
             $object = $file['src'];
         }
-        
+        // 把左边的/去掉再加上，避免有些有/有些没有
+        $object='/'.ltrim($object,'/');
         $ret = [
             "src"      => $object,
             "name"     => $name,
@@ -83,6 +85,8 @@ class Upload extends BaseController
             "type"     =>2,
             'user_id'=>$uid,
         ];
+        $newFile=new FileModel;
+        $newFile->save($ret);
         if($message){
             // 自动获取视频第一帧,视频并且是使用的阿里云
             if($message['type']=='video' && $this->disk=='aliyun'){
@@ -90,13 +94,17 @@ class Upload extends BaseController
             }else{
                 $message['extends']['poster']='https://im.file.raingad.com/static/image/video.png';
             }
+            // 如果发送的文件是图片、视频、音频则将消息类型改为对应的类型
+            if(in_array($fileType,[2,3,4])){
+                $message['type']=$filecate;
+            }
             $message['content']=$ret['src'];
+            $message['file_id']=$newFile->file_id;
+            $message['file_cate']=$fileType;
             $message['file_size']=$info['size'];
             $message['file_name']= $name.'.'.$info['ext'];
             $message['user_id']= $uid;
             $data=Message::sendMessage($message);
-            $newFile=new FileModel;
-            $newFile->save($ret);
             return $data;
         }else{
             return $ret;
@@ -118,7 +126,7 @@ class Upload extends BaseController
 
 
     // 获取上传文件的信息
-    protected function getFileInfo($file,$path=false){
+    protected function getFileInfo($file,$path,$isObj=false){
         $info= [
             'path'=>$file->getRealPath(),
             'size'=>$file->getSize(),
@@ -126,7 +134,7 @@ class Upload extends BaseController
             'ext'=>$file->extension(),
             'md5'=>$file->md5(),
         ];
-        if(!$path){
+        if($isObj){
             $info['name']=$file->getOriginalName();
         }else{
             // 根据路径获取文件名

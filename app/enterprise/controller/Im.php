@@ -86,7 +86,6 @@ class Im extends BaseController
     protected function recombileMsg($list)
     {
         $data = [];
-        $ossUrl = getDiskUrl(). '/';
         $userInfo = $this->userInfo;
         if ($list) {
             $listData = $list->toArray()['data'];
@@ -105,7 +104,7 @@ class Im extends BaseController
                 $content = $v['content'];
                 $preview = '';
                 if (in_array($v['type'], $this->fileType)) {
-                    $content = $ossUrl . $v['content'];
+                    $content = getFileUrl($v['content']);
                     $preview = previewUrl($content);
                 }
                 $fromUser = $userList[$v['from_user']];

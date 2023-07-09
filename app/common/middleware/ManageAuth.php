@@ -12,26 +12,28 @@ class ManageAuth
             if($request->userInfo['user_id']!=1 || $request->userInfo['role']!=2){
                 shutdown('您没有权限访问该接口',-1);
             }
+        }else{
+            $rules=[
+                'User/add',
+                'User/edit',
+                'User/del',
+                'User/setRole',
+                'User/setsatus',
+                'User/editPassword',
+                'Group/del',
+                'Group/changeOwner',
+                'Group/delGroupUser',
+                'Task/startTask',
+                'Task/stopTask',
+                'Config/setConfig'
+            ];
+            // 获取pathinfo信息
+            $pathinfo = $request->pathinfo();
+            if(in_array($pathinfo,$rules)){
+                 return shutdown('演示模式下无法操作！',400);
+            }
         }
-        $rules=[
-            'User/add',
-            'User/edit',
-            'User/del',
-            'User/setRole',
-            'User/setsatus',
-            'User/editPassword',
-            'Group/del',
-            'Group/changeOwner',
-            'Group/delGroupUser',
-            'Task/startTask',
-            'Task/stopTask',
-            'Config/setConfig'
-        ];
-        // 获取pathinfo信息
-        $pathinfo = $request->pathinfo();
-        if(in_array($pathinfo,$rules) && $request->demonMode){
-             return shutdown('演示模式下无法操作！',400);
-        }
+        
         return $next($request);
     }
 }

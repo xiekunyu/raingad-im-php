@@ -125,6 +125,8 @@ CREATE TABLE IF NOT EXISTS `yu_message` (
   `is_last` tinyint(1) NOT NULL DEFAULT '1' COMMENT '是否是最后一条消息',
   `create_time` int(13) NOT NULL DEFAULT '0' COMMENT '发送时间',
   `is_undo` tinyint(1) NOT NULL DEFAULT '0' COMMENT '是否撤回',
+  `file_id` int(11) NOT NULL DEFAULT '0' COMMENT '文件id',
+  `file_cate` tinyint(1) NOT NULL DEFAULT '0' COMMENT '文件类型',
   `file_size` int(11) NOT NULL DEFAULT '0' COMMENT '文件大小',
   `file_name` varchar(256) DEFAULT NULL COMMENT '文件名称',
   `extends` json DEFAULT NULL COMMENT '消息扩展内容',

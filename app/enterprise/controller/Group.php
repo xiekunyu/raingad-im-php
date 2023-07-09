@@ -3,7 +3,7 @@
 namespace app\enterprise\controller;
 
 use app\BaseController;
-use app\enterprise\model\{User,Group as GroupModel,GroupUser};
+use app\enterprise\model\{User,Group as GroupModel,GroupUser,Message};
 use think\Exception;
 use think\facade\Db;
 use app\common\controller\Upload;
@@ -86,7 +86,7 @@ class Group extends BaseController
          }
          $groupUser=new GroupUser;
          $groupUser->saveAll($data);
-         $url=$this->setGroupAvatar($group_id);
+         $url=GroupModel::setGroupAvatar($group_id);
          wsSendMsg($group_id,"addGroupUser",['group_id'=>$param['id'],'avatar'=>$url],1);
          return success('添加成功');
       }catch(Exception $e){
@@ -163,7 +163,7 @@ class Group extends BaseController
             }
             $groupUser=new GroupUser();
             $groupUser->saveAll($data);
-            $url=$this->setGroupAvatar($group_id);
+            $url=GroupModel::setGroupAvatar($group_id);
             $groupInfo=[
                'displayName'=>$create['name'],
                'owner_id'=>$create['owner_id'],
@@ -180,9 +180,19 @@ class Group extends BaseController
                'setting'=>$setting,
          
             ];
-            
+            Message::create([
+               'from_user'=>$uid,
+               'to_user'=>$group_id,
+               'content'=>'创建了群聊',
+               'type'=>'event',
+               'is_group'=>1,
+               'is_read'=>1,
+               'is_last'=>1,
+               'chat_identify'=>'group-'.$group_id
+            ]);
             wsSendMsg($user_ids, 'addGroup', $groupInfo);
             Db::commit();
+            $groupInfo['role']=1;
             return success('',$groupInfo);
          }catch(Exception $e){
             Db::rollback();
@@ -206,7 +216,7 @@ class Group extends BaseController
          }else{
             return warning('您的权限不够！');
          }
-         $url=$this->setGroupAvatar($group_id);
+         $url=GroupModel::setGroupAvatar($group_id);
          wsSendMsg($group_id,"removeUser",['group_id'=>$param['id'],'avatar'=>$url],1);
          return success('删除成功');
       }

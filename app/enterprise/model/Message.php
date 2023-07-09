@@ -53,7 +53,7 @@ class Message extends BaseModel
         }
         $fileSzie=isset($param['file_size'])?$param['file_size']:'';
         $fileName=isset($param['file_name'])?$param['file_name']:'';
-        $ossUrl=getDiskUrl().'/';
+        $ossUrl=getDiskUrl();
         // 如果是转发图片文件的消息，必须把域名去除掉
         $content=$param['content'];
         if(in_array($param['type'],self::$fileType)){
@@ -71,6 +71,8 @@ class Message extends BaseModel
             'type'=>$param['type'],
             'is_group'=>$is_group,
             'is_read'=>$is_read,
+            'file_id'=>$param['file_id'] ?? 0,
+            "file_cate"=>$param['file_cate'] ?? 0,
             'file_size'=>$fileSzie,
             'file_name'=>$fileName,
             'extends'=>($param['extends'] ?? null) ? $param['extends'] : null,
@@ -97,7 +99,7 @@ class Message extends BaseModel
         $sendData['fileName']=$fileName;
         
         if(in_array($sendData['type'],self::$fileType)){
-            $sendData['content']=$ossUrl.$sendData['content'];
+            $sendData['content']=getFileUrl($sendData['content']);
             if($sendData['type']=='image'){
                 $pre=1;
             }else{
@@ -133,6 +135,10 @@ class Message extends BaseModel
             }
         }
         return true;
+    }
+
+    public function matchData(){
+
     }
 
 }
