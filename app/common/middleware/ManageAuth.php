@@ -14,21 +14,21 @@ class ManageAuth
             }
         }else{
             $rules=[
-                'User/add',
-                'User/edit',
-                'User/del',
-                'User/setRole',
-                'User/setsatus',
-                'User/editPassword',
-                'Group/del',
-                'Group/changeOwner',
-                'Group/delGroupUser',
-                'Task/startTask',
-                'Task/stopTask',
-                'Config/setConfig'
+                'user/add',
+                'user/edit',
+                'user/del',
+                'user/setrole',
+                'user/setstatus',
+                'user/editpassword',
+                'group/del',
+                'group/changeowner',
+                'group/delgroupuser',
+                'task/starttask',
+                'task/stoptask',
+                'config/setconfig'
             ];
             // 获取pathinfo信息
-            $pathinfo = $request->pathinfo();
+            $pathinfo = strtolower($request->pathinfo());
             if(in_array($pathinfo,$rules)){
                  return shutdown('演示模式下无法操作！',400);
             }

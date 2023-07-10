@@ -30,7 +30,9 @@ class Files extends BaseController
                 $data = $list->toArray()['data'];
                 $userList = User::matchUser($data, true, 'user_id', 120);
                 foreach ($data as $k => $v) {
-                    $data[$k]['src'] = getFileUrl($v['src']);
+                    $url=getFileUrl($v['src']);
+                    $data[$k]['src'] =$url;
+                    $data[$k]['preview'] = previewUrl($url);
                     $data[$k]['extUrl'] = getExtUrl($v['src']);
                     $data[$k]['user_id_info'] = $userList[$v['user_id']] ?? [];
                 }
@@ -40,7 +42,8 @@ class Files extends BaseController
             $map = [
                ['file_id', '>', 0],
                ['type', '<>', 'voice'],
-               ['is_group', '=', 0]
+               ['is_group', '=', 0],
+               ['is_undo', '=', 0],
             ];
             if ($param['cate'] ?? 0) {
                 $map[] = ['file_cate', '=', $param['cate']];
@@ -63,7 +66,9 @@ class Files extends BaseController
                 $data = $list->toArray()['data'];
                 $userList = User::matchUser($data, true, 'from_user', 120);
                 foreach ($data as $k => $v) {
-                    $data[$k]['src'] = getFileUrl($v['content']);
+                    $url=getFileUrl($v['content']);
+                    $data[$k]['src'] = $url;
+                    $data[$k]['preview'] = previewUrl($url);
                     $data[$k]['extUrl'] = getExtUrl($v['content']);
                     $data[$k]['cate'] = $v['file_cate'];
                     $data[$k]['name'] = $v['file_name'];
