@@ -424,24 +424,32 @@ function arrayToString($array,$field,$isStr=true){
 }
 
 // 根据文件后缀进行分类
-function getFileType($ext){
+function getFileType($ext,$rst=false){
     $ext=strtolower($ext);
     $image=['jpg','jpeg','png','bmp','gif'];
     $radio=['mp3','wav','wmv','amr'];
     $video=['mp4','3gp','avi','m2v','mkv','mov'];
     $doc=['ppt','pptx','doc','docx','xls','xlsx','pdf','txt','md'];
+    $msgType='file';
     if(in_array($ext,$doc)){
         $fileType=1;
     }elseif(in_array($ext,$image)){
         $fileType=2;
+        $msgType='image';
     }elseif(in_array($ext,$radio)){
         $fileType=3;
+        $msgType='voice';
     }elseif(in_array($ext,$video)){
         $fileType=4;
+        $msgType='video';
     }else{
         $fileType=9;
     }
-    return $fileType;
+    if($rst){
+        return $msgType;
+    }else{
+        return $fileType;
+    }
 }
 
 /**

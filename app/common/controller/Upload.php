@@ -85,8 +85,7 @@ class Upload extends BaseController
             "type"     =>2,
             'user_id'=>$uid,
         ];
-        $newFile=new FileModel;
-        $newFile->save($ret);
+        
         if($message){
             // 自动获取视频第一帧,视频并且是使用的阿里云
             if($message['type']=='video' && $this->disk=='aliyun'){
@@ -97,6 +96,11 @@ class Upload extends BaseController
             // 如果发送的文件是图片、视频、音频则将消息类型改为对应的类型
             if(in_array($fileType,[2,3,4])){
                 $message['type']=$filecate;
+            }
+            // 录音就不保存了
+            if($message['type']!='voice'){
+                $newFile=new FileModel;
+                $newFile->save($ret);
             }
             $message['content']=$ret['src'];
             $message['file_id']=$newFile->file_id;

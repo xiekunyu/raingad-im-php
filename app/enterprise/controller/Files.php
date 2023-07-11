@@ -34,6 +34,8 @@ class Files extends BaseController
                     $data[$k]['src'] =$url;
                     $data[$k]['preview'] = previewUrl($url);
                     $data[$k]['extUrl'] = getExtUrl($v['src']);
+                    $data[$k]['name'] = $v['name'].'.'.$v['ext'];
+                    $data[$k]['msg_type'] = getFileType($v['ext'],true);
                     $data[$k]['user_id_info'] = $userList[$v['user_id']] ?? [];
                 }
                 
@@ -54,14 +56,16 @@ class Files extends BaseController
                $map[] = ['file_name', 'like', '%' . $param['keywords'] . '%'];
             }
             $role = $param['role'] ?? 0;
+            $where=[];
             if($role==1){
                $map[] = ['from_user', '=', $user_id];
             }elseif($role==2){
                $map[] = ['to_user', '=', $user_id];
             }else{
-               $model = $model->where(['from_user'=> $user_id]);
+                $where='(from_user='.$user_id.' or to_user='.$user_id.')';
             }
-            $list = $this->paginate($model->where($map)->order('create_time desc'));
+
+            $list = $this->paginate($model->where($map)->where($where)->order('create_time desc'));
             if ($list) {
                 $data = $list->toArray()['data'];
                 $userList = User::matchUser($data, true, 'from_user', 120);
@@ -73,6 +77,7 @@ class Files extends BaseController
                     $data[$k]['cate'] = $v['file_cate'];
                     $data[$k]['name'] = $v['file_name'];
                     $data[$k]['size'] = $v['file_size'];
+                    $data[$k]['msg_type'] = $v['type'];
                     $ext=explode('.',$v['content']);
                     $data[$k]['ext'] = end($ext);
                     $data[$k]['user_id_info'] = $userList[$v['from_user']] ?? [];
