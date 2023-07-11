@@ -100,23 +100,29 @@ class Pub
     return success('退出成功！');
    }
 
-
+// 注册用户
    public function register(){
-       $salt="srww";
-       if(!$this->postData){
-           $data=[
-               'account'=>'admin',
-               'realname'=>"管理员",
-               'password'=>md5('123456'.$salt)
-
-           ];
-       }else{
-           $data=$this->postData;
-       }
-       $data['salt']=$salt;
-       $data['create_time']=time();
-       User::addData($data);
-       return success('操作成功');
+       try{
+        $data = $this->request->param();
+        $user=User::where('account',$data['account'])->find();
+        if($user){
+            return warning('账户已存在');
+        }
+        // 验证账号是否为手机号或者邮箱
+        if(!\utils\Regular::is_email($data['account']) && !\utils\Regular::is_phonenumber($data['account'])){
+            return warning('账户必须为手机号或者邮箱');
+        }
+        $salt=\utils\Str::random(4);
+        $data['password'] = password_hash_tp($data['password'],$salt);
+        $data['salt'] =$salt;
+        $data['name_py'] = pinyin_sentence($data['realname']);
+        $user=new User();
+        $user->save($data);
+        $data['user_id']=$user->user_id;
+        return success('添加成功', $data);
+    }catch (\Exception $e){
+        return error('添加失败');
+    }
 
    }
 
@@ -176,6 +182,7 @@ class Pub
     // 获取系统配置信息
     public function getSystemInfo(){
         $systemInfo=Config::getSystemInfo();
+        $systemInfo['demon_mode']=env('app.demon_mode',false);
         return success('',$systemInfo);
     }
     
