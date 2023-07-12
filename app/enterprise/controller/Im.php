@@ -8,6 +8,7 @@ use think\facade\Db;
 use app\enterprise\model\{User, Message, GroupUser, Friend};
 use GatewayClient\Gateway;
 use Exception;
+use think\facade\Cache;
 
 class Im extends BaseController
 {
@@ -384,5 +385,85 @@ class Im extends BaseController
         ];
         wsSendMsg($toContactId,'webrtc',$data);
         return success('');
+    }
+
+    // 修改密码
+    public function editPassword()
+    {
+        if(env('app.demon_mode',false)){
+            return warning('演示模式不支持修改');
+        }
+        $code=$this->request->param('code','');
+        $user_id = $this->userInfo['user_id'];
+        $user=User::find($user_id);
+        if(!$user){
+            return warning('用户不存在');
+        }
+        $account=$user->account;
+        if(Cache::get($account)!=$code){
+            return warning('验证码不正确！');
+        }
+        try{
+            $password = $this->request->param('password','');
+            if($password){
+                $salt=$user->salt;
+                $user->password= password_hash_tp($password,$salt);
+            }
+            $user->save();
+            return success('修改成功');
+        }catch (\Exception $e){
+            return error('修改失败');
+        }
+    }
+
+    // 修改用户信息
+    public function updateUserInfo(){
+        try{
+            $data = $this->request->param();
+            $user=User::find($this->uid);
+            if(!$user){
+                return warning('用户不存在');
+            }
+            $user->realname =$data['realname'];
+            $user->email =$data['email'];
+            $user->motto=$data['motto'];
+            $user->sex =$data['sex'];
+            $user->name_py= pinyin_sentence($data['realname']);
+            $user->save();
+            return success('修改成功', $data);
+        }catch (\Exception $e){
+            return error($e->getMessage());
+        }
+    }
+
+    // 修改账户
+    public function editAccount(){
+        if(env('app.demon_mode',false)){
+            return warning('演示模式不支持修改');
+        }
+        $code=$this->request->param('code','');
+        $newCode=$this->request->param('newCode','');
+        $account=$this->request->param('account','');
+        $isUser=User::where('account',$account)->find();
+        if($isUser){
+            return warning('账户已存在');
+        }
+        $user=User::find($this->uid);
+        if(!$user){
+            return warning('用户不存在');
+        }
+        if(Cache::get($user->account)!=$code){
+            return warning('验证码不正确！');
+        }
+        if(Cache::get($account)!=$newCode){
+            return warning('新账户验证码不正确！');
+        }
+        try{
+            $user->account=$account;
+            $user->save();
+            return success('修改成功');
+        }catch (\Exception $e){
+            return error('修改失败');
+        }
     }
 }

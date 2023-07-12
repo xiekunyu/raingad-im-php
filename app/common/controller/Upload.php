@@ -6,7 +6,7 @@
 namespace app\common\controller;
 
 use app\BaseController;
-use app\enterprise\model\{File as FileModel,Message};
+use app\enterprise\model\{File as FileModel,Message,User};
 use think\facade\Filesystem;
 use think\facade\Request;
 use think\File;
@@ -169,6 +169,7 @@ class Upload extends BaseController
             $file=request()->file('file');
             $uid=request()->userInfo['user_id'];
             $info=$this->upload($param,$file,'avatar/'.$uid.'/');
+            User::where(['user_id'=>$uid])->update(['avatar'=>$info['src']]);
             $url=$this->url.$info['src'];
             return success("上传成功",$url);
         } catch(\Exception $e) {

@@ -185,5 +185,34 @@ class Pub
         $systemInfo['demon_mode']=env('app.demon_mode',false);
         return success('',$systemInfo);
     }
+
+    // 发送验证码
+    public function sendCode(){
+        $account=$this->request->param('account');
+        if(!$account){
+            return warning('请输入账户');
+        }
+        $type=$this->request->param('type',1);
+        if(!\utils\Regular::is_email($account)){
+            return warning('暂时仅支持邮箱验证码');
+        }
+        if($type==1){
+            $text='登录账户';
+        }elseif($type==2){
+            $text='注册账户';
+        }elseif($type==3){
+            $text='修改密码';
+        }else{
+            $text="修改账户";
+        }
+        $code=rand(100000,999999);
+        Cache::set($account,$code,300);
+        $conf=Config::where(['name'=>'smtp'])->value('value');
+        $conf['temp']='code';
+        $mail=new \mail\Mail($conf);
+        $mail->sendEmail([$account],$text,$code);
+        return success('发送成功');
+        
+    }
     
 }
