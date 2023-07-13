@@ -16,7 +16,7 @@ class Group extends BaseController
    public function getAllUser(){
       $param=$this->request->param();
       $user_ids=isset($param['user_ids'])?$param['user_ids']:[];
-      $data=User::getAllUser([['status','=',1],['user_id','<>',$this->userInfo['user_id']]],$user_ids);
+      $data=User::getAllUser([['status','=',1],['user_id','<>',$this->userInfo['user_id']]],$user_ids,$this->uid);
       return success('',$data);
    }
 

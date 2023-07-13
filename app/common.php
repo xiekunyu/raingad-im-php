@@ -409,15 +409,20 @@ function chat_identify($from_user,$to_user){
 
 //数组中获取ID字符串
 function arrayToString($array,$field,$isStr=true){
-    $idArr=[];
-    foreach ($array as $k=>$v){
-        $idArr[]=$v[$field];
+    $idArr = [];
+    foreach ($array as $k => $v) {
+        if(is_array($field)){
+            foreach($field as $val){
+                $idArr[]=$v[$val];
+            }
+        }else{
+            $idArr[] = $v[$field];
+        }
     }
-    $idArr=array_unique($idArr);
-    if($isStr){
-        $idStr=implode(',',$idArr);
+    if ($isStr) {
+        $idStr = implode(',', $idArr);
         return $idStr;
-    }else{
+    } else {
         return $idArr;
     }
 

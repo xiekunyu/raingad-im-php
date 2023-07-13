@@ -47,9 +47,18 @@ class User extends BaseModel
       return $data;
    }
    //   获取所有用户列表
-   public static function getAllUser($map, $user_ids = [], $field = 'user_id,realname,avatar,account,name_py,email')
+   public static function getAllUser($map, $user_ids = [],$user_id)
    {
-      $list = self::where($map)->field($field)->select()->toArray();
+      $field = self::$defaultField;
+      $config=Config::getSystemInfo();
+      // 如果是社区模式，就只查询自己的好友，如果是企业模式，就查询所有用户
+      if($config['sysInfo']['runMode']==1){
+         $list = self::where($map)->field($field)->select()->toArray();
+      }else{
+         $friendList = Friend::getFriend(['create_user' => $user_id]);
+         $userList = array_keys($friendList);
+         $list = self::where($map)->where('user_id', 'in', $userList)->field($field)->select()->toArray();
+      }
       foreach ($list as $k => $v) {
          $list[$k]['disabled'] = false;
          $list[$k]['avatar'] = avatarUrl($v['avatar'], $v['realname'], $v['user_id']);

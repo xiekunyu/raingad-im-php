@@ -42,7 +42,7 @@ class Im extends BaseController
             return warning('目前禁止用户私聊！');
         }
         // 如果是单聊，并且是社区模式，需要判断是否是好友
-        if($is_group==0 && $this->globalConfig['systemInfo']['runMode']==2){
+        if($is_group==0 && $this->globalConfig['sysInfo']['runMode']==2){
             $friend=Friend::where(['friend_user_id'=>$this->uid,'create_user'=>$param['toContactId']])->find();
             if(!$friend){
                 return warning('您你在TA的好友列表，不能发消息！');
@@ -71,7 +71,7 @@ class Im extends BaseController
         $user->avatar=avatarUrl($user->avatar,$user->realname,$user->user_id,120);
         // 查询好友关系
         $friend=Friend::where(['friend_user_id'=>$user_id,'create_user'=>$this->userInfo['user_id']])->find();
-        $user->friend=$friend ? : [];
+        $user->friend=$friend ? : '';
         $location='';
         if($user->last_login_ip){
             $location=implode(" ", \Ip::find($user->last_login_ip));
@@ -79,6 +79,22 @@ class Im extends BaseController
         $user->location=$location;
         $user->password='';
         return success('', $user);
+    }
+
+    // 搜索用户
+    public function searchUser(){
+        $keywords=$this->request->param('keywords','');
+        if(!$keywords){
+            return success('',[]);
+        }
+        $map=['status'=>1,'account'=>$keywords];
+        $list=User::where($map)->select()->toArray();
+        if($list){
+            foreach($list as $k=>$v){
+                $list[$k]['avatar']=avatarUrl($v['avatar'],$v['realname'],$v['user_id'],120);
+            }
+        }
+        return success('', $list);
     }
 
     // 获取聊天记录

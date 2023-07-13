@@ -13,6 +13,7 @@ class Friend extends BaseController
     {
         $param = $this->request->param();
         $map = [];
+        $map[]=['is_invite','=',1];
         $isMine=$param['is_mine'] ?? 0;
         if($isMine){
             // 我发起的
@@ -26,9 +27,10 @@ class Friend extends BaseController
         $list = $this->paginate($model->where($map)->order('friend_id desc'));
         if ($list) {
             $data = $list->toArray()['data'];
-            $userList = User::matchUser($data, true, 'create_user', 120);
+            $userList = User::matchUser($data, true, ['create_user','friend_user_id'], 120);
             foreach ($data as $k => $v) {
                 $data[$k]['create_user_info'] = $userList[$v['create_user']] ?? [];
+                $data[$k]['user_id_info'] = $userList[$v['friend_user_id']] ?? [];
             }
         }
         return success('', $data);
@@ -60,6 +62,7 @@ class Friend extends BaseController
             'status'=>$status,
             'create_user'=>$this->uid,
             'remark'=>$param['remark'],
+            'is_invite'=>1 // 是否为发起方
         ];
         $model->save($data);
         // 发送好友申请
@@ -71,20 +74,18 @@ class Friend extends BaseController
     public function update()
     {
         $param = $this->request->param();
-        $model = new FriendModel();
         $friend=FriendModel::find($param['friend_id']);
         if(!$friend){
             return warning('申请不存在');
         }
-        $data=[
-            'status'=>$param['status'],
+        $map=[
             'friend_id'=>$param['friend_id']
         ];
-        $model->save($data);
+        FriendModel::where($map)->update(['status'=>$param['status']]);
         // 如果是接收，就添加到好友列表
         if($param['status']){
             $data=[
-                'friend_user_id'=>$friend->friend_user_id,
+                'friend_user_id'=>$friend->create_user,
                 'create_user'=>$this->uid,
             ];
             $newFriend=FriendModel::where($data)->find();
@@ -112,8 +113,10 @@ class Friend extends BaseController
     public function setNickname()
     {
         $param = $this->request->param();
-        $model = new FriendModel();
-        $model->save(['nickname'=>$param['nickname']],['friend_id'=>$param['friend_id']]);
+        if(!$param['nickname']){
+            return warning('备注不能为空');
+        }
+        FriendModel::update(['nickname'=>$param['nickname']],['friend_id'=>$param['friend_id']]);
         return success('设置成功');
     }
 
@@ -125,4 +128,5 @@ class Friend extends BaseController
         $count=$model->where($map)->count();
         return success('', $count);
     }
+
 }
