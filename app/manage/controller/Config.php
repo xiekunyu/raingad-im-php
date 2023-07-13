@@ -11,7 +11,7 @@ namespace app\manage\controller;
 
 use app\BaseController;
 use app\manage\model\{Config as Conf};
-use think\facade\Env;
+use think\facade\Cache;
 class Config extends BaseController
 {
     /**
@@ -81,8 +81,9 @@ class Config extends BaseController
     public function getInviteLink(){
         $uid=$this->userInfo['user_id'];
         // 邀请码仅两天有效
-        $code=\utils\Str::authcode($uid,'ENCODE','imchat',48*3600);
-        $url=request()->domain().'/index.html/#/register?code='.$code;
+        $code=\utils\Str::random(8);
+        Cache::set($code,$uid,172800);
+        $url=request()->domain().'/index.html/#/register?inviteCode='.$code;
         return success('',$url);
     }
 

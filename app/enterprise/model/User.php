@@ -12,6 +12,7 @@ use app\BaseModel;
 use think\facade\Db;
 use think\facade\Request;
 use think\model\concern\SoftDelete;
+use app\manage\model\Config;
 
 class User extends BaseModel
 {
@@ -67,9 +68,16 @@ class User extends BaseModel
       if (!$field) {
          $field = self::$defaultField;
       }
-      $list = Db::name('user')->field($field)->where($map)->select();
-      $list_chart = chartSort($list, 'realname', false, 'index');
       $friendList = Friend::getFriend(['create_user' => $user_id]);
+      $config=Config::getSystemInfo();
+      // 如果是社区模式，就只查询自己的好友，如果是企业模式，就查询所有用户
+      if($config['sysInfo']['runMode']==1){
+         $list = self::where($map)->field($field)->select();
+      }else{
+         $userList = array_keys($friendList);
+         $list = self::where($map)->where('user_id', 'in', $userList)->field($field)->select();
+      }
+      $list_chart = chartSort($list, 'realname', false, 'index');
       // 查询未读消息
       $unread = Db::name('message')
          ->field('from_user,count(msg_id) as unread')
@@ -100,7 +108,7 @@ class User extends BaseModel
             $group[$k]['role'] = $v['role'];
             $group[$k]['is_group'] = 1;
             $group[$k]['setting'] = $setting;
-            $group[$k]['index'] = "群聊";
+            $group[$k]['index'] = "[2]群聊";
             $group[$k]['realname'] = $v['displayName'] . " [群聊]";
             $group[$k]['is_notice'] = $v['is_notice'];
             $group[$k]['is_top'] = $v['is_top'];
@@ -119,8 +127,10 @@ class User extends BaseModel
       }
       $onlineList=Gateway::getAllUidList();
       foreach ($list_chart as $k => $v) {
+         // 是否有消息通知或者置顶聊天
+         $friend = isset($friendList[$v['user_id']]) ? $friendList[$v['user_id']] : [];
          $list_chart[$k]['id'] = $v['user_id'];
-         $list_chart[$k]['displayName'] = $v['realname'];
+         $list_chart[$k]['displayName'] = ($friend['nickname'] ?? '') ? : $v['realname'];
          $list_chart[$k]['name_py'] = $v['name_py'];
          $list_chart[$k]['avatar'] = avatarUrl($v['avatar'], $v['realname'], $v['user_id'], 120);
          $list_chart[$k]['lastContent'] = '';
@@ -133,8 +143,7 @@ class User extends BaseModel
             $is_online=1;
          }
          $list_chart[$k]['is_online'] = $is_online;
-         // 是否置顶聊天
-         $friend = isset($friendList[$v['user_id']]) ? $friendList[$v['user_id']] : [];
+         
          $is_top = 0;
          $is_notice = 1;
          if ($friend) {

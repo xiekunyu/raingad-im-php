@@ -6,7 +6,7 @@ namespace app;
 use think\App;
 use think\exception\ValidateException;
 use think\Validate;
-use think\facade\Cache;
+use app\manage\model\{Config};
 /**
  * 控制器基础类
  */
@@ -50,6 +50,10 @@ abstract class BaseController
 
     protected $uid = 0;
 
+    protected $globalConfig = [];
+
+    protected $chatSetting = [];
+
     /**
      * 构造方法
      * @access public
@@ -59,7 +63,6 @@ abstract class BaseController
     {
         $this->app     = $app;
         $this->request = $this->app->request;
-
         // 控制器初始化
         $this->initialize();
     }
@@ -69,6 +72,9 @@ abstract class BaseController
     {
        $this->userInfo=$this->request->userInfo;
        $this->uid=$this->userInfo['user_id'];
+       $config=Config::getSystemInfo();
+       $this->globalConfig = $config;
+       $this->chatSetting = $config['chatInfo'];
     }
 
     /**

@@ -74,6 +74,10 @@ class Group extends BaseController
       $uid=$this->userInfo['user_id'];
       $group_id = explode('-', $param['id'])[1];
       $user_ids=$param['user_ids'];
+      $groupUserCount=GroupUser::where(['group_id'=>$group_id,'status'=>1])->count();
+      if((count($user_ids) + $groupUserCount) > $this->chatSetting['groupUserMax']){
+         return warning("人数不能超过".$this->chatSetting['groupUserMax']."人！");
+      }
       $data=[];
       try{
          foreach($user_ids as $k=>$v){
@@ -122,6 +126,12 @@ class Group extends BaseController
          $param = $this->request->param();
          $uid=$this->userInfo['user_id'];
          $user_ids=$param['user_ids'];
+         if($this->chatSetting['groupChat']==0){
+            return warning("您没有创建群聊的权限！");
+         }
+         if(count($user_ids)>$this->chatSetting['groupUserMax']){
+            return warning("人数不能超过".$this->chatSetting['groupUserMax']."人！");
+         }
          if(count($user_ids)<=1){
             return warning("请至少选择两人！");
          }
@@ -174,7 +184,7 @@ class Group extends BaseController
                'is_group'=>1,
                'lastContent'=>$this->userInfo['realname'].' 创建了群聊',
                'lastSendTime'=>time()*1000,
-               'index'=>"群聊",
+               'index'=>"[2]群聊",
                'is_notice'=>1,
                'is_top'=>0,
                'setting'=>$setting,

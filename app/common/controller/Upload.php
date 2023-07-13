@@ -6,7 +6,8 @@
 namespace app\common\controller;
 
 use app\BaseController;
-use app\enterprise\model\{File as FileModel,Message,User};
+use app\enterprise\model\{File as FileModel,Message,User}; 
+use app\manage\model\{Config}; 
 use think\facade\Filesystem;
 use think\facade\Request;
 use think\File;
@@ -39,12 +40,18 @@ class Upload extends BaseController
         }else{
             $filePath = new File($path);
         }
-        
         $info=$this->getFileInfo($filePath,$path,$fileObj);
         if($info['ext']=='' && $message){
             $pathInfo        = pathinfo($message['fileName'] ?? '');
             $info['ext']     = $pathInfo['extension'];
             $info['name']    =$message['fileName'] ?? '';
+        }
+        $conf=Config::where(['name'=>'fileUpload'])->value('value');
+        if($conf['size']*1024*1024 < $info['size']){
+            return shutdown('文件大小超过限制');
+        }
+        if(!in_array($info['ext'],$conf['fileExt'])){
+            return shutdown('文件格式不支持');
         }
         $fileType=getFileType($info['ext']);
         if($fileType==2){

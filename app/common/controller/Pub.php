@@ -45,45 +45,52 @@ class Pub
        $post=input('post.');
        $userInfo=User::getUserInfo(['account'=>$post['username']]);
        if($userInfo==null){
-            return error('当前用户不存在！');
+            return warning('当前用户不存在！');
        }elseif($userInfo['status']==0){
-            return error('您的账号已被禁用');
+            return warning('您的账号已被禁用');
        }else{
            $password=password_hash_tp($post['password'],$userInfo['salt']);
-           if($password!=$userInfo['password']){
-                return error('密码错误！');
+           $code=$post['code'] ?? '';
+           if($code){
+                if($code!=Cache::get($post['username'])){
+                    return warning('验证码错误！');
+                }
+                Cache::delete($post['username']);
            }else{
-                $authToken=ssoTokenEncode($userInfo['user_id'],"raingadIm",300);
-                $userInfo['avatar']=avatarUrl($userInfo['avatar'],$userInfo['realname'],$userInfo['user_id']);
-                //    如果用户已经有设置
-                $setting=$userInfo['setting'] ?: '';
-                if($setting){
-                    $setting['hideMessageName']= $setting['hideMessageName']=='true' ? true : false;
-                    $setting['hideMessageTime']= $setting['hideMessageTime']=='true' ? true : false;
-                    $setting['avatarCricle']= $setting['avatarCricle']=='true' ? true : false;
-                    $setting['isVoice']= $setting['isVoice']=='true' ? true : false;
-                    $setting['sendKey']=(int)$setting['sendKey'];
-                    $userInfo['setting']=$setting;
+                if($password!=$userInfo['password']){
+                    return warning('密码错误！');
                 }
-                //如果登录信息中含有client——id则自动进行绑定
-                $client_id=$this->request->param('client_id');
-                if($client_id){
-                    $this->doBindUid($userInfo['user_id'],$client_id);
-                }
-                $update=[
-                   'last_login_time'=>time(),
-                   'last_login_ip'=>$this->request->ip(),
-                   'login_count'=>Db::raw('login_count+1')
-                ];
-                User::where('user_id',$userInfo['user_id'])->update($update);
-                $data=[
-                   'sessionId'=>Session::getId(),
-                   'authToken'=>$authToken,
-                   'userInfo'=>$userInfo
-                ];
-                Cache::set($authToken,$userInfo);
-                return success('登录成功！',$data);
            }
+           $authToken=ssoTokenEncode($userInfo['user_id'],"raingadIm",300);
+            $userInfo['avatar']=avatarUrl($userInfo['avatar'],$userInfo['realname'],$userInfo['user_id']);
+            //    如果用户已经有设置
+            $setting=$userInfo['setting'] ?: '';
+            if($setting){
+                $setting['hideMessageName']= $setting['hideMessageName']=='true' ? true : false;
+                $setting['hideMessageTime']= $setting['hideMessageTime']=='true' ? true : false;
+                $setting['avatarCricle']= $setting['avatarCricle']=='true' ? true : false;
+                $setting['isVoice']= $setting['isVoice']=='true' ? true : false;
+                $setting['sendKey']=(int)$setting['sendKey'];
+                $userInfo['setting']=$setting;
+            }
+            //如果登录信息中含有client——id则自动进行绑定
+            $client_id=$this->request->param('client_id');
+            if($client_id){
+                $this->doBindUid($userInfo['user_id'],$client_id);
+            }
+            $update=[
+                'last_login_time'=>time(),
+                'last_login_ip'=>$this->request->ip(),
+                'login_count'=>Db::raw('login_count+1')
+            ];
+            User::where('user_id',$userInfo['user_id'])->update($update);
+            $data=[
+                'sessionId'=>Session::getId(),
+                'authToken'=>$authToken,
+                'userInfo'=>$userInfo
+            ];
+            Cache::set($authToken,$userInfo);
+            return success('登录成功！',$data);
        }
    }
 
@@ -97,39 +104,59 @@ class Pub
     if($userInfo){
         wsSendMsg(0,'isOnline',['id'=>$userInfo['user_id'],'is_online'=>0]);
     }
-    return success('退出成功！');
-   }
-
-// 注册用户
-   public function register(){
-       try{
-        $data = $this->request->param();
-        $user=User::where('account',$data['account'])->find();
-        if($user){
-            return warning('账户已存在');
-        }
-        // 验证账号是否为手机号或者邮箱
-        if(!\utils\Regular::is_email($data['account']) && !\utils\Regular::is_phonenumber($data['account'])){
-            return warning('账户必须为手机号或者邮箱');
-        }
-        $salt=\utils\Str::random(4);
-        $data['password'] = password_hash_tp($data['password'],$salt);
-        $data['salt'] =$salt;
-        $data['name_py'] = pinyin_sentence($data['realname']);
-        $user=new User();
-        $user->save($data);
-        $data['user_id']=$user->user_id;
-        return success('添加成功', $data);
-    }catch (\Exception $e){
-        return error('添加失败');
+        return success('退出成功！');
     }
 
-   }
+    // 注册用户
+    public function register(){
+        try{
+            $data = $this->request->param();
+            $systemInfo=Config::getSystemInfo();
+            // 判断系统是否开启注册
+            if($systemInfo['sysInfo']['regtype']==2){
+                $inviteCode=$data['inviteCode'] ?? '';
+                if(!$inviteCode){
+                    return warning('当前系统已关闭注册功能！');
+                }
+                if(!Cache::get($inviteCode)){
+                    return warning('邀请码已失效！');
+                }
+            }
+            $user=User::where('account',$data['username'])->find();
+            if($user){
+                return warning('账户已存在');
+            }
+            $code=$data['code'] ?? '';
+            if($code){
+                if($code!=Cache::get($data['username'])){
+                    return warning('验证码错误！');
+                }
+                Cache::delete($data['account']);
+            }else{
+                return warning('验证码不能为空！');
+            }
+            // 验证账号是否为手机号或者邮箱
+            if(!\utils\Regular::is_email($data['username']) && !\utils\Regular::is_phonenumber($data['username'])){
+                return warning('账户必须为手机号或者邮箱');
+            }
+            $salt=\utils\Str::random(4);
+            $data['password'] = password_hash_tp($data['password'],$salt);
+            $data['salt'] =$salt;
+            $data['name_py'] = pinyin_sentence($data['realname']);
+            $user=new User();
+            $user->save($data);
+            $data['user_id']=$user->user_id;
+            return success('添加成功', $data);
+        }catch (\Exception $e){
+            return error($e->getMessage());
+        }
 
-//    头像生成
-   public function avatar(){
-    circleAvatar(input('str'),input('s')?:80,input('uid'));die;
-   }
+    }
+
+    //头像生成
+    public function avatar(){
+        circleAvatar(input('str'),input('s')?:80,input('uid'));die;
+    }
 
     /**
      * 将用户UId绑定到消息推送服务中
@@ -189,6 +216,7 @@ class Pub
     // 发送验证码
     public function sendCode(){
         $account=$this->request->param('account');
+        if(Cache::get($account.'_time')) return warning('请一分钟后再试！');
         if(!$account){
             return warning('请输入账户');
         }
@@ -207,12 +235,12 @@ class Pub
         }
         $code=rand(100000,999999);
         Cache::set($account,$code,300);
+        Cache::set($account.'_time',$code,60);
         $conf=Config::where(['name'=>'smtp'])->value('value');
         $conf['temp']='code';
         $mail=new \mail\Mail($conf);
         $mail->sendEmail([$account],$text,$code);
         return success('发送成功');
-        
     }
     
 }

@@ -8,7 +8,7 @@
 -- 表的结构 `yu_config`
 --
 
-CREATE TABLE `yu_config` (
+CREATE TABLE IF NOT EXISTS `yu_config` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
   `name` varchar(128) DEFAULT NULL,
   `value` json DEFAULT NULL,
@@ -52,6 +52,7 @@ CREATE TABLE IF NOT EXISTS `yu_file` (
 CREATE TABLE IF NOT EXISTS `yu_friend` (
   `friend_id` int(11) NOT NULL AUTO_INCREMENT,
   `friend_user_id` varchar(32) DEFAULT NULL COMMENT '好友ID',
+  `nickname` VARCHAR(255) NULL DEFAULT NULL COMMENT '好友备注',
   `is_invite` tinyint(1) NOT NULL DEFAULT '0' COMMENT '是否为邀请方',
   `is_top` tinyint(1) NOT NULL DEFAULT '0' COMMENT '是否置顶',
   `is_notice` tinyint(1) NOT NULL DEFAULT '1' COMMENT '是否消息提醒',
@@ -59,6 +60,7 @@ CREATE TABLE IF NOT EXISTS `yu_friend` (
   `update_time` int(11) NOT NULL DEFAULT '0',
   `create_time` int(11) NOT NULL DEFAULT '0',
   `delete_time` int(11) NOT NULL DEFAULT '0',
+  `remark` VARCHAR(255) NULL DEFAULT NULL COMMENT '申请备注',
   `status` tinyint(1) NOT NULL DEFAULT '1',
   PRIMARY KEY (`friend_id`)
 ) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8mb4 COMMENT='联系人置顶表';
