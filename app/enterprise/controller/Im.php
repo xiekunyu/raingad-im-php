@@ -18,16 +18,8 @@ class Im extends BaseController
     {
         $data = User::getUserList([['status', '=', 1], ['user_id', '<>', $this->userInfo['user_id']]], $this->userInfo['user_id']);
         $count=Friend::where(['status'=>2,'friend_user_id'=>$this->uid])->count();
-        $time=Friend::where(['status'=>2,'friend_user_id'=>$this->uid])->order('create_time desc')->value('create_time');
-        return success('', $data,$count,strtotime($time)*1000);
-    }
-
-    protected function checkAuth($is_group,$toContactId=0)
-    {
-        $chatSetting=$this->chatSetting;
-        if($is_group==0 && $chatSetting['simpleChat']==0){
-            return shutdown('目前禁止用户私聊！',400);
-        }
+        $time=Friend::where(['friend_user_id'=>$this->uid,'is_invite'=>1])->order('create_time desc')->value('create_time');
+        return success('', $data,$count,$time*1000);
     }
 
 
@@ -45,7 +37,7 @@ class Im extends BaseController
         if($is_group==0 && $this->globalConfig['sysInfo']['runMode']==2){
             $friend=Friend::where(['friend_user_id'=>$this->uid,'create_user'=>$param['toContactId']])->find();
             if(!$friend){
-                return warning('您你在TA的好友列表，不能发消息！');
+                return warning('您不在TA的好友列表，不能发消息！');
             }
             $otherFriend=Friend::where(['friend_user_id'=>$param['toContactId'],'create_user'=>$this->uid])->find();
             if(!$otherFriend){
@@ -167,7 +159,7 @@ class Im extends BaseController
                 $data[] = [
                     'msg_id' => $v['msg_id'],
                     'id' => $v['id'],
-                    'status' => "successd",
+                    'status' => "succeed",
                     'type' => $v['type'],
                     'sendTime' => $v['create_time'] * 1000,
                     'content' => $content,
@@ -416,7 +408,7 @@ class Im extends BaseController
             'toContactId'=>$toContactId,
             'content'=>$content,
             'type'=>'webrtc',
-            'status'=>'successd',
+            'status'=>'succeed',
             'fromUser'=>$this->userInfo,
             'extends'=>[
                 'type'=>$type,    //通话类型，1视频，0语音。

@@ -16,6 +16,7 @@ class BaseModel extends Model
     protected        $error             = '';
     protected static $db_prefix         = 'yu_';
     protected static $userInfo          = null;
+    protected static $uid          = null;
 
 
     protected static function init()
@@ -27,7 +28,8 @@ class BaseModel extends Model
     // 加载模型自动处理
     public static function initModel()
     {
-
+        self::$userInfo=request()->userInfo;
+        self::$uid=request()->userInfo['user_id'];
     }
 
     /**

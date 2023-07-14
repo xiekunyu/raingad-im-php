@@ -31,6 +31,7 @@ class Friend extends BaseController
             foreach ($data as $k => $v) {
                 $data[$k]['create_user_info'] = $userList[$v['create_user']] ?? [];
                 $data[$k]['user_id_info'] = $userList[$v['friend_user_id']] ?? [];
+                $data[$k]['is_group'] = 0;
             }
         }
         return success('', $data);
@@ -65,8 +66,23 @@ class Friend extends BaseController
             'is_invite'=>1 // 是否为发起方
         ];
         $model->save($data);
+        $msg=[
+            'fromUser'=>[
+                'id'=>'system',
+                'nickname'=>'新朋友',
+                'avatar'=>'',
+            ],
+            'toContactId'=>'system',
+            'id'=>uniqid(),
+            'content'=>"添加您为好友",
+            'status'=>'succeed',
+            'sendTime'=>time()*1000,
+            'type'=>'event',
+            'fileSize'=>0,
+            'fileName'=>'',
+        ];
         // 发送好友申请
-        wsSendMsg($user_id,'friendApply',[]);
+        wsSendMsg($user_id,'simple',$msg);
         return success('添加成功');
     }
 
@@ -96,16 +112,35 @@ class Friend extends BaseController
                 $data['status']=1;
                 FriendModel::create($data);
             }
+            // 将对方的信息发送给我，把我的信息发送对方
+            $user=User::setContact($friend->create_user);
+            if($user){
+                wsSendMsg($this->uid,'appendContact',$user);
+            }
+            $myInfo=User::setContact($this->uid);
+            if($myInfo){
+                wsSendMsg($friend->create_user,'appendContact',$myInfo);
+            }
+            
         }
         return success('操作成功');
     }
+
 
     // 删除好友
     public function del()
     {
         $param = $this->request->param();
-        $model = new FriendModel();
-        $model->where(['friend_id'=>$param['friend_id']])->delete();
+        $map=['friend_user_id'=>$param['id'],'create_user'=>$this->uid];
+        $friend=FriendModel::where($map)->find();
+        if(!$friend){
+            return warning('好友不存在');
+        }
+        // 需要删除双方的好友关系
+        FriendModel::where($map)->delete();
+        FriendModel::where(['friend_user_id'=>$this->uid,'create_user'=>$param['id']])->delete();
+        // 性质和删除群聊一样
+        wsSendMsg($param['id'],'removeGroup',['group_id'=>$this->uid]);
         return success('删除成功');
     }
 

@@ -55,7 +55,7 @@ class User extends BaseModel
       if($config['sysInfo']['runMode']==1){
          $list = self::where($map)->field($field)->select()->toArray();
       }else{
-         $friendList = Friend::getFriend(['create_user' => $user_id]);
+         $friendList = Friend::getFriend(['create_user' => $user_id,'status'=>1]);
          $userList = array_keys($friendList);
          $list = self::where($map)->where('user_id', 'in', $userList)->field($field)->select()->toArray();
       }
@@ -259,5 +259,27 @@ class User extends BaseModel
          ];
       }
       return $data;
+   }
+
+   // 将用户信息转换成联系人信息
+   public static function setContact($user_id){
+      $user=self::where('user_id',$user_id)->field(self::$defaultField)->find();
+      if($user){
+         $user['avatar']=avatarUrl($user['avatar'],$user['realname'],$user['user_id']);
+         $user['id']=$user['user_id'];
+         $user['displayName']=$user['realname'];
+         $user['lastContent']="你们已经成功添加为好友，现在开始聊天吧！";
+         $user['unread']=0;
+         $user['lastSendTime']=time() * 1000;
+         $user['is_group']=0;
+         $user['is_top']=0;
+         $user['is_notice']=1;
+         $user['type']='event';
+         $user['index']=getFirstChart($user['realname']);
+         return $user;
+      }else{
+         return false;
+      }
+
    }
 }

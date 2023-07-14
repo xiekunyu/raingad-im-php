@@ -80,6 +80,7 @@ CREATE TABLE IF NOT EXISTS `yu_group` (
   `create_user` int(11) NOT NULL DEFAULT '0' COMMENT '创建人',
   `create_time` int(11) NOT NULL DEFAULT '0' COMMENT '创建时间',
   `owner_id` int(11) NOT NULL DEFAULT '0' COMMENT '拥有者',
+  `is_public` TINYINT(1) NOT NULL DEFAULT '0' COMMENT '是否公开',
   `notice` text COMMENT '公告',
   `setting` text COMMENT '设置',
   `status` tinyint(1) NOT NULL DEFAULT '1' COMMENT '状态',
