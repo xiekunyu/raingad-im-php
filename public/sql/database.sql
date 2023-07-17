@@ -20,6 +20,13 @@ CREATE TABLE IF NOT EXISTS `yu_config` (
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8 COMMENT='配置表';
 
+INSERT INTO `yu_config` (`id`, `name`, `value`, `create_user`, `update_time`, `create_time`, `remark`, `status`) VALUES
+(1, 'sysInfo', '{\"logo\": \"https://im.raingad.com/storage/image/2023-07-05/64a524209c486.png\", \"name\": \"raingad-IM\", \"state\": \"1\", \"regtype\": \"2\", \"runMode\": \"1\", \"closeTips\": \"系统升级维护中，请稍候再试！\", \"description\": \"一款基于vue2.0的即时通信系统\"}', 0, 1688462862, 1688462862, NULL, 1),
+(2, 'chatInfo', '{\"stun\": \"\", \"online\": \"1\", \"webrtc\": \"1\", \"msgClear\": \"0\", \"groupChat\": \"1\", \"simpleChat\": \"1\", \"msgClearDay\": \"0\", \"groupUserMax\": \"0\"}', 0, 1688463300, 1688463300, NULL, 1),
+(3, 'smtp', '{\"addr\": \"xiekunyu@lcoce.com\", \"host\": \"smtp.exmail.qq.com\", \"pass\": \"osQ5NJq4MkzMD\", \"port\": \"465\", \"sign\": \"Raingad-IM\"}', 0, 1688464072, 1688464072, NULL, 1),
+(4, 'fileUpload', '{\"disk\": \"local\", \"size\": \"50\", \"qiniu\": {\"url\": \"\", \"bucket\": \"\", \"accessKey\": \"\", \"secretKey\": \"\"}, \"aliyun\": {\"url\": \"\", \"bucket\": \"\", \"accessId\": \"\", \"endpoint\": \"\", \"accessSecret\": \"\"}, \"qcloud\": {\"cdn\": \"\", \"appId\": \"\", \"bucket\": \"\", \"region\": \"\", \"secretId\": \"\", \"secretKey\": \"\"}, \"fileExt\": [\"jpg\", \"jpeg\", \"png\", \"bmp\", \"gif\", \"pdf\", \"mp3\", \"wav\", \"wmv\", \"amr\", \"mp4\", \"3gp\", \"avi\", \"m2v\", \"mkv\", \"mov\", \"webp\", \"ppt\", \"pptx\", \"doc\", \"docx\", \"xls\", \"xlsx\", \"txt\", \"md\"], \"preview\": \"\"}', 0, 1688464130, 1688464130, NULL, 1);
+
+
 --
 -- 表的结构 `yu_file`
 --
