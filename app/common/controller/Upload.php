@@ -104,13 +104,13 @@ class Upload extends BaseController
             if(in_array($fileType,[2,3,4])){
                 $message['type']=$filecate;
             }
+            $newFile=new FileModel;
             // 录音就不保存了
             if($message['type']!='voice'){
-                $newFile=new FileModel;
                 $newFile->save($ret);
             }
             $message['content']=$ret['src'];
-            $message['file_id']=$newFile->file_id;
+            $message['file_id']=$newFile->file_id ?? 0;
             $message['file_cate']=$fileType;
             $message['file_size']=$info['size'];
             $message['file_name']= $name.'.'.$info['ext'];
