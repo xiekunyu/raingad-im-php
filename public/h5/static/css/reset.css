@@ -1,0 +1,275 @@
+.fr {
+    float: right;
+}
+
+.fl {
+    float: left;
+}
+
+/*文字单行溢出省略号
+	Name:			style_text-overflow
+	Example:		class="text-overflow"
+*/
+.text-overflow{overflow:hidden !important;text-overflow:ellipsis;white-space:nowrap !important}
+/*线条
+	Name:			style_line
+	Example:		class="line"
+*/
+/* .line{font-size: 0rpx; line-height: 0rpx; border-top: solid 2rpx #eee; float: none} */
+/*外边距
+	Name:			style_margin
+	Example:		class="mt-5|mt-10..."
+	Explain:		.mt表示上边距|.mb表示下边距|.ml表示左边距|.mr表示右边距
+*/
+.m-5{margin:10rpx}.m-10{margin:20rpx}.m-15{margin:30rpx}.m-20{margin:40rpx}.m-25{margin:50rpx}.m-30{margin:60rpx}.m-35{margin:70rpx}.m-40{margin:80rpx}.m-50{margin:100rpx}
+.mt-5{margin-top:10rpx}.mt-10{margin-top:20rpx}.mt-15{margin-top:30rpx}.mt-20{margin-top:40rpx}.mt-25{margin-top:50rpx}.mt-30{margin-top:60rpx}.mt-35{margin-top:70rpx}.mt-40{margin-top:80rpx}.mt-50{margin-top:100rpx}
+.mb-5{margin-bottom:10rpx}.mb-10{margin-bottom:20rpx}.mb-15{margin-bottom:30rpx}.mb-20{margin-bottom:40rpx}.mb-30{margin-bottom:60rpx}.mb-40{margin-bottom:80rpx}.mb-50{margin-bottom:100rpx}
+.ml-5{margin-left:10rpx}.ml-10{margin-left:20rpx}.ml-15{margin-left:30rpx}.ml-20{margin-left:40rpx}.ml-30{margin-left:60rpx}.ml-40{margin-left:80rpx}.ml-50{margin-left:100rpx}
+.mr-5{margin-right:10rpx}.mr-10{margin-right:20rpx}.mr-15{margin-right:30rpx}.mr-20{margin-right:40rpx}.mr-30{margin-right:60rpx}.mr-40{margin-right:80rpx}.mr-50{margin-right:100rpx} 
+/*内填充
+	Name:			style_padding
+	Example:		class="pt-5|pt-10|……"
+	Explain:		.pt表示上填充|.pb表示下填充|.pl表示左填充|.pr表示右填充
+*/
+.pt-5{padding-top:10rpx}.pt-10{padding-top:20rpx}.pt-15{padding-top:30rpx}.pt-20{padding-top:40rpx}.pt-30{padding-top:60rpx}.pt-40{padding-top:80rpx}
+.pb-5{padding-bottom:10rpx}.pb-10{padding-bottom:20rpx}.pb-15{padding-bottom:30rpx}.pb-20{padding-bottom:40rpx}.pb-30{padding-bottom:60rpx}.pb-40{padding-bottom:80rpx}
+.pl-5{padding-left:10rpx}.pl-10{padding-left:20rpx}.pl-15{padding-left:30rpx}.pl-20{padding-left:40rpx}.pl-30{padding-left:60rpx}.pl-40{padding-left:80rpx}
+.pr-5{padding-right:10rpx}.pr-10{padding-right:20rpx}.pr-15{padding-right:30rpx}.pr-20{padding-right:40rpx}.pr-30{padding-right:60rpx}.pr-40{padding-right:80rpx}
+.pd-5{padding:10rpx}.pd-10{padding:20rpx}.pd-15{padding:30rpx}.pd-20{padding:40rpx}.pd-30{padding:60rpx}.pd-40{padding:80rpx}
+
+/* 边框，css3圆角
+	Name:			style-border
+	Example:		class="bk_gray radius"
+	Explain:		.bk_gray 边框|radius 圆角|round 椭圆 | circle 圆形
+*/
+.radius-4{border-radius:8rpx}.radius-6{ border-radius:12rpx}.radius-8{ border-radius:16rpx}.radius-10{ border-radius:20rpx}.radius-12{ border-radius:24rpx}.radius-14{ border-radius:28rpx}.radius-16{ border-radius:32rpx}.radius-18{ border-radius:36rpx}.radius-20{ border-radius:40rpx}.radius-round{border-radius:50%; overflow:hidden}
+
+/*css3阴影
+	Name:			style_shadow
+	Example:		class="box_shadow|text-shadow"
+	Explain:		box_shadow 块级元素阴影，全局样式，可用在表格，文本框，文本域，div等块级元素上。
+					text-shadow 文字阴影
+*/
+.box-shadow{-webkit-box-shadow:0 4rpx 8rpx rgba(0,0,0,0.1);box-shadow:0 4rpx 8rpx rgba(0,0,0,0.1)}
+.text-shadow{-webkit-text-shadow:0 0 4rpx rgba(0,0,0,0.2);text-shadow:0 0 4rpx rgba(0,0,0,0.2)}
+/*行内分割竖线
+	Name:			style_pipe
+	Example:		<span class="pipe">|</span>
+*/
+.pipe{margin:0 10rpx;color:#CCC;font-size:20rpx!important}
+/*文字尺寸
+	Name:			style_font-size
+	Example:		class="f-12|f-14|f-16|f-18|f-20|f-24|f-26|f-28|f-30"
+	Explain:		12rpx字体|14rpx字体|16rpx字体|18rpx字体|20rpx字体|24rpx字体|26rpx字体|28rpx字体|30rpx字体
+*/
+.f-10{font-size:20rpx}.f-11{font-size:22rpx}.f-12{font-size:24rpx}.f-14{font-size:28rpx}.f-16{font-size:32rpx}.f-18{font-size:36rpx}.f-20{font-size:40rpx}.f-24{font-size:48rpx}.f-26{font-size:52rpx}.f-28{font-size:56rpx}.f-30{font-size:60rpx}.f-32{font-size:64rpx}.f-36{font-size:72rpx}.f-40{font-size:80rpx}
+
+/*3.1.14 文字行距
+	Name:			mod_line-height
+	Example:		class="lh-16|lh-18|lh-20|lh-22|lh-24|lh-26|lh-28|lh-30"
+	Explain:		16rpx行高|18rpx行高|20rpx行高|22rpx行高|24rpx行高|26rpx行高|30rpx行高
+*/
+.lh-16{line-height:32rpx}.lh-18{line-height:36rpx}.lh-20{line-height:40rpx}.lh-22{line-height:44rpx}.lh-24{line-height:48rpx}.lh-26{line-height:52rpx}.lh-28{line-height:56rpx}.lh-30{line-height:60rpx}.lh-10x{line-height:1.0}.lh-12x{line-height:1.2}.lh-15x{line-height:1.5}.lh-18x{line-height:1.8}.lh-20x{line-height:2.0}.lh-30x{line-height:3.0}
+
+/*3.1.15 文字颜色
+	Name:			style_color
+	Example:		class="c-primary|c-sub|c-success|c-danger|c-warning|c-333|c-666|c-999|c-red|c-green|c-blue|c-white|c-black|c-orange"
+	Explain:		主要颜色|次主色|强调色—成功|强调色—危险|强调色—警告色|强调色—错误色|次主色—浅黑|辅助色—灰色|标准色—红色|标准色—绿色|标准色—蓝色|标准色—白色|标准色—黑色|标准色—橙色
+*/
+
+/*主要颜色*/
+.c-primary,.c-primary a,a.c-primary{color:#175CFF}
+.c-primary a:hover,a.c-primary:hover{ color:#175CFF}
+
+/*次主色*/
+.c-secondary,.c-secondary a,a.c-secondary{color:#409EFF}
+.c-secondary a:hover,a.c-secondary:hover{ color:#409EFF}
+
+/*强调色—成功*/
+.c-success,.c-success a,a.c-success{color:#67C23A}
+.c-success a:hover,a.c-success:hover{ color:#67C23A}
+
+/*强调色—危险*/
+.c-danger,.c-danger a,a.c-danger{color:#F56C6C}
+.c-danger a:hover,a.c-danger:hover{ color:#F56C6C}
+
+/*强调色—警告*/
+.c-warning,.c-warning a,a.c-warning{color:#FFAA00}
+.c-warning a:hover,a.c-warning:hover{ color:#FFAA00}
+
+
+/*辅助色—浅黑*/
+.c-333,.c-333 a,a.c-333{color:#252438}
+.c-333 a:hover,a.c-333:hover{ color:#252438}
+
+/*辅助色—灰色*/
+.c-666,.c-666 a,a.c-666{color:#606066}
+.c-666 a:hover,a.c-666:hover{ color:#606066}
+.c-999,.c-999 a,a.c-999{color:#909199}
+.c-999 a:hover,a.c-999:hover{color:#909199}
+
+.c-remark,.c-remark a,a.c-remark{color:#C0C2CC}
+.c-remark a:hover,a.c-remark:hover{color:#C0C2CC}
+
+/*标准色—红色*/
+.c-red,.c-red a,a.c-red{color:red}
+.c-red a:hover,a.c-red:hover{ color:red}
+/*标准色—绿色*/
+.c-green,.c-green a,a.c-green{color:green}
+.c-red a:hover,a.c-red:hover{color:green}
+/*标准色—蓝色*/
+.c-blue,.c-blue a,a.c-blue{color:blue}
+.c-blue a:hover,a.c-blue:hover{color:blue}
+/*标准色—白色*/
+.c-white,.c-white a,a.c-white{color: white !important;}
+.c-white a:hover,a.c-white:hover{color:white}
+/*标准色—黑色*/
+.c-black,.c-black a{color:black}
+.c-black a:hover,a.c-black:hover{color:black}
+/*标准色—橙色*/
+.c-orange,.c-orange a,a.c-orange{color:orange}
+.c-orange a:hover,a.c-orange:hover{color:orange}
+
+/* 渐变色 */
+/* 翠柳 */
+.linear-green {background: linear-gradient(45deg, #87DE0E 0%, #64BD38 100%) !important;}
+/* 麦黄 */
+.linear-yellow {background: linear-gradient(45deg, #FBB437 0%, #FDD36D 100%) !important;}
+/* 靛青 */
+.linear-blue {background: linear-gradient(45deg, #3485FF 0%, #1C68FF 100%) !important;}
+/* 魅红 */
+.linear-red {background: linear-gradient(45deg, #F43F3B 0%, #EC008C 100%) !important;}
+/* 鎏金 */
+.linear-orange {background: linear-gradient(45deg, #Ff9700 0%, #ed1c24 100%) !important;}
+/* 惑紫 */
+.linear-purple {background: linear-gradient(45deg, #9000ff 0%, #5e00ff 100%) !important;}
+/* 霞彩 */
+.linear-pink {background: linear-gradient(45deg, #EC008C 0%, #6739b6 100%) !important;}
+
+
+/* flex布局 */
+
+.im-flex {
+    display: flex;
+}
+
+.im-border-box {
+    box-sizing: border-box;
+}
+
+.im-rows {
+    flex-direction: row;
+}
+
+.im-rows-reverse{
+	flex-direction: row-reverse !important;
+}
+
+.im-columns {
+    flex-direction: column;
+}
+
+.im-wrap {
+    flex-direction: row;
+    flex-wrap: wrap;
+}
+
+.im-nowrap {
+    flex-direction: row;
+    flex-wrap: nowrap;
+}
+
+.im-columns-reverse{
+	flex-direction:column-reverse !important;
+}
+
+
+.im-space-around {
+    justify-content: space-around;
+}
+
+.im-space-between {
+    justify-content: space-between;
+}
+
+.im-justify-content-start {
+    justify-content: flex-start;
+}
+
+.im-justify-content-center {
+    justify-content: center;
+}
+
+.im-justify-content-end {
+    justify-content: flex-end;
+}
+
+.im-align-items-start {
+    align-items: flex-start;
+}
+
+.im-align-items-center {
+    align-items: center;
+}
+
+.im-align-items-end {
+    align-items: flex-end;
+}
+
+.im-align-content-start {
+    align-content: flex-start;
+}
+
+.im-align-content-center {
+    align-content: center;
+}
+
+.im-align-content-end {
+    align-content: flex-end;
+}
+
+.im-flex1 {
+    flex: 1;
+}
+
+.rotate45{transform:rotate(45deg);}
+.rotate90{transform:rotate(90deg);}
+.rotate135{transform:rotate(135deg);}
+.rotate180{transform:rotate(180deg);}
+.rotate225{transform:rotate(225deg);}
+.rotate270{transform:rotate(270deg);}
+.rotate315{transform:rotate(315deg);}
+.rotate360{transform:rotate(360deg);}
+
+/* 分割线 */
+ .parting-line-5{
+	 padding:5rpx;
+	 background: #f5f5f5;
+ }
+ .parting-line-10{
+ 	 padding:10rpx;
+	 background: #f5f5f5;
+ }
+ .parting-line-15{
+ 	 padding:15rpx;
+ 	 background: #f5f5f5;
+ }
+ .parting-line-20{
+ 	 padding:20rpx;
+ 	 background: #f5f5f5;
+ }
+ /* colorUI样式重写 */
+ .cu-list.menu-avatar>.cu-item:after, .cu-list.menu>.cu-item:after {
+     position: absolute;
+     top: 0;
+     left: 0;
+     box-sizing: border-box;
+     width: 200%;
+	 height:1px;
+     border-bottom: 1px solid #eee;
+     border-radius: inherit;
+     content: " ";
+     transform: scale(.5);
+     transform-origin: 0 0;
+     pointer-events: none;
+ }
