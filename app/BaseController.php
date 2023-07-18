@@ -70,11 +70,14 @@ abstract class BaseController
     // 初始化
     protected function initialize()
     {
-       $this->userInfo=$this->request->userInfo;
-       $this->uid=$this->userInfo['user_id'];
-       $config=Config::getSystemInfo();
-       $this->globalConfig = $config;
-       $this->chatSetting = $config['chatInfo'];
+        $this->userInfo=$this->request->userInfo;
+        $this->uid=$this->userInfo['user_id'];
+        $config=Config::getSystemInfo();
+        if($config){
+            $this->globalConfig = $config;
+            $this->chatSetting = $config['chatInfo'] ?? [];
+        }
+       
     }
 
     /**

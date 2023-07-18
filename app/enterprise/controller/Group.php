@@ -129,7 +129,7 @@ class Group extends BaseController
          if($this->chatSetting['groupChat']==0){
             return warning("您没有创建群聊的权限！");
          }
-         if(count($user_ids)>$this->chatSetting['groupUserMax']){
+         if(count($user_ids)>$this->chatSetting['groupUserMax'] && $this->chatSetting['groupUserMax']!=0){
             return warning("人数不能超过".$this->chatSetting['groupUserMax']."人！");
          }
          if(count($user_ids)<=1){
