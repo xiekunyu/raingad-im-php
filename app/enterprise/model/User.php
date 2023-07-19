@@ -20,7 +20,7 @@ class User extends BaseModel
 
    protected $pk = "user_id";
    
-   protected static $defaultField = 'user_id,realname,account,avatar,name_py,email';
+   public static $defaultField = 'user_id,realname,account,avatar,name_py,email';
 
    public static $user_id = '';
 

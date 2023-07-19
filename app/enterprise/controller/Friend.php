@@ -34,7 +34,7 @@ class Friend extends BaseController
                 $data[$k]['is_group'] = 0;
             }
         }
-        return success('', $data);
+        return success('', $data,$list->total(),$list->currentPage());
     }
 
     // 添加好友
@@ -74,6 +74,7 @@ class Friend extends BaseController
             ],
             'toContactId'=>'system',
             'id'=>uniqid(),
+            'is_group'=>2,
             'content'=>"添加您为好友",
             'status'=>'succeed',
             'sendTime'=>time()*1000,

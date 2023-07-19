@@ -80,10 +80,13 @@ class Im extends BaseController
             return success('',[]);
         }
         $map=['status'=>1,'account'=>$keywords];
-        $list=User::where($map)->select()->toArray();
+        $list=User::where($map)->field(User::$defaultField)->where([['account','<>',$this->userInfo['account']]])->select()->toArray();
         if($list){
+            $ids=array_column($list,'user_id');
+            $friendList=Friend::getFriend([['create_user','=',$this->uid],['friend_user_id','in',$ids]]);
             foreach($list as $k=>$v){
                 $list[$k]['avatar']=avatarUrl($v['avatar'],$v['realname'],$v['user_id'],120);
+                $list[$k]['friend']=$friendList[$v['user_id']] ?? '';
             }
         }
         return success('', $list);
