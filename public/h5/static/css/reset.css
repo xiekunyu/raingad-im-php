@@ -279,3 +279,27 @@
  	height: 72upx;
  	font-size: 1.5em;
  }
+ 
+ .cu-list>.cu-item.move-cur.first {
+ 	transform: translateX(-150upx) !important;
+ }
+ 
+ .cu-list>.cu-item .move.first {
+ 	width: 150upx !important;
+ }
+ 
+ .cu-list>.cu-item.move-cur.second {
+ 	transform: translateX(-300upx) !important;
+ }
+ 
+ .cu-list>.cu-item .move.second {
+ 	width: 300upx !important;
+ }
+ 
+ .cu-list>.cu-item.move-cur.third {
+ 	transform: translateX(-450upx) !important;
+ }
+ 
+ .cu-list>.cu-item .move.third {
+ 	width: 450upx !important;
+ }

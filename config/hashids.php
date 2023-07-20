@@ -11,6 +11,6 @@
 return [
     // Hashids 的配置项
     'length'   => 12, // 加密字符串长度
-    'salt'     => 'lvzhe', // 加密盐值
+    'salt'     => 'raingads', // 加密盐值
     'alphabet' => '', // 字符仓库,不填写默认为扩展里的字符仓库
 ];

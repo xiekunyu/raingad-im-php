@@ -5,7 +5,7 @@ namespace app\enterprise\controller;
 use app\BaseController;
 
 use app\enterprise\model\{File,User,Message};
-
+use think\facade\View;
 class Files extends BaseController
 {
     // 文件列表
@@ -37,6 +37,7 @@ class Files extends BaseController
                     $data[$k]['name'] = $v['name'].'.'.$v['ext'];
                     $data[$k]['msg_type'] = getFileType($v['ext'],true);
                     $data[$k]['user_id_info'] = $userList[$v['user_id']] ?? [];
+                    $data[$k]['download'] = request()->domain().'/filedown/'.encryptIds($v['file_id']);
                 }
                 
             }
@@ -81,6 +82,7 @@ class Files extends BaseController
                     $ext=explode('.',$v['content']);
                     $data[$k]['ext'] = end($ext);
                     $data[$k]['user_id_info'] = $userList[$v['from_user']] ?? [];
+                    $data[$k]['download'] = request()->domain().'/filedown/'.encryptIds($v['file_id']);
                 }
             }
         }

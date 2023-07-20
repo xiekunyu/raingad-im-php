@@ -11,3 +11,4 @@
 use think\facade\Route;
 Route::rule('avatar/:str/:s/:uid','index/avatar');
 Route::rule('view','index/index/view');
+Route::rule('filedown/:file_id','index/download');
