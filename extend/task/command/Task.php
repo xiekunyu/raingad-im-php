@@ -43,7 +43,7 @@ class Task extends Command
         $task->setDaemon(!Helper::isWin());
 
         // 设置项目名称 获取运行目录文件夹名称
-        $task->setPrefix(basename($rootPath) . '_task');
+        $task->setPrefix('easy_task');
 
         // 设置子进程挂掉自动重启
         $task->setAutoRecover(true);
