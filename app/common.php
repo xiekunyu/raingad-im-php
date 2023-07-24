@@ -515,7 +515,7 @@ function previewUrl($url){
     }elseif(in_array($ext,$doc) && $previewConf['yzdcs']){
         $preview=$previewConf['yzdcs'].'?k='.$previewConf['keycode'].'&url='.$url;
     }else{
-        $preview=request()->domain()."view.html?src=".$url;
+        $preview=rtrim(request()->domain(),'/')."/view.html?src=".$url;
     }
     return $preview;
 }
