@@ -75,7 +75,7 @@ class Group extends BaseController
       $group_id = explode('-', $param['id'])[1];
       $user_ids=$param['user_ids'];
       $groupUserCount=GroupUser::where(['group_id'=>$group_id,'status'=>1])->count();
-      if((count($user_ids) + $groupUserCount) > $this->chatSetting['groupUserMax']){
+      if((count($user_ids) + $groupUserCount) > $this->chatSetting['groupUserMax'] && $this->chatSetting['groupUserMax']!=0){
          return warning("人数不能超过".$this->chatSetting['groupUserMax']."人！");
       }
       $data=[];

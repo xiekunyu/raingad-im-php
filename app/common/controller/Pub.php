@@ -43,7 +43,7 @@ class Pub
 
    public function login(){
        $post=input('post.');
-       $userInfo=User::getUserInfo(['account'=>$post['username']]);
+       $userInfo=User::getUserInfo(['account'=>$post['account']]);
        if($userInfo==null){
             return warning('当前用户不存在！');
        }elseif($userInfo['status']==0){
@@ -52,10 +52,10 @@ class Pub
            $password=password_hash_tp($post['password'],$userInfo['salt']);
            $code=$post['code'] ?? '';
            if($code){
-                if($code!=Cache::get($post['username'])){
+                if($code!=Cache::get($post['account'])){
                     return warning('验证码错误！');
                 }
-                Cache::delete($post['username']);
+                Cache::delete($post['account']);
            }else{
                 if($password!=$userInfo['password']){
                     return warning('密码错误！');
@@ -122,13 +122,13 @@ class Pub
                     return warning('邀请码已失效！');
                 }
             }
-            $user=User::where('account',$data['username'])->find();
+            $user=User::where('account',$data['account'])->find();
             if($user){
                 return warning('账户已存在');
             }
             $code=$data['code'] ?? '';
             if($code){
-                if($code!=Cache::get($data['username'])){
+                if($code!=Cache::get($data['account'])){
                     return warning('验证码错误！');
                 }
                 Cache::delete($data['account']);
@@ -136,7 +136,7 @@ class Pub
                 return warning('验证码不能为空！');
             }
             // 验证账号是否为手机号或者邮箱
-            if(!\utils\Regular::is_email($data['username']) && !\utils\Regular::is_phonenumber($data['username'])){
+            if(!\utils\Regular::is_email($data['account']) && !\utils\Regular::is_phonenumber($data['account'])){
                 return warning('账户必须为手机号或者邮箱');
             }
             $salt=\utils\Str::random(4);
