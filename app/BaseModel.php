@@ -28,8 +28,8 @@ class BaseModel extends Model
     // 加载模型自动处理
     public static function initModel()
     {
-        self::$userInfo=request()->userInfo;
-        self::$uid=request()->userInfo['user_id'];
+        self::$userInfo=request()->userInfo ?? null;
+        self::$uid=request()->userInfo['user_id'] ?? null;
     }
 
     /**

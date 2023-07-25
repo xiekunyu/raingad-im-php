@@ -22,21 +22,9 @@ class User extends BaseModel
    
    public static $defaultField = 'user_id,realname,account,avatar,name_py,email';
 
-   public static $user_id = '';
-
-   public static $user_info = [];
-
    protected $json = ['setting'];
    protected $jsonAssoc = true;
 
-   // 模型初始化
-   protected static function init()
-   {
-      //TODO:初始化内容
-      $request = Request::instance();
-      self::$user_id = $request->userInfo['user_id'];
-      self::$user_info = $request->userInfo;
-   }
    //查询用户信息
    public static function getUserInfo($map)
    {
@@ -134,7 +122,11 @@ class User extends BaseModel
             }
          }
       }
-      $onlineList=Gateway::getAllUidList();
+      try{
+         $onlineList=Gateway::getAllUidList();
+      }catch(\Exception $e){
+         $onlineList=[];
+      }
       foreach ($list_chart as $k => $v) {
          // 是否有消息通知或者置顶聊天
          $friend = isset($friendList[$v['user_id']]) ? $friendList[$v['user_id']] : [];

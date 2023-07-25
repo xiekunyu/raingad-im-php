@@ -192,6 +192,7 @@ class Pub
     public function offline(){
         $user_id=input('user_id');
         wsSendMsg(0,'isOnline',['id'=>$user_id,'is_online'=>0]);
+        return success('');
     }
   
  /**

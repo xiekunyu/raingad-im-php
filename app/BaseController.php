@@ -71,7 +71,7 @@ abstract class BaseController
     protected function initialize()
     {
         $this->userInfo=$this->request->userInfo;
-        $this->uid=$this->userInfo['user_id'];
+        $this->uid=$this->userInfo['user_id'] ?? 0;
         $config=Config::getSystemInfo();
         if($config){
             $this->globalConfig = $config;
