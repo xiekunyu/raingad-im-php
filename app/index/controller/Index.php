@@ -1,11 +1,10 @@
 <?php
 namespace app\index\controller;
 
-use app\BaseController;
 use app\enterprise\model\File;
 use think\facade\View;
 
-class Index extends BaseController
+class Index
 {
 
     public function index()
@@ -36,7 +35,7 @@ class Index extends BaseController
         if (strpos($_SERVER['HTTP_USER_AGENT'], 'MicroMessenger') !== false) {
             throw new \think\Exception('请使用浏览器下载!',400);
         }
-        $param = $this->request->param();
+        $param = request()->param();
         $file_id = $param['file_id'] ?? 0;
         if (!$file_id) {
             throw new \think\Exception('参数错误', 502);
