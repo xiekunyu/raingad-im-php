@@ -103,7 +103,7 @@ CREATE TABLE IF NOT EXISTS `yu_group` (
 
 CREATE TABLE `yu_group_user` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
-  `group_id` int(11) NOT NULL DEFAULT '0' COMMENT 't团队Id',
+  `group_id` int(11) NOT NULL DEFAULT '0' COMMENT '团队Id',
   `user_id` int(11) NOT NULL DEFAULT '0' COMMENT '用户Id',
   `role` tinyint(1) NOT NULL DEFAULT '2' COMMENT '角色 1拥有者，2管理员，3成员',
   `invite_id` int(11) NOT NULL DEFAULT '0' COMMENT '邀请人',
