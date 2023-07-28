@@ -94,16 +94,20 @@ class Pub
        }
    }
 
-//    退出登录
-   public function logout(){
-    $authToken=request()->header('authToken');
-    $userInfo=[];
-    if($authToken){
-        $userInfo=Cache::get($authToken);
-    }
-    if($userInfo){
-        wsSendMsg(0,'isOnline',['id'=>$userInfo['user_id'],'is_online'=>0]);
-    }
+    //退出登录
+    public function logout(){
+        $authToken=request()->header('authToken');
+        $userInfo=[];
+        if($authToken){
+            $userInfo=Cache::get($authToken);
+        }
+        if($userInfo){
+            $client_id=$this->request->param('client_id','');
+            if($client_id){
+                Gateway::unbindUid($client_id,$userInfo['user_id']);
+            }
+            wsSendMsg(0,'isOnline',['id'=>$userInfo['user_id'],'is_online'=>0]);
+        }
         return success('退出成功！');
     }
 
