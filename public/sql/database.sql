@@ -192,7 +192,7 @@ INSERT INTO `yu_user` (`user_id`, `account`, `realname`, `password`, `salt`, `av
 (8, '13800000008', '猪八戒', '2cb4ecb7fd5295685e275edc7d44e02e', 'srww', NULL, 'zhubajie@qq.com', 2, 0, NULL, '', 'zhubajie', NULL, 1604587378, 1604587378, 0, 0, NULL, 0, 1),
 (9, '13800000009', '唐三藏', '2cb4ecb7fd5295685e275edc7d44e02e', 'srww', NULL, 'tangsanzang@qq.com', 2, 0, NULL, '', 'tangsanzang', NULL, 1604587409, 1604587409, 0, 0, NULL, 0, 1),
 (10, '13800000010', '沙悟净', '2cb4ecb7fd5295685e275edc7d44e02e', 'srww', NULL, 'lantian@qq.com', 2, 0, NULL, '', 'shawujing', NULL, 1604587409, 1604587409, 0, 0, NULL, 0, 1),
-(11, '138000000011', '刘备', '2cb4ecb7fd5295685e275edc7d44e02e', 'srww', NULL, 'liubei@kaishanlaw.com', 2, 0, NULL, '', 'liubei', NULL, 1555341865, 1558019786, 4, 0, NULL, 0, 1),
+(11, '13800000011', '刘备', '2cb4ecb7fd5295685e275edc7d44e02e', 'srww', NULL, 'liubei@kaishanlaw.com', 2, 0, NULL, '', 'liubei', NULL, 1555341865, 1558019786, 4, 0, NULL, 0, 1),
 (12, '13800000012', '关羽', '2cb4ecb7fd5295685e275edc7d44e02e', 'srww', NULL, 'guanyu@163.com', 2, 0, NULL, '', 'guanyu', NULL, 1557933999, 1604587104, 0, 0, NULL, 0, 1),
 (13, '13800000013', '张飞', '2cb4ecb7fd5295685e275edc7d44e02e', 'srww', NULL, 'zhangfei@qq.com', 2, 0, NULL, '', 'zhangfei', NULL, 1604587165, 1604587250, 0, 0, NULL, 0, 1),
 (14, '13800000014', '赵云', '2cb4ecb7fd5295685e275edc7d44e02e', 'srww', NULL, 'zhaoyun@qq.com', 2, 0, NULL, '', 'zhaoyun', NULL, 1604587246, 1604587246, 0, 0, NULL, 0, 1),
