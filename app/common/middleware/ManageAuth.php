@@ -33,7 +33,6 @@ class ManageAuth
                  return shutdown('演示模式下无法操作！',400);
             }
         }
-        
         return $next($request);
     }
 }

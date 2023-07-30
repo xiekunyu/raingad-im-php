@@ -48,6 +48,11 @@ class Events
             // 客户端回应服务端的心跳
             case 'pong':
                 break;
+            case 'ping':
+                Gateway::sendToClient($client_id, json_encode(array(
+                    'type' => 'pong'
+                )));
+                break;
             case 'bindUid':
                 $_SESSION['user_id']=$message_data['user_id'];
                 break;

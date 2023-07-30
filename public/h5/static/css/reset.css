@@ -78,12 +78,12 @@
 */
 
 /*主要颜色*/
-.c-primary,.c-primary a,a.c-primary{color:#175CFF}
-.c-primary a:hover,a.c-primary:hover{ color:#175CFF}
+.c-primary,.c-primary a,a.c-primary{color:#409EFF}
+.c-primary a:hover,a.c-primary:hover{ color:#409EFF}
 
 /*次主色*/
-.c-secondary,.c-secondary a,a.c-secondary{color:#409EFF}
-.c-secondary a:hover,a.c-secondary:hover{ color:#409EFF}
+.c-secondary,.c-secondary a,a.c-secondary{color:#175CFF}
+.c-secondary a:hover,a.c-secondary:hover{ color:#175CFF}
 
 /*强调色—成功*/
 .c-success,.c-success a,a.c-success{color:#67C23A}

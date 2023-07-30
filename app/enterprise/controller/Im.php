@@ -8,6 +8,7 @@ use think\facade\Db;
 use app\enterprise\model\{User, Message, GroupUser, Friend};
 use GatewayClient\Gateway;
 use Exception;
+use League\Flysystem\Util;
 use think\facade\Cache;
 
 class Im extends BaseController
@@ -189,8 +190,14 @@ class Im extends BaseController
     {
         $param = $this->request->param();
         $this->setIsRead($param['is_group'], $param['toContactId']);
+        // 判断是否是一个二维数组
+        if (is_array($param['messages'][0] ?? '')) {
+           $messages=$param['messages'];
+        } else {
+            $messages=[$param['messages']];
+        }
         if (!$param['is_group']) {
-            wsSendMsg($param['fromUser'], 'isRead', $param['messages'], 0);
+            wsSendMsg($param['fromUser'], 'isRead', $messages, 0);
         }
         return success('');
     }
@@ -427,7 +434,7 @@ class Im extends BaseController
             ]
         ];
         wsSendMsg($toContactId,'webrtc',$data);
-        return success('');
+        return success('',$data);
     }
 
     // 修改密码
