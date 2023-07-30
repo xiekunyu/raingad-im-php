@@ -6,15 +6,13 @@
 // +----------------------------------------------------------------------
 
 namespace app\index\controller;
-
-use app\BaseController;
 use think\facade\Request;
 use think\facade\Db;
 use think\facade\View;
 use think\facade\Config;
 use Env;
 
-class Install extends BaseController
+class Install
 {
     // private $count = 100;
     // private $now = 0; 
@@ -27,18 +25,6 @@ class Install extends BaseController
         header('Access-Control-Allow-Credentials: true');
         header('Access-Control-Allow-Methods: GET, POST, PUT, DELETE, OPTIONS');
         header("Access-Control-Allow-Headers: Origin, X-Requested-With, Content-Type, Accept, authKey, sessionId");
-        $param = Request::instance()->param();          
-        $this->param = $param;
-
-//        $request = request();
-//        $m = strtolower($request->module());
-//        $c = strtolower($request->controller());
-//        $a = strtolower($request->action());
-//
-//        if (!in_array($a, array('upgrade','upgradeprocess','checkversion')) && file_exists(CONF_PATH . "install.lock")) {
-//            echo "<meta http-equiv='content-type' content='text/html; charset=UTF-8'> <script>alert('请勿重复安装!');location.href='".$_SERVER["HTTP_HOST"]."';</script>";
-//            die();
-//        }
     }
 
     /**
@@ -90,10 +76,9 @@ class Install extends BaseController
         if (!file_exists(PUBLIC_PATH . "sql/database.sql")) {
             return warning('缺少必要的数据库文件!');     
         } 
-        $temp = $this->request->param();
+        $temp = request()->param();
         $db_config = $temp['form'];
-        $db_config['type'] = 'mysql';      
-        // $wkcode = $param['wkcode'];
+        $db_config['type'] = 'mysql';
         if (empty($db_config['hostname'])) {
             return warning('请填写数据库主机!');
         }           
@@ -353,21 +338,6 @@ INFO;
             } 
         } 
         return $is_writale; 
-    } 
-
-    /**
-     * [checkVersion 检查升级]
-     * @author Michael_xu 
-     * @param  
-     */     
-    public function checkVersion(){
-        $version = Config::load('version');
-        // $info = sendRequest($this->upgrade_site.'index.php?m=version&a=checkVersion', $version['VERSION']);
-        // if ($info){
-        //     return resultArray(['data' => $info]);
-        // } else {
-        //     return resultArray(['error' => '检查新版本出错!']);
-        // }
     }    
 
     /**
