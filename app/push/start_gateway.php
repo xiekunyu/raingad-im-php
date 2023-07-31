@@ -38,7 +38,7 @@ $gateway->lanIp = '127.0.0.1';
 // 则一般会使用2300 2301 2302 2303 4个端口作为内部通讯端口 
 $gateway->startPort = 2300;
 // 心跳间隔
-$gateway->pingInterval = 50;
+$gateway->pingInterval = 10;
 // 心跳数据
 $gateway->pingData = '{"type":"ping"}';
 // 服务注册地址
