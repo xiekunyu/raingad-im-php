@@ -84,6 +84,8 @@ class Pub
                 'login_count'=>Db::raw('login_count+1')
             ];
             User::where('user_id',$userInfo['user_id'])->update($update);
+            unset($userInfo['password'],$userInfo['salt']);
+            $userInfo['displayName']=$userInfo['realname'];
             $data=[
                 'sessionId'=>Session::getId(),
                 'authToken'=>$authToken,
