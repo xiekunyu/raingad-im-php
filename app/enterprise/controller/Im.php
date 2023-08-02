@@ -379,7 +379,7 @@ class Im extends BaseController
         $callTime=$param['callTime'] ?? '';
         $msg_id=$param['msg_id'] ?? '';
         $id=$param['id'] ?? '';
-        $code=$param['code'] ?? 901;
+        $code=($param['code'] ?? '') ?: 901;
         // 如果该用户不在线，则发送忙线
         if(!Gateway::isUidOnline($toContactId)){
             $toContactId=$this->userInfo['user_id'];
@@ -413,16 +413,17 @@ class Im extends BaseController
                 $content='数据交换中';
                 break;
         }
-        
+        $userInfo=$this->userInfo;
+        $userInfo['id']=$userInfo['user_id'];
         $data=[
-            'id'=>uniqid(),
+            'id'=>$id,
             'msg_id'=>$msg_id,
             'sendTime'=>time()*1000,
             'toContactId'=>$toContactId,
             'content'=>$content,
             'type'=>'webrtc',
             'status'=>'succeed',
-            'fromUser'=>$this->userInfo,
+            'fromUser'=>$userInfo,
             'extends'=>[
                 'type'=>$type,    //通话类型，1视频，0语音。
                 'status'=>$status, //，1拨打方，2接听方

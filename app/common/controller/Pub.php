@@ -86,6 +86,7 @@ class Pub
             User::where('user_id',$userInfo['user_id'])->update($update);
             unset($userInfo['password'],$userInfo['salt']);
             $userInfo['displayName']=$userInfo['realname'];
+            $userInfo['id']=$userInfo['user_id'];
             $data=[
                 'sessionId'=>Session::getId(),
                 'authToken'=>$authToken,
