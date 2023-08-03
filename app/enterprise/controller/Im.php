@@ -374,6 +374,9 @@ class Im extends BaseController
         $type=$param['type'];
         $status=$param['status'];
         $event=$param['event'] ?? 'calling';
+        if($event=='calling'){
+            $status=3;
+        }
         $sdp=$param['sdp'] ?? '';
         $iceCandidate=$param['iceCandidate'] ?? '';
         $callTime=$param['callTime'] ?? '';
@@ -388,17 +391,11 @@ class Im extends BaseController
             sleep(1);
         }
         switch($code){
-            case 901:
-                $content='发起通话请求';
-                break;
             case 902:
                 $content='取消通话请求';
                 break;
             case 903:
                 $content='拒绝通话请求';
-                break;
-            case 904:
-                $content='接听通话请求';
                 break;
             case 905:
                 $content='未接通';
@@ -408,6 +405,23 @@ class Im extends BaseController
                 break;
             case 907:
                 $content='忙线中';
+                break;
+            case 908:
+                $content='其他端已操作';
+                break;
+            default:
+                $content='数据交换中';
+                break;
+        }
+        switch($event){
+            case 'calling':
+                $content='发起通话请求';
+                break;
+            case 'acceptRtc':
+                $content='接听通话请求';
+                break;
+            case 'iceCandidate':
+                $content='数据交换中';
                 break;
             default:
                 $content='数据交换中';
@@ -430,12 +444,22 @@ class Im extends BaseController
                 'event'=>$event,
                 'callTime'=>$callTime,
                 'sdp'=>$sdp,
-                'code'=>$code,  //通话状态:呼叫901，取消902，拒绝903，接听904，未接通905，接通后挂断906，忙线907
+                'code'=>$code,  //通话状态:呼叫901，取消902，拒绝903，接听904，未接通905，接通后挂断906，忙线907,其他端操作908
                 'iceCandidate'=>$iceCandidate,
+                'isMobile'=>$this->request->isMobile() ? 1 : 0,
             ]
         ];
         wsSendMsg($toContactId,'webrtc',$data);
-        return success('',$data);
+        $wsData=$data;
+        if(in_array($event,['calling','acceptRtc','hangup'])){
+            if(in_array($event,['acceptRtc','hangup'])){
+                $data['extends']['event']='otherOpt'; //其他端操作
+                $data['extends']['code']=908;
+            }
+            $data['toContactId']=$userInfo['id'];
+            wsSendMsg($userInfo['id'],'webrtc',$data);
+        }
+        return success('',$wsData);
     }
 
     // 修改密码
