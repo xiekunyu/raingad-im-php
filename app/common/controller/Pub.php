@@ -198,7 +198,11 @@ class Pub
     // 下线通知
     public function offline(){
         $user_id=input('user_id');
-        wsSendMsg(0,'isOnline',['id'=>$user_id,'is_online'=>0]);
+        $client_ids=Gateway::getClientIdByUid($user_id);
+        // 一个终端登录时才发送下线通知
+        if(count($client_ids)<2){
+            wsSendMsg(0,'isOnline',['id'=>$user_id,'is_online'=>0]);
+        }
         return success('');
     }
   

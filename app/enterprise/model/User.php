@@ -88,6 +88,7 @@ class User extends BaseModel
       $lasMsgList = Db::name('message')
          ->field($msgField)
          ->whereOr([$map1, $map2])
+         ->order('create_time desc')
          ->select();
       // 查询群聊
       $group = Group::getMyGroup(['gu.user_id' => $user_id, 'gu.status' => 1]);

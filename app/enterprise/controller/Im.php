@@ -392,10 +392,10 @@ class Im extends BaseController
         }
         switch($code){
             case 902:
-                $content='取消通话请求';
+                $content='取消通话';
                 break;
             case 903:
-                $content='拒绝通话请求';
+                $content='已拒绝';
                 break;
             case 905:
                 $content='未接通';
@@ -410,20 +410,17 @@ class Im extends BaseController
                 $content='其他端已操作';
                 break;
             default:
-                $content='数据交换中';
+                $content=$type==1 ?'视频通话' : '语音通话';
                 break;
         }
         switch($event){
             case 'calling':
-                $content='发起通话请求';
+                $content=$type==1 ?'视频通话' : '语音通话';
                 break;
             case 'acceptRtc':
                 $content='接听通话请求';
                 break;
             case 'iceCandidate':
-                $content='数据交换中';
-                break;
-            default:
                 $content='数据交换中';
                 break;
         }
@@ -437,6 +434,8 @@ class Im extends BaseController
             'content'=>$content,
             'type'=>'webrtc',
             'status'=>'succeed',
+            'is_group'=>0,
+            'is_read'=>0,
             'fromUser'=>$userInfo,
             'extends'=>[
                 'type'=>$type,    //通话类型，1视频，0语音。
@@ -449,12 +448,48 @@ class Im extends BaseController
                 'isMobile'=>$this->request->isMobile() ? 1 : 0,
             ]
         ];
+        if($event=='calling'){
+            $chat_identify=chat_identify($userInfo['id'],$toContactId);
+            $msg=[
+                'from_user'=>$userInfo['id'],
+                'to_user'=>$toContactId,
+                'id'=>$id,
+                'content'=>$content,
+                'chat_identify'=>$chat_identify,
+                'create_time'=>time(),
+                'type'=>$data['type'],
+                'is_group'=>0,
+                'is_read'=>0,
+                'extends'=>$data['extends'],
+            ];
+            $message=new Message();
+            $message->update(['is_last'=>0],['chat_identify'=>$chat_identify]);
+            $message->save($msg);
+            $msg_id=$message->msg_id;
+            $data['msg_id']=$msg_id;
+            // 将接收人设置为发送人才能定位到该消息
+            $data['toContactId']=$userInfo['id'];
+            $data['toUser']=$toContactId;
+        }elseif($event=='hangup'){
+            $message=Message::find($msg_id);
+            // halt($message);
+            if(!$message){
+                return error('通话失败！');
+            }
+            if($message){
+                $message->content=$content;
+                $extends=$message->extends;
+                $extends['code']=$code;
+                $extends['callTime']=$callTime;
+                $message->extends=$extends;
+                $message->save();
+            }
+        }
         wsSendMsg($toContactId,'webrtc',$data);
         $wsData=$data;
         if(in_array($event,['calling','acceptRtc','hangup'])){
             if(in_array($event,['acceptRtc','hangup'])){
                 $data['extends']['event']='otherOpt'; //其他端操作
-                $data['extends']['code']=908;
             }
             $data['toContactId']=$userInfo['id'];
             wsSendMsg($userInfo['id'],'webrtc',$data);
