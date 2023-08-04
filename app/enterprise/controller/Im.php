@@ -392,7 +392,7 @@ class Im extends BaseController
         }
         switch($code){
             case 902:
-                $content='取消通话';
+                $content='已取消通话';
                 break;
             case 903:
                 $content='已拒绝';
@@ -401,7 +401,7 @@ class Im extends BaseController
                 $content='未接通';
                 break;
             case 906:
-                $content='通话时长'.$callTime.'秒';
+                $content='通话时长 '.date("i:s",$callTime);
                 break;
             case 907:
                 $content='忙线中';
@@ -471,8 +471,7 @@ class Im extends BaseController
             $data['toContactId']=$userInfo['id'];
             $data['toUser']=$toContactId;
         }elseif($event=='hangup'){
-            $message=Message::find($msg_id);
-            // halt($message);
+            $message=Message::where(['id'=>$id])->find();
             if(!$message){
                 return error('通话失败！');
             }
@@ -491,7 +490,7 @@ class Im extends BaseController
             if(in_array($event,['acceptRtc','hangup'])){
                 $data['extends']['event']='otherOpt'; //其他端操作
             }
-            $data['toContactId']=$userInfo['id'];
+            $data['toContactId']=$toContactId;
             wsSendMsg($userInfo['id'],'webrtc',$data);
         }
         return success('',$wsData);
