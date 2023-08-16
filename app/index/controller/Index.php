@@ -12,9 +12,6 @@ class Index
         if (!file_exists(CONF_PATH . "install.lock")) {
             return redirect(url('index/install/index'));
         }
-        if (request()->isMobile()) {
-            return redirect("/h5");
-        }
         return redirect("/index.html");
     }
 
