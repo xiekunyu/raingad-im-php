@@ -152,7 +152,7 @@ CREATE TABLE IF NOT EXISTS `yu_message` (
 --
 
 CREATE TABLE `yu_user` (
-  `user_id` mediumint(8) UNSIGNED NOT NULL,
+  `user_id` int(11) NOT NULL AUTO_INCREMENT,
   `account` char(32) NOT NULL,
   `realname` varchar(255) DEFAULT NULL,
   `password` char(32) NOT NULL,
