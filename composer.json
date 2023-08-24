@@ -38,7 +38,8 @@
         "thans/thinkphp-filesystem-cloud": "^1.0",
         "topthink/think-queue": "^3.0",
         "yunwuxin/think-cron": "^3.0",
-        "swiftmailer/swiftmailer": "^6.0"
+        "swiftmailer/swiftmailer": "^6.0",
+        "thans/tp-jwt-auth": "^1.3"
     },
     "require-dev": {
         "symfony/var-dumper": "^4.2",
@@ -53,7 +54,8 @@
         }
     },
     "config": {
-        "preferred-install": "dist"
+        "preferred-install": "dist",
+        "secure-http": false 
     },
     "scripts": {
         "post-autoload-dump": [
