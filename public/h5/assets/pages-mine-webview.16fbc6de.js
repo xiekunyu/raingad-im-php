@@ -1,0 +1,1 @@
+import{_ as s,o as a,c as t,w as n,j as o,g as r,ae as c}from"./index-4eea144c.js";const e=s({data:()=>({html:""}),onLoad:function(s){this.html=s.src}},[["render",function(s,e,l,d,u,f){const i=c,m=o;return a(),t(m,{class:""},{default:n((()=>[r(i,{src:u.html},null,8,["src"])])),_:1})}]]);export{e as default};

@@ -50,6 +50,10 @@ class Upload extends BaseController
         if($conf['size']*1024*1024 < $info['size']){
             return shutdown('文件大小超过限制');
         }
+        // 兼容uniapp文件上传
+        if($info['ext']=='' && isset($data['ext'])){
+            $info['ext']=$data['ext'];
+        }
         if(!in_array($info['ext'],$conf['fileExt'])){
             return shutdown('文件格式不支持');
         }
