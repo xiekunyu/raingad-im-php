@@ -20,7 +20,7 @@ class User extends BaseModel
 
    protected $pk = "user_id";
    
-   public static $defaultField = 'user_id,realname,account,avatar,name_py,email';
+   public static $defaultField = 'user_id,realname,account,avatar,name_py,email,last_login_ip';
 
    protected $json = ['setting'];
    protected $jsonAssoc = true;
@@ -140,6 +140,8 @@ class User extends BaseModel
          $list_chart[$k]['lastSendTime'] = time() * 1000;
          $list_chart[$k]['is_group'] = 0;
          $list_chart[$k]['setting'] = [];
+         $list_chart[$k]['last_login_ip'] = $v['last_login_ip'];
+         $list_chart[$k]['location'] =$v['last_login_ip'] ? implode(" ", \Ip::find($v['last_login_ip'])) : "未知";
          $is_online=0;
          if(isset($onlineList[$v['user_id']])){
             $is_online=1;

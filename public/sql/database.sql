@@ -170,6 +170,7 @@ CREATE TABLE `yu_user` (
   `login_count` mediumint(8) UNSIGNED DEFAULT '0' COMMENT '登录次数',
   `last_login_time` int(11) UNSIGNED DEFAULT '0' COMMENT '最后登录时间',
   `last_login_ip` char(15) DEFAULT NULL COMMENT '最后登录Ip\n',
+  `register_ip` char(15) DEFAULT NULL COMMENT '注册Ip\n',
   `delete_time` int(11) UNSIGNED NOT NULL DEFAULT '0',
   `status` tinyint(1) UNSIGNED DEFAULT '1',
   PRIMARY KEY (`user_id`),
