@@ -9,6 +9,8 @@ use think\facade\Cache;
 use think\facade\Db;
 use GatewayClient\Gateway;
 use app\manage\model\Config;
+use thans\jwt\facade\JWTAuth;
+
 
 /**
  * 控制器基础类
@@ -41,27 +43,26 @@ class Pub
         // $this->initialize();
     }
 
-   public function login(){
-       $post=input('post.');
-       $userInfo=User::getUserInfo(['account'=>$post['account']]);
-       if($userInfo==null){
+    public function login(){
+        $param=request()->param();
+        $userInfo=User::where(['account'=> $param['account']])->withoutField('register_ip,login_count,update_time,create_time')->find();
+        if($userInfo==null){
             return warning('当前用户不存在！');
-       }elseif($userInfo['status']==0){
+        }elseif($userInfo['status']==0){
             return warning('您的账号已被禁用');
-       }else{
-           $password=password_hash_tp($post['password'],$userInfo['salt']);
-           $code=$post['code'] ?? '';
-           if($code){
-                if($code!=Cache::get($post['account'])){
+        }else{
+            $password=password_hash_tp($param['password'],$userInfo['salt']);
+            $code=$param['code'] ?? '';
+            if($code){
+                if($code!=Cache::get($param['account'])){
                     return warning('验证码错误！');
                 }
-                Cache::delete($post['account']);
-           }else{
+                Cache::delete($param['account']);
+            }else{
                 if($password!=$userInfo['password']){
                     return warning('密码错误！');
                 }
-           }
-           $authToken=ssoTokenEncode($userInfo['user_id'],"raingadIm",300);
+            }
             $userInfo['avatar']=avatarUrl($userInfo['avatar'],$userInfo['realname'],$userInfo['user_id']);
             //    如果用户已经有设置
             $setting=$userInfo['setting'] ?: '';
@@ -87,23 +88,33 @@ class Pub
             unset($userInfo['password'],$userInfo['salt']);
             $userInfo['displayName']=$userInfo['realname'];
             $userInfo['id']=$userInfo['user_id'];
+            $authToken=User::refreshToken($userInfo,$param['terminal'] ?? 'web');
             $data=[
                 'sessionId'=>Session::getId(),
                 'authToken'=>$authToken,
                 'userInfo'=>$userInfo
             ];
-            Cache::set($authToken,$userInfo);
             return success('登录成功！',$data);
        }
    }
 
     //退出登录
     public function logout(){
-        $authToken=request()->header('authToken');
-        $userInfo=[];
-        if($authToken){
-            $userInfo=Cache::get($authToken);
+        try {
+            $jwtData = JWTAuth::auth();
+        } catch (\Exception $e) {
+            return success('退出成功！');
         }
+
+        $userInfo = $jwtData['info']->getValue();
+        //解密token中的用户信息
+        $userInfo = str_encipher($userInfo,false, config('app.aes_token_key'));
+
+        if (!$userInfo) {
+            return success('退出成功！');
+        }
+        //解析json
+        $userInfo = (array)json_decode($userInfo, true);
         if($userInfo){
             $client_id=$this->request->param('client_id','');
             if($client_id){
@@ -111,6 +122,7 @@ class Pub
             }
             wsSendMsg(0,'isOnline',['id'=>$userInfo['user_id'],'is_online'=>0]);
         }
+        JWTAuth::invalidate(JWTAuth::token()->get());
         return success('退出成功！');
     }
 

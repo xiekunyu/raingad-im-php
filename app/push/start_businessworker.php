@@ -13,9 +13,10 @@
  */
 use \Workerman\Worker;
 use \GatewayWorker\BusinessWorker;
-use \Workerman\Autoloader;
+
 require_once __DIR__ . '/../../vendor/autoload.php';
 require_once __DIR__ . '/Events.php';
+
 // bussinessWorker 进程
 $worker = new BusinessWorker();
 // worker名称
@@ -23,7 +24,7 @@ $worker->name = 'PushBusinessWorker';
 // bussinessWorker进程数量
 $worker->count = 1;
 // 服务注册地址
-$worker->registerAddress = '127.0.0.1:1236';
+$worker->registerAddress = '127.0.0.1:1237';
 $worker->eventHandler = 'Events';
 // 如果不是在根目录启动，则运行runAll方法
 if(!defined('GLOBAL_START'))

@@ -17,9 +17,23 @@
  * 主要是处理 onMessage onClose 
  */
 use \GatewayWorker\Lib\Gateway;
+use think\App;
+use think\facade\Config;
+use Lcobucci\JWT\Builder;
+use Lcobucci\JWT\Parser;
+use thans\jwt\exception\TokenInvalidException;
+use thans\jwt\provider\JWT\Lcobucci;
+use utils\Aes;
 
 class Events
 {
+    // 使用TP框架
+    public static function onWorkerStart()
+    {
+        $app = new App;
+        $app->initialize();
+    }
+
     // 当有客户端连接时，将client_id返回，让mvc框架判断当前uid并执行绑定
     public static function onConnect($client_id)
     {
@@ -54,11 +68,45 @@ class Events
                 )));
                 break;
             case 'bindUid':
-                $_SESSION['user_id']=$message_data['user_id'];
+                self::auth($client_id,$message_data);
                 break;
         }
         return;
    }
+
+    //验证用户的真实性并绑定
+    protected static function auth($client_id, $msg){
+        $token=$msg['token'] ?? '';
+        $config   = Config::get('jwt');
+        $keys     = $config['secret'] ?: [
+            'public' => $config['public_key'],
+            'private' => $config['private_key'],
+            'password' => $config['password'],
+        ];
+        $provider = new Lcobucci(new Builder(), new Parser(), $config['algo'], $keys);
+        try {
+            $token=str_replace('bearer ','',$token);
+            $jwtData = $provider->decode((string)$token);
+        } catch (Exception $exception) {
+            self::closeClient($client_id);
+        }
+
+        $userInfo = $jwtData['info']->getValue();
+        //解密token中的用户信息
+        $userInfo = Aes::decrypt($userInfo, config('app.aes_token_key'));
+        //解析json
+        $userInfo = (array)json_decode($userInfo, true);
+        if(!$userInfo){
+            self::closeClient($client_id);
+        }
+        $_SESSION['user_id']=$userInfo['user_id'];
+    }
+
+    //断开连接
+    protected static function closeClient($client_id){
+        $_SESSION['user_id']=null;
+        Gateway::closeClient($client_id);
+    }
 
     /**
     * 当断开连接时

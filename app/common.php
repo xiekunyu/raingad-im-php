@@ -851,3 +851,16 @@ function getExtUrl($path){
     }
     return request()->domain().$extUrl;
 }
+
+// 字符串内容加解密函数
+function str_encipher($str,$encode=true,$key=''){
+    if($key==''){
+         $key=config('app.aes_chat_key');
+    }
+    if($encode){
+        $s=\utils\Aes::encrypt($str,$key);
+    }else{
+        $s=\utils\Aes::decrypt($str,$key) ?:'';
+    }
+    return $s;
+}

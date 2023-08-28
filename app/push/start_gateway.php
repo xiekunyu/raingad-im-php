@@ -13,21 +13,10 @@
  */
 use \Workerman\Worker;
 use \GatewayWorker\Gateway;
-use \Workerman\Autoloader;
+
 require_once __DIR__ . '/../../vendor/autoload.php';
-// $context = array(
-//     'ssl' => array(
-//         // 使用绝对路径
-//         'local_cert'  => '/www/cert/im.pem', // 也可以是crt文件
-//         'local_pk'    => '/www/cert/im.key',
-//         'verify_peer' => false,
-//     )
-// );
-// // websocket协议(端口任意，只要没有被其它程序占用就行)
-// $gateway = new Gateway("websocket://0.0.0.0:8282", $context);
-// $gateway->transport = 'ssl';
 // gateway 进程
-$gateway = new Gateway("Websocket://0.0.0.0:8282");
+$gateway = new Gateway("Websocket://0.0.0.0:8283");
 // 设置名称，方便status时查看
 $gateway->name = 'pushMessage';
 // 设置进程数，gateway进程数建议与cpu核数相同
@@ -36,13 +25,13 @@ $gateway->count = 1;
 $gateway->lanIp = '127.0.0.1';
 // 内部通讯起始端口。假如$gateway->count=4，起始端口为2300
 // 则一般会使用2300 2301 2302 2303 4个端口作为内部通讯端口 
-$gateway->startPort = 2300;
+$gateway->startPort = 2301;
 // 心跳间隔
 $gateway->pingInterval = 20;
 // 心跳数据
 $gateway->pingData = '{"type":"ping"}';
 // 服务注册地址
-$gateway->registerAddress = '127.0.0.1:1236';
+$gateway->registerAddress = '127.0.0.1:1237';
 
 /* 
 // 当客户端连接上来时，设置连接的onWebSocketConnect，即在websocket握手时的回调

@@ -143,7 +143,7 @@ class Im extends BaseController
                         // $v['content']="删除了一条消息";
                     }
                 }
-                $content = $v['content'];
+                $content = str_encipher($v['content'],false);
                 $preview = '';
                 if (in_array($v['type'], $this->fileType)) {
                     $content = getFileUrl($v['content']);

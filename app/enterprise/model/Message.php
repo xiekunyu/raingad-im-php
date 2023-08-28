@@ -65,7 +65,7 @@ class Message extends BaseModel
             'from_user'=>$param['user_id'],
             'to_user'=>$toContactId,
             'id'=>$param['id'],
-            'content'=>$content,
+            'content'=>str_encipher($content,true),
             'chat_identify'=>$chat_identify,
             'create_time'=>time(),
             'type'=>$param['type'],

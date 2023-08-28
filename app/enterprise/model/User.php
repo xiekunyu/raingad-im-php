@@ -13,6 +13,7 @@ use think\facade\Db;
 use think\facade\Request;
 use think\model\concern\SoftDelete;
 use app\manage\model\Config;
+use thans\jwt\facade\JWTAuth;
 
 class User extends BaseModel
 {
@@ -24,6 +25,23 @@ class User extends BaseModel
 
    protected $json = ['setting'];
    protected $jsonAssoc = true;
+
+   /**
+     * 刷新用户token 之前token将被拉黑
+     * 修改用户数据后 调用该方法 并返回前台更新token
+     * @param array $info 用户信息
+     * @param string $terminal 客户端标识
+     * @return string
+     * @throws \think\db\exception\DataNotFoundException
+     * @throws \think\db\exception\DbException
+     * @throws \think\db\exception\ModelNotFoundException
+     */
+    public static function refreshToken($info,$terminal)
+    {
+        $info      = str_encipher(json_encode($info),true, config('app.aes_token_key'));
+        $authToken = 'bearer '.JWTAuth::builder(['info' => $info, 'terminal' => $terminal]);
+        return $authToken;
+    }
 
    //查询用户信息
    public static function getUserInfo($map)
@@ -115,7 +133,7 @@ class User extends BaseModel
                foreach ($getGroupLastMsg as $val) {
                   if ($val['to_user'] == $v['group_id']) {
                      $group[$k]['type'] =$val['type'];
-                     $group[$k]['lastContent'] = $val['lastContent'];
+                     $group[$k]['lastContent'] = str_encipher($val['lastContent'],false);
                      $group[$k]['lastSendTime'] = $val['lastSendTime'] * 1000;
                      break;
                   }
@@ -167,7 +185,7 @@ class User extends BaseModel
          if ($lasMsgList) {
             foreach ($lasMsgList as $val) {
                if ($val['from_user'] == $v['user_id'] || $val['to_user'] == $v['user_id']) {
-                  $content = $val['lastContent'];
+                  $content = str_encipher($val['lastContent'],false);
                   // 屏蔽已删除的消息
                   if ($val['del_user']) {
                      $delUser = explode(',', $val['del_user']);

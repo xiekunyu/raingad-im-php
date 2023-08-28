@@ -7,6 +7,7 @@ use think\App;
 use think\exception\ValidateException;
 use think\Validate;
 use app\manage\model\{Config};
+use think\facade\Cache;
 /**
  * 控制器基础类
  */
@@ -77,7 +78,15 @@ abstract class BaseController
             $this->globalConfig = $config;
             $this->chatSetting = $config['chatInfo'] ?? [];
         }
-       
+        // 验证版本，如果不一致，就需要退出重新登陆
+        $version =config('app.app_version');
+        $oldVersion=cache('app_version');
+        if($version!=$oldVersion){
+            cache('app_version',$version);
+            $authToken=request()->header('authToken');
+            Cache::delete($authToken);
+            Cache::delete('systemInfo');
+        }
     }
 
     /**
