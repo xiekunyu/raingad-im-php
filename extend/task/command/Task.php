@@ -51,7 +51,7 @@ class Task extends Command
         // 设置运行时目录(日志或缓存目录)
         $task->setRunTimePath($rootPath . 'runtime');
         // 消息推送
-        $task->addCommand('php start.php start', 'worker', 0);
+        $task->addCommand('php think worker:gateway start', 'worker', 0);
         // 定时任务
         $task->addCommand('php think cron:schedule', 'schedule', 0);
         // 律者队列

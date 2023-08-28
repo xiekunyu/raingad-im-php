@@ -384,6 +384,7 @@ class Im extends BaseController
         $id=$param['id'] ?? '';
         $code=($param['code'] ?? '') ?: 901;
         // 如果该用户不在线，则发送忙线
+        Gateway::$registerAddress = config('gateway.registerAddress');
         if(!Gateway::isUidOnline($toContactId)){
             $toContactId=$this->userInfo['user_id'];
             $code=907;

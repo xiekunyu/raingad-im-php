@@ -490,6 +490,7 @@ function wsSendMsg($user, $type,  $data, $isGroup=0)
         'data' => $data
     ]);
     try{
+        Gateway::$registerAddress = config('gateway.registerAddress');
         if (!$user) {
             Gateway::sendToAll($message);
         } else {

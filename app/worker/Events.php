@@ -12,12 +12,13 @@
  * @license http://www.opensource.org/licenses/mit-license.php MIT License
  */
 
+ namespace app\worker;
 /**
  * 推送主逻辑
  * 主要是处理 onMessage onClose 
  */
-use \GatewayWorker\Lib\Gateway;
-use think\App;
+use GatewayWorker\Lib\Gateway;
+use app\push\Application;
 use think\facade\Config;
 use Lcobucci\JWT\Builder;
 use Lcobucci\JWT\Parser;
@@ -29,7 +30,7 @@ class Events
     // 使用TP框架
     public static function onWorkerStart()
     {
-        $app = new App;
+        $app = new Application;
         $app->initialize();
     }
 

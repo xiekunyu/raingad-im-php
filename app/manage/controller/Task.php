@@ -64,6 +64,11 @@ class Task extends BaseController
      */
     public function startTask()
     {
+        if(strpos(strtolower(PHP_OS), 'win') === 0)
+        {
+            return warning("windows启动请运行根目录下的：start_for_win.bat");
+        }
+
         if (count($this->taskMsg())) {
             return warning('进程已启动');
         }
@@ -122,9 +127,7 @@ class Task extends BaseController
     {
         $name = $this->request->param('name');
 
-        $baseName = \utils\Str::strFilter(basename($this->rootPath)) . '_task';
-
-        $path = $this->rootPath . 'runtime' . DIRECTORY_SEPARATOR . $baseName . DIRECTORY_SEPARATOR . 'Std' . DIRECTORY_SEPARATOR;
+        $path = $this->rootPath . 'runtime' . DIRECTORY_SEPARATOR . 'easy_task' . DIRECTORY_SEPARATOR . 'Std' . DIRECTORY_SEPARATOR;
 
         if (!file_exists($path . 'exec_' . $name . '.std')) {
             $expName = explode('_', $name);

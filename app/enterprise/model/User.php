@@ -142,6 +142,7 @@ class User extends BaseModel
          }
       }
       try{
+         Gateway::$registerAddress = config('gateway.registerAddress');
          $onlineList=Gateway::getAllUidList();
       }catch(\Exception $e){
          $onlineList=[];

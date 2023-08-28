@@ -36,6 +36,7 @@ class Pub
      */
     public function __construct(App $app)
     {
+        Gateway::$registerAddress = config('gateway.registerAddress');
         $this->app     = $app;
         $this->request = $this->app->request;
 
@@ -118,6 +119,7 @@ class Pub
         if($userInfo){
             $client_id=$this->request->param('client_id','');
             if($client_id){
+                
                 Gateway::unbindUid($client_id,$userInfo['user_id']);
             }
             wsSendMsg(0,'isOnline',['id'=>$userInfo['user_id'],'is_online'=>0]);

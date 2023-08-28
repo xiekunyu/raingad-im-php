@@ -6,7 +6,7 @@ return [
     'port'                  => env('worker_port',8282), // 监听端口
     'socket'                => '', // 完整监听地址
     'context'               => [], // socket 上下文选项
-    'register_deploy'       => true, // 是否需要部署register
+    'register_deploy'       => env('worker_register_deploy',true), // 是否需要部署register
     'businessWorker_deploy' => true, // 是否需要部署businessWorker
     'gateway_deploy'        => true, // 是否需要部署gateway
 
@@ -15,8 +15,8 @@ return [
 
     // Gateway配置
     'name'                  => env('worker_name','pushGateWay'),
-    'count'                 => 1,
-    'lanIp'                 => '127.0.0.1',
+    'count'                 => env('worker_count',1),
+    'lanIp'                 => env('worker_lan_ip','127.0.0.1'),
     'startPort'             => env('worker_start_port',2300),
     'daemonize'             => false,
     'pingInterval'          => 30,
@@ -27,7 +27,7 @@ return [
     'businessWorker'        => [
         'name'         => 'BusinessWorker',
         'count'        => 1,
-        'eventHandler' => '\app\push\Events',
+        'eventHandler' => 'app\worker\Events',
     ],
 
 ];
