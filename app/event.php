@@ -10,6 +10,7 @@ return [
         'HttpEnd'  => [],
         'LogLevel' => [],
         'LogWrite' => [],
+        'UserRegister'=>['app\common\listen\UserRegister'],
     ],
 
     'subscribe' => [

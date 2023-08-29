@@ -119,7 +119,6 @@ class Pub
         if($userInfo){
             $client_id=$this->request->param('client_id','');
             if($client_id){
-                
                 Gateway::unbindUid($client_id,$userInfo['user_id']);
             }
             wsSendMsg(0,'isOnline',['id'=>$userInfo['user_id'],'is_online'=>0]);
@@ -153,20 +152,44 @@ class Pub
                     return warning('验证码错误！');
                 }
                 Cache::delete($data['account']);
-            }else{
-                return warning('验证码不能为空！');
             }
-            // 验证账号是否为手机号或者邮箱
-            if(!\utils\Regular::is_email($data['account']) && !\utils\Regular::is_phonenumber($data['account'])){
-                return warning('账户必须为手机号或者邮箱');
+            $config=Config::getSystemInfo();
+            $regauth=$config['sysInfo']['regauth'] ?? 0;
+            $acType=\utils\Regular::check_account($data['account']);
+            switch($regauth){
+                case 1:
+                    if($acType!=1){
+                        return warning('当前系统只允许手机注册！');
+                    }
+                    break;
+                case 2:
+                    if($acType!=2){
+                        return warning('当前系统只允许邮箱注册！');
+                    }
+                    break;
+                case 3:
+                   // 验证账号是否为手机号或者邮箱
+                    if(!$acType){
+                        return warning('账户必须为手机号或者邮箱');
+                    }
+                    break;
+                default:
+                   break;
             }
             $salt=\utils\Str::random(4);
             $data['password'] = password_hash_tp($data['password'],$salt);
             $data['salt'] =$salt;
+            $data['is_auth'] =$regauth ? 1 : 0;
+            if($data['is_auth'] && $acType==2){
+                $data['email'] =$data['account'];
+            }
+            $data['register_ip'] =$this->request->ip();
             $data['name_py'] = pinyin_sentence($data['realname']);
             $user=new User();
             $user->save($data);
             $data['user_id']=$user->user_id;
+            // 监听用户注册后的操作
+            event('UserRegister',$data);
             return success('添加成功', $data);
         }catch (\Exception $e){
             return error($e->getMessage());
@@ -242,31 +265,50 @@ class Pub
     // 发送验证码
     public function sendCode(){
         $account=$this->request->param('account');
-        if(Cache::get($account.'_time')) return warning('请一分钟后再试！');
-        if(!$account){
-            return warning('请输入账户');
-        }
         $type=$this->request->param('type',1);
-        if(!\utils\Regular::is_email($account)){
-            return warning('暂时仅支持邮箱验证码');
+        if(in_array($type,[3,4]) && !$account){
+            $userInfo=request()->userInfo;
+            $acType=\utils\Regular::check_account($userInfo['account']);
+            if($acType){
+                $account=$userInfo['account'];
+            }else{
+                $account=$userInfo['email'];
+            }
+        };
+        $acType=\utils\Regular::check_account($account);
+        if(!$acType){
+            return warning('账户必须为手机号或者邮箱');
         }
+        if(Cache::get($account.'_time')) return warning('请一分钟后再试！');
         if($type==1){
             $text='登录账户';
+            $actions="login";
         }elseif($type==2){
             $text='注册账户';
+            $actions="register";
         }elseif($type==3){
             $text='修改密码';
+            $actions="changePassword";
         }else{
             $text="修改账户";
+            $actions="changeUserinfo";
         }
         $code=rand(100000,999999);
         Cache::set($account,$code,300);
         Cache::set($account.'_time',$code,60);
-        $conf=Config::where(['name'=>'smtp'])->value('value');
-        $conf['temp']='code';
-        $mail=new \mail\Mail($conf);
-        $mail->sendEmail([$account],$text,$code);
-        return success('发送成功');
+        if($acType==2){
+            $conf=Config::where(['name'=>'smtp'])->value('value');
+            $conf['temp']='code';
+            $mail=new \mail\Mail($conf);
+            $mail->sendEmail([$account],$text,$code);
+            return success('发送成功');
+        }else{
+            $parmes=[
+                'code'=>$code
+            ];
+            $res=sendSms($account,$actions,$parmes);
+            return success($res['msg']);
+        }
     }
     
 }

@@ -503,15 +503,25 @@ class Im extends BaseController
         if(env('app.demon_mode',false)){
             return warning('演示模式不支持修改');
         }
-        $code=$this->request->param('code','');
+        
         $user_id = $this->userInfo['user_id'];
         $user=User::find($user_id);
         if(!$user){
             return warning('用户不存在');
         }
         $account=$user->account;
-        if(Cache::get($account)!=$code){
-            return warning('验证码不正确！');
+        $code=$this->request->param('code','');
+        $originalPassword = $this->request->param('originalPassword', '');
+        if($code){
+            if(Cache::get($account)!=$code){
+                return warning('验证码不正确！');
+            }
+        }elseif($originalPassword){
+            if(password_hash_tp($originalPassword,$user->salt)!= $user->password){
+                return warning('原密码不正确！');
+            }
+        }else{
+            return warning('参数错误！');
         }
         try{
             $password = $this->request->param('password','');
@@ -562,8 +572,11 @@ class Im extends BaseController
         if(!$user){
             return warning('用户不存在');
         }
-        if(Cache::get($user->account)!=$code){
-            return warning('验证码不正确！');
+        // 如果已经认证过了，则需要验证验证码
+        if($user->is_auth){
+            if(Cache::get($user->account)!=$code){
+                return warning('验证码不正确！');
+            }
         }
         if(Cache::get($account)!=$newCode){
             return warning('新账户验证码不正确！');

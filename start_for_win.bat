@@ -1,3 +1,3 @@
 CHCP 65001
-php app\push\start_register.php app\push\start_gateway.php app\push\start_businessworker.php
+php app\worker\start_register.php app\worker\start_gateway.php app\worker\start_businessworker.php
 pause

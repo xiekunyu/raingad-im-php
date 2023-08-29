@@ -18,7 +18,7 @@
  * 主要是处理 onMessage onClose 
  */
 use GatewayWorker\Lib\Gateway;
-use app\push\Application;
+use app\worker\Application;
 use think\facade\Config;
 use Lcobucci\JWT\Builder;
 use Lcobucci\JWT\Parser;

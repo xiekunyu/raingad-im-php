@@ -1,9 +1,6 @@
 <?php
 // 应用公共文件
-use AlibabaCloud\Client\AlibabaCloud;
-use AlibabaCloud\Client\Exception\ClientException;
-use AlibabaCloud\Client\Exception\ServerException;
-use think\facade\Cache;
+use SingKa\Sms\SkSms;
 use GatewayClient\Gateway;
 use \utils\Str;
 /**
@@ -159,53 +156,58 @@ function decryptIds($str)
     return \Hashids\Hashids::instance($hash['length'], $hash['salt'])->decode($str);
 }
 
-/*
-*第三方发送平台,包含阿里大于短信，极光推送，workerman，网页推送；
- * mobile,接收通知的号码
- * temp，数据库短信模板id
- * tempid，自定义选取对应的case，对应阿里设置的参数
-*/
-function sendsms($mobile, $temp, $tempid=1, $name = "律者")
-{
-    // 配置信息
-    $conf = config('sms');
-    AlibabaCloud::accessKeyClient($conf['app_key'], $conf['app_secret'])
-        ->regionId('cn-hangzhou')
-        ->asDefaultClient();
-    $code = rand(1000, 9999);
-    $param=[
-        'code' => $code,
-        'product' => $name
-    ];
-    try {
-        $result = AlibabaCloud::rpc()
-            ->product('Dysmsapi')
-            ->version('2017-05-25')
-            ->action('SendSms')
-            ->method('POST')
-            ->host('dysmsapi.aliyuncs.com')
-            ->options([
-                'query' => [
-                    'RegionId' => "cn-hangzhou",
-                    'PhoneNumbers' => $mobile,
-                    'SignName' => $conf['app_sign'],
-                    'TemplateCode' => $temp,
-                    'TemplateParam' => json_encode($param),
-                ],
-            ])
-            ->request();
-        $res=$result->toArray();
-        if($res['Code']=="OK"){
-            $status = 1;
-        }else{
-            $status=0;
+    /**
+    * 短信发送示例
+    *
+    * @mobile  短信发送对象手机号码
+    * @action  短信发送场景，会自动传入短信模板
+    * @parme   短信内容数组
+    */
+    function sendSms($mobile, $action, $parme)
+    {
+        $config = config('sms');
+        //$this->SmsDefaultDriver是从数据库中读取的短信默认驱动
+        $driver = $config['driver'] ?: 'aliyun'; 
+        $conf=$config[$driver];
+        $sms = new SkSms($driver, $conf);//传入短信驱动和配置信息
+        //判断短信发送驱动，非阿里云和七牛云，需将内容数组主键序号化
+        if ($driver == 'aliyun') {
+            $result = $sms->$action($mobile, $parme);
+        } elseif ($driver == 'qiniu') {
+            $result = $sms->$action([$mobile], $parme);
+        } elseif ($driver == 'upyun') {
+            $result = $sms->$action($mobile, implode('|', restoreArray($parme)));
+        } else {
+            $result = $sms->$action($mobile, restoreArray($parme));
         }
-        Cache::set($mobile,$code,300);
-        return $status;
-    } catch (ClientException $e) {
-        return false;
+        if ($result['code'] == 200) {
+            $data['code'] = 200;
+            $data['msg'] = '短信发送成功';
+        } else {
+            $data['code'] = $result['code'];
+            $data['msg'] = $result['msg'];
+        }
+        return $data;
     }
-}
+  	
+    /**
+    * 数组主键序号化
+    *
+    * @arr  需要转换的数组
+    */
+    function restoreArray($arr)
+    {
+        if (!is_array($arr)){
+            return $arr;
+        }
+        $c = 0;
+        $new = [];
+        foreach ($arr as $key => $value) {
+            $new[$c] = $value;
+            $c++;
+        }
+        return $new;
+    }
 
 //密码生成规则
 function password_hash_tp($password,$salt)

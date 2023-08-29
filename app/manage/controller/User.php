@@ -31,6 +31,9 @@ class User extends BaseController
             $data = $list->toArray()['data'];
             foreach($data as $k=>$v){
                 $data[$k]['avatar']=avatarUrl($v['avatar'],$v['realname'],$v['user_id'],120);
+                $data[$k]['location']=$v['last_login_ip'] ? implode(" ", \Ip::find($v['last_login_ip'])) : '--';
+                $data[$k]['reg_location']=$v['register_ip'] ? implode(" ", \Ip::find($v['register_ip'])) : '--';
+                $data[$k]['last_login_time']=$v['last_login_time'] ? date('Y-m-d H:i:s',$v['last_login_time']) : '--';
                 unset($data[$k]['password']);
             }
         }

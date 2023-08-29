@@ -19,7 +19,7 @@ return [
     'lanIp'                 => env('worker_lan_ip','127.0.0.1'),
     'startPort'             => env('worker_start_port',2300),
     'daemonize'             => false,
-    'pingInterval'          => 30,
+    'pingInterval'          => 20,
     'pingNotResponseLimit'  => 0,
     'pingData'              => '{"type":"ping"}',
 

@@ -21,6 +21,17 @@ class Regular{
         return preg_match($preg,$str) ? true : false;
     }
 
+    // 判断手机号或者邮箱,1手机号，2邮箱，0不是
+    public static function check_account($str){
+        if(self::is_phonenumber($str)){
+            return 1;
+        }
+        if(self::is_email($str)){
+            return 2;
+        }
+        return 0;
+    }
+
     //判断是否是网址
     public static function is_url($str){
         $preg='/^((ht|f)tps?):\/\/([\w\-]+(\.[\w\-]+)*\/)*[\w\-]+(\.[\w\-]+)*\/?(\?([\w\-\.,@?^=%&:\/~\+#]*)+)?/';
