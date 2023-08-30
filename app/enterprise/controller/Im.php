@@ -114,8 +114,12 @@ class Im extends BaseController
         if ($keywords && in_array($type, ['text', 'all'])) {
             $where[] = ['content', 'like', '%' . $keywords . '%'];
         }
-        $listRows = input('limit') ?: 20;
-        $pageSize = input('page');
+        $listRows = $param['limit'] ?: 20;
+        $pageSize = $param['page'] ?: 1;
+        $last_id = $param['last_id'] ?? 0;
+        if($last_id){
+            $where[]=['msg_id','<',$last_id];
+        }
         $list = Message::getList($map, $where, 'msg_id desc', $listRows, $pageSize);
         $data = $this->recombileMsg($list);
         // 如果是消息管理器则不用倒序
@@ -146,18 +150,18 @@ class Im extends BaseController
                 $content = str_encipher($v['content'],false);
                 $preview = '';
                 if (in_array($v['type'], $this->fileType)) {
-                    $content = getFileUrl($v['content']);
+                    $content = getFileUrl($content);
                     $preview = previewUrl($content);
                 }
                 $fromUser = $userList[$v['from_user']];
                 // 处理撤回的消息
                 if ($v['type'] == "event") {
                     if ($v['from_user'] == $userInfo['user_id']) {
-                        $content = "你" . $v['content'];
+                        $content = "你" . $content;
                     } elseif ($v['is_group'] == 1) {
-                        $content = $fromUser['realname'] . $v['content'];
+                        $content = $fromUser['realname'] . $content;
                     } else {
-                        $content = "对方" . $v['content'];
+                        $content = "对方" . $content;
                     }
                 }
                 $data[] = [
@@ -214,6 +218,8 @@ class Im extends BaseController
             $chat_identify = chat_identify($this->userInfo['user_id'], $to_user);
             // 更新我的未读消息为0
             Message::update(['is_read' => 1], [['chat_identify', '=', $chat_identify], ['to_user', '=', $this->userInfo['user_id']]]);
+            // 告诉对方我阅读了消息
+            wsSendMsg($to_user, 'readAll', ['toContactId' => $this->userInfo['user_id']]);
         }
         return $chat_identify;
     }
@@ -241,16 +247,16 @@ class Im extends BaseController
             $toContactId = $message['to_user'];
             if ($message['is_group'] == 1) {
                 $fromUserName = $this->userInfo['realname'];
-                $toContactId = $message['chat_identify'];
+                $toContactId = explode('-', $message['chat_identify'])[1];
             }
-            $message->content = $text;
+            $message->content = str_encipher($text);
             $message->type = 'event';
             $message->is_undo = 1;
             $message->create_time = time();
             $message->save();
             $data = $message->toArray();
             $data['content'] = $fromUserName . $text;
-            wsSendMsg($toContactId, 'undoMessage', $data, $data['is_group']);
+            wsSendMsg($toContactId, 'undoMessage', $data, $message['is_group']);
             return success('');
         } else {
             return warning();
@@ -455,7 +461,7 @@ class Im extends BaseController
                 'from_user'=>$userInfo['id'],
                 'to_user'=>$toContactId,
                 'id'=>$id,
-                'content'=>$content,
+                'content'=>str_encipher($content),
                 'chat_identify'=>$chat_identify,
                 'create_time'=>time(),
                 'type'=>$data['type'],

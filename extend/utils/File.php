@@ -28,7 +28,6 @@ class File
             try {
                 $file_size = filesize($file_path);
             } catch (\Exception $e) {
-//                return $e->getMessage();
                 return "文件不存在";
             }
         }
@@ -44,14 +43,13 @@ class File
         // 处理中文文件名
         $ua = $_SERVER["HTTP_USER_AGENT"];
         $encoded_filename = rawurlencode($file_name);
-
+        
         // 文件类型
         if (preg_match("/Safari/", $ua)) {
             header('Content-Type: application/octet-stream;charset=utf-8');
         } else {
             header("Content-type: {$content_type}");
         }
-
         //IE
         if (preg_match("/MSIE/", $ua) || preg_match("/Trident\/7.0/", $ua)) {
             header('Content-Disposition: attachment; filename="' . $encoded_filename . '"');
@@ -62,7 +60,6 @@ class File
         } else {
             header('Content-Disposition: attachment; filename="' . $file_name . '"');
         }
-
         // 文件大小
         if ($file_size) {
             header("Accept-Length: " . $file_size);

@@ -29,6 +29,7 @@ class Index
     // 文件下载
     public function download()
     {
+        
         if (strpos($_SERVER['HTTP_USER_AGENT'], 'MicroMessenger') !== false) {
             throw new \think\Exception('请使用浏览器下载!',400);
         }
@@ -47,7 +48,13 @@ class Index
             throw new \think\Exception('该文件不存在!',404);
         }
         $file = $file->toArray();
-        $url= getFileUrl($file['src']);
+        // 兼容本地文件下载
+        $fileUrl=getDiskUrl();
+        if($fileUrl==request()->domain()){
+            $url=rtrim(public_path(),'/').$file['src'];
+        }else{
+            $url= getFileUrl($file['src']);
+        }
         return \utils\File::download($url, $file['name'] . '.' . $file['ext'], $file['size'], $file['ext']);
     }
 
