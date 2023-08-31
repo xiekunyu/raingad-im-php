@@ -43,9 +43,15 @@ class Group extends BaseController
          $userList=User::matchUser($group,false,'owner_id');
          $userCount=GroupUser::where(['group_id'=>$group_id])->count();
          $userInfo=$userList[$group['owner_id']];
+         $expire=time()+7*86400;
+         $token=urlencode(authcode($this->uid.'-'.$group_id,'ENCODE','groupQr',7*86400));
+         $qrUrl=request()->domain().'/scan/g/'.$token;
+         $group['qrUrl']=$qrUrl;
+         $group['qrExpire']=date('m月d日',$expire);
          $group['userInfo']=$userInfo;
          $group['ownerName']=$userInfo['realname'];
          $group['groupUserCount']=$userCount;
+         $group['avatar']=avatarUrl($group['avatar'],$group['name'],$group['group_id'],120);
          $group['setting']=$group['setting']?json_decode($group['setting'],true):['manage' => 0, 'invite' => 1, 'nospeak' => 0];
          return success('', $group);
       } catch (Exception $e) {
@@ -193,7 +199,7 @@ class Group extends BaseController
             Message::create([
                'from_user'=>$uid,
                'to_user'=>$group_id,
-               'content'=>'创建了群聊',
+               'content'=>str_encipher('创建了群聊'),
                'type'=>'event',
                'is_group'=>1,
                'is_read'=>1,

@@ -61,7 +61,13 @@ class Upload extends BaseController
         if($fileType==2){
             $filecate="image";
         }elseif($fileType==3){
-            $filecate="voice";
+            $msgType=$message['type'] ?? '';
+            // 如果是语音消息，类型才为语音，否者为文件，主要是兼容发送音频文件
+            if($msgType=='voice'){
+                $filecate="voice";
+            }else{
+                $filecate="file";
+            }
         }elseif($fileType==4){
             $filecate="video";
         }else{
