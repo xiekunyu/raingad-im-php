@@ -38,7 +38,14 @@ class Group extends BaseController
    {
       $param = $this->request->param();
       try {
-         $group_id = explode('-', $param['group_id'])[1];
+         $groupId=$param['group_id'] ?? '';
+         $groupToken=$param['group_token'] ?? '';
+         if($groupToken){
+            // 解析token ，格式为邀请人id-群聊ID
+            $groupId=authcode($groupToken,"DECODE");
+         }
+         $groupInfo = explode('-', $groupId);
+         $group_id=$groupInfo[1];
          $group=GroupModel::find($group_id)->toArray();
          $userList=User::matchUser($group,false,'owner_id');
          $userCount=GroupUser::where(['group_id'=>$group_id])->count();
@@ -46,6 +53,9 @@ class Group extends BaseController
          $expire=time()+7*86400;
          $token=urlencode(authcode($this->uid.'-'.$group_id,'ENCODE','groupQr',7*86400));
          $qrUrl=request()->domain().'/scan/g/'.$token;
+         if($groupToken){
+            $group['inviteUid']=$groupInfo[0];
+         }
          $group['qrUrl']=$qrUrl;
          $group['qrExpire']=date('m月d日',$expire);
          $group['userInfo']=$userInfo;
