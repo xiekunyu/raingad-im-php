@@ -38,12 +38,8 @@ class Group extends BaseController
    {
       $param = $this->request->param();
       try {
+         $jm='qr';
          $groupId=$param['group_id'] ?? '';
-         $groupToken=$param['group_token'] ?? '';
-         if($groupToken){
-            // 解析token ，格式为邀请人id-群聊ID
-            $groupId=authcode($groupToken,"DECODE");
-         }
          $groupInfo = explode('-', $groupId);
          $group_id=$groupInfo[1];
          $group=GroupModel::find($group_id)->toArray();
@@ -51,18 +47,18 @@ class Group extends BaseController
          $userCount=GroupUser::where(['group_id'=>$group_id])->count();
          $userInfo=$userList[$group['owner_id']];
          $expire=time()+7*86400;
-         $token=urlencode(authcode($this->uid.'-'.$group_id,'ENCODE','groupQr',7*86400));
+         $token=urlencode(authcode($this->uid.'-'.$group_id,'ENCODE', $jm,7*86400));
          $qrUrl=request()->domain().'/scan/g/'.$token;
-         if($groupToken){
-            $group['inviteUid']=$groupInfo[0];
-         }
+         $group['id']=$groupId;
          $group['qrUrl']=$qrUrl;
          $group['qrExpire']=date('m月d日',$expire);
          $group['userInfo']=$userInfo;
          $group['ownerName']=$userInfo['realname'];
          $group['groupUserCount']=$userCount;
+         $group['displayName']=$group['name'];
          $group['avatar']=avatarUrl($group['avatar'],$group['name'],$group['group_id'],120);
          $group['setting']=$group['setting']?json_decode($group['setting'],true):['manage' => 0, 'invite' => 1, 'nospeak' => 0];
+         $group['isJoin']=GroupUser::where(['group_id'=>$group_id,'user_id'=>$this->uid])->value('role') ?: 0;
          return success('', $group);
       } catch (Exception $e) {
          return error($e->getMessage());
@@ -80,7 +76,9 @@ class Group extends BaseController
       }
       GroupModel::where(['group_id' => $group_id])->update(['name' => $param['displayName'],'name_py'=>pinyin_sentence($param['displayName'])]);
       $param['editUserName'] = $this->userInfo['realname'];
-      wsSendMsg($group_id, 'editGroupName', $param, 1);
+      $action='editGroupName';
+      event('GroupChange', ['action' => $action, 'group_id' => $group_id, 'param' => $param]);
+      wsSendMsg($group_id, $action, $param, 1);
       return success('修改成功');
    }
 
@@ -112,7 +110,6 @@ class Group extends BaseController
       }catch(Exception $e){
          return error($e->getMessage());
       }
-      
    }
 
       // 设置管理员
@@ -336,5 +333,35 @@ class Group extends BaseController
             }
          }
          return $url;
+      }
+
+      // 加入群
+      public function joinGroup(){
+         $param = $this->request->param();
+         $uid=$this->userInfo['user_id'];
+         $group_id = explode('-', $param['group_id'])[1];
+         // event('GroupChange', ['action' => 'joinGroup', 'group_id' => $group_id, 'param' => $param]);
+         // exit();
+         $inviteUid=$param['inviteUid'] ?? '';
+         $groupUserCount=GroupUser::where(['group_id'=>$group_id,'status'=>1])->count();
+         if(($groupUserCount+1) > $this->chatSetting['groupUserMax'] && $this->chatSetting['groupUserMax']!=0){
+            return warning("人数不能超过".$this->chatSetting['groupUserMax']."人！");
+         }
+         try{
+            $data=[
+               'group_id'=>$group_id,
+               'user_id'=>$uid,
+               'role'=>3,
+               'invite_id'=>$inviteUid
+            ];
+            GroupUser::create($data);
+            $url=GroupModel::setGroupAvatar($group_id);
+            $action='joinGroup';
+            event('GroupChange', ['action' => $action, 'group_id' => $group_id, 'param' => $param]);
+            wsSendMsg($group_id,"addGroupUser",['group_id'=>$param['group_id'],'avatar'=>$url],1);
+            return success('加入成功');
+         }catch(Exception $e){
+            return error($e->getMessage());
+         }
       }
 }

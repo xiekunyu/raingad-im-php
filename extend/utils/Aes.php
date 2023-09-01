@@ -10,7 +10,7 @@ class Aes
      * @param $key string 秘钥
      * @return string
      */
-    static function encrypt($data, $key)
+    public static function encrypt($data, $key)
     {
         $data = openssl_encrypt($data, 'aes-128-ecb', $key, OPENSSL_RAW_DATA);
         return base64_encode($data);
@@ -22,9 +22,10 @@ class Aes
      * @param $key string 秘钥
      * @return false|string
      */
-    static function decrypt($data, $key)
+    public static function decrypt($data, $key)
     {
         $encrypted = base64_decode($data);
         return openssl_decrypt($encrypted, 'aes-128-ecb', $key, OPENSSL_RAW_DATA);
     }
+
 }

@@ -1,7 +1,7 @@
 <?php
 namespace app\index\controller;
 
-use app\enterprise\model\File;
+use app\enterprise\model\{File,Group,User};
 use think\facade\View;
 
 class Index
@@ -58,4 +58,46 @@ class Index
         return \utils\File::download($url, $file['name'] . '.' . $file['ext'], $file['size'], $file['ext']);
     }
 
+    // 扫码获取信息
+    public function scanQr(){
+        $param=request()->param();
+        $action=$param['action'] ?? '';
+        $token=$param['token'] ?? '';
+        $realToken=$param['realToken'] ?? '';
+        if(request()->isPost() && $action && $token && $realToken){
+            $actions=[
+                'g'=>'group',
+                'u'=>'user',
+            ];
+            $a=$actions[$action] ?? '';
+            if(!$a){
+                return warning('二维码已失效');
+            }
+            return $this->$a($param);
+        }else{
+            return $this->index();
+        }
+    }
+
+    protected function group($param)
+    {
+        $token=authcode(urldecode($param['realToken']),"DECODE", 'qr');
+        if(!$token){
+            return warning('二维码已失效');
+        }
+        $groupInfo=explode('-',$token);
+        $uid=$groupInfo[0];
+        $group_id=$groupInfo[1];
+        $group=Group::find($group_id);
+        if($group){
+            $group=$group->toArray();
+            $group['avatar']=avatarUrl($group['avatar'],$group['name'],$group_id,120);
+            $group['invite_id']=$uid;
+            $group['id']='group-'.$group_id;
+            $group['action']='groupInfo';
+            return success('',$group);
+        }else{
+            return warning('二维码已失效');
+        }
+    }
 }

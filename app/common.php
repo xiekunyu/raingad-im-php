@@ -860,6 +860,9 @@ function str_encipher($str,$encode=true,$key=''){
     if($key==''){
          $key=config('app.aes_chat_key');
     }
+    if($key==''){
+        return $str;
+    }
     if($encode){
         $s=\utils\Aes::encrypt($str,$key);
     }else{

@@ -1,5 +1,5 @@
 <?php
-namespace app\common\listen;
+namespace app\common\listener;
 
 use app\enterprise\model\{User};
 

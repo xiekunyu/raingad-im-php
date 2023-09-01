@@ -26,6 +26,24 @@ class User extends BaseModel
    protected $json = ['setting'];
    protected $jsonAssoc = true;
 
+   public function getUid()
+   {
+      return self::$uid;
+   }
+
+   //查询用户信息
+   public static function getUserInfo($map=[])
+   {
+      if(!$map){
+         return self::$userInfo;
+      }
+      $data = self::where($map)->find();
+      if ($data) {
+         $data = $data->toArray();
+      }
+      return $data;
+   }
+   
    /**
      * 刷新用户token 之前token将被拉黑
      * 修改用户数据后 调用该方法 并返回前台更新token
@@ -43,15 +61,6 @@ class User extends BaseModel
         return $authToken;
     }
 
-   //查询用户信息
-   public static function getUserInfo($map)
-   {
-      $data = self::where($map)->find();
-      if ($data) {
-         $data = $data->toArray();
-      }
-      return $data;
-   }
    //   获取所有用户列表
    public static function getAllUser($map, $user_ids = [],$user_id)
    {
@@ -118,6 +127,7 @@ class User extends BaseModel
             $setting = $v['setting'] ? json_decode($v['setting'], true) : ['manage' => 0, 'invite' => 1, 'nospeak' => 0];
             $group_id = 'group-' . $v['group_id'];
             $group[$k]['id'] = $group_id;
+            $group[$k]['account'] = $group_id;
             $group[$k]['avatar'] = avatarUrl($v['avatar'], $v['displayName'], $v['group_id'], 120);
             $group[$k]['name_py'] = $v['name_py'];
             $group[$k]['owner_id'] = $v['owner_id'];
