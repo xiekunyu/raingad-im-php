@@ -9,7 +9,7 @@ class Index
 
     public function index()
     {
-        if (!file_exists(CONF_PATH . "install.lock")) {
+        if (!file_exists(PUBLIC_PATH . "install.lock")) {
             return redirect(url('index/install/index'));
         }
         return redirect("/index.html");

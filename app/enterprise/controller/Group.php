@@ -364,4 +364,39 @@ class Group extends BaseController
             return error($e->getMessage());
          }
       }
+
+          // 更换群主
+    public function changeOwner()
+    {
+        $user_id = $this->request->param('user_id');
+        $group_id = $this->request->param('group_id');
+        $param = $this->request->param();
+        $group_id = explode('-', $param['id'])[1];
+        $uid=$this->userInfo['user_id'];
+        $group=GroupModel::where('group_id',$group_id)->find();
+        if(!$group){
+            return warning('群组不存在');
+        }
+        $user=User::where('user_id',$user_id)->find();
+        if(!$user){
+            return warning('用户不存在');
+        }
+        $role=GroupUser::where(['group_id'=>$group_id,'user_id'=>$uid])->value('role');
+        if($role>1){
+           return warning('您没有操作权限！');
+        }
+        Db::startTrans();
+        try{
+            GroupUser::where('group_id',$group_id)->where('user_id',$user_id)->update(['role'=>1]);
+            GroupUser::where('group_id',$group_id)->where('user_id',$group->owner_id)->update(['role'=>3]);
+            $group->owner_id=$user_id;
+            $group->save();
+            wsSendMsg($group_id,"changeOwner",['group_id'=>'group-'.$group_id,'user_id'=>$user_id],1);
+            Db::commit();
+            return success('保存成功');
+        }catch (\Exception $e){
+            Db::rollback();
+            return warning('更换失败');
+        }
+    }
 }

@@ -36,7 +36,7 @@ class Install
     {
         $protocol = strpos(strtolower($_SERVER['SERVER_PROTOCOL']), 'https') === false ? 'http' : 'https';
 
-        if (file_exists(CONF_PATH . "install.lock")) {
+        if (file_exists(PUBLIC_PATH . "install.lock")) {
             echo "<meta http-equiv='content-type' content='text/html; charset=UTF-8'> <script>alert('请勿重复安装!');location.href='".$protocol."://".$_SERVER["HTTP_HOST"]."';</script>";
             die();     
         }
@@ -70,7 +70,7 @@ class Install
     // 检查数据库
     public function checkDatabase(){
          
-        if (file_exists(CONF_PATH . "install.lock")) {
+        if (file_exists(PUBLIC_PATH . "install.lock")) {
             return warning('请勿重复安装!');       
         } 
         if (!file_exists(PUBLIC_PATH . "sql/database.sql")) {
@@ -146,12 +146,12 @@ class Install
                     $temp_sql = $v.';';
                     Db::query($temp_sql);
                 } catch(\Exception $e) {
-                    touch(CONF_PATH . "install.lock");
+                    touch(PUBLIC_PATH . "install.lock");
                     return error('数据库sql安装出错，请操作数据库手动导入sql文件'.$e->getMessage());
                 }
             }
         } 
-        touch(CONF_PATH . "install.lock");
+        touch(PUBLIC_PATH . "install.lock");
         return success('安装成功',['status'=>$this->status],$install_count);
     }
 
@@ -189,6 +189,28 @@ default_lang = zh-cn
 HOST = {$data['redishost']}
 PORT = {$data['redisport']}
 PASSWORD ={$data['redispass']}
+
+
+[AES]
+TOKEN_KEY = tHTi8USApxsdfnhTM
+LOGIN_KEY = t2fe6HMnmssswDVi2
+#聊天内容加密，如果不加密则留空，一旦加密就不能修改，如果修改了需要清空所有聊天记录
+CHAT_KEY  =
+
+[JWT]
+SECRET = 17b190c0d612321f94f57325ae5a8b4c
+TTL = 2592000
+
+[WORKER]
+NAME = businessWorker
+PORT = 8282
+# 根据自己的核心数而配置
+COUNT = 1
+START_PORT = 2300
+REGISTER_ADDRESS =127.0.0.1:1236
+lAN_IP = 127.0.0.1
+# 分部署部署只需要启动一个gateway，其他的gateway只需要配置register_address即可
+REGISTER_DEPLOY = true
 
 #配置预览功能，本系统主要使用第三方的预览工具，比如永中云转换，自带预览系统
 [PREVIEW]
