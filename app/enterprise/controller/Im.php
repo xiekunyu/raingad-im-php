@@ -483,7 +483,7 @@ class Im extends BaseController
                 return error('通话失败！');
             }
             if($message){
-                $message->content=$content;
+                $message->content=str_encipher($content);
                 $extends=$message->extends;
                 $extends['code']=$code;
                 $extends['callTime']=$callTime;
