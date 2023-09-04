@@ -15,13 +15,13 @@ class Config extends BaseModel
     // 获取系统配置信息
     public static function getSystemInfo($update=false){
         $name='systemInfo';
-        $auth=request()->header('Authorization');
-        $nameFields=['sysInfo','fileUpload'];
+        // $auth=request()->header('Authorization');
+        $nameFields=['sysInfo','fileUpload','chatInfo'];
         // 如果是登录状态才会返回chatINfo
-        if($auth){
-            $name='all'.$name;
-            $nameFields[]="chatInfo";
-        }
+        // if($auth){
+        //     $name='all'.$name;
+        //     $nameFields[]="chatInfo";
+        // }
         if(Cache::has($name) && !$update){
             $systemInfo=Cache::get($name);
         }else{
