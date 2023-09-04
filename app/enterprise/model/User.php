@@ -62,17 +62,25 @@ class User extends BaseModel
     }
 
    //   获取所有用户列表
-   public static function getAllUser($map, $user_ids = [],$user_id)
+   public static function getAllUser($map, $user_ids = [],$user_id,$group_id = 0)
    {
       $field = self::$defaultField;
-      $config=Config::getSystemInfo();
-      // 如果是社区模式，就只查询自己的好友，如果是企业模式，就查询所有用户
-      if($config['sysInfo']['runMode']==1){
-         $list = self::where($map)->field($field)->select()->toArray();
+      $list=[];
+      if($group_id){
+         $groupUser=GroupUser::where([['group_id','=',$group_id],['role','<>',1],['status','=',1]])->column('user_id');
+         if($groupUser){
+            $list=User::where([['user_id','in',$groupUser]])->field($field)->select()->toArray();
+         }
       }else{
-         $friendList = Friend::getFriend(['create_user' => $user_id,'status'=>1]);
-         $userList = array_keys($friendList);
-         $list = self::where($map)->where('user_id', 'in', $userList)->field($field)->select()->toArray();
+         $config=Config::getSystemInfo();
+         // 如果是社区模式，就只查询自己的好友，如果是企业模式，就查询所有用户
+         if($config['sysInfo']['runMode']==1){
+            $list = self::where($map)->field($field)->select()->toArray();
+         }else{
+            $friendList = Friend::getFriend(['create_user' => $user_id,'status'=>1]);
+            $userList = array_keys($friendList);
+            $list = self::where($map)->where('user_id', 'in', $userList)->field($field)->select()->toArray();
+         }
       }
       foreach ($list as $k => $v) {
          $list[$k]['disabled'] = false;

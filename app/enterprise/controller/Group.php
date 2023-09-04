@@ -16,7 +16,12 @@ class Group extends BaseController
    public function getAllUser(){
       $param=$this->request->param();
       $user_ids=isset($param['user_ids'])?$param['user_ids']:[];
-      $data=User::getAllUser([['status','=',1],['user_id','<>',$this->userInfo['user_id']]],$user_ids,$this->uid);
+      $groupId=$param['group_id'] ?? '';
+      $group_id='';
+      if($groupId){
+         $group_id=explode('-',$groupId)[1];
+      }
+      $data=User::getAllUser([['status','=',1],['user_id','<>',$this->userInfo['user_id']]],$user_ids,$this->uid,$group_id);
       return success('',$data);
    }
 
@@ -365,13 +370,12 @@ class Group extends BaseController
          }
       }
 
-          // 更换群主
+   // 更换群主
     public function changeOwner()
     {
         $user_id = $this->request->param('user_id');
-        $group_id = $this->request->param('group_id');
-        $param = $this->request->param();
-        $group_id = explode('-', $param['id'])[1];
+        $id = $this->request->param('id');
+        $group_id = explode('-', $id)[1];
         $uid=$this->userInfo['user_id'];
         $group=GroupModel::where('group_id',$group_id)->find();
         if(!$group){
@@ -393,7 +397,7 @@ class Group extends BaseController
             $group->save();
             wsSendMsg($group_id,"changeOwner",['group_id'=>'group-'.$group_id,'user_id'=>$user_id],1);
             Db::commit();
-            return success('保存成功');
+            return success('转让成功');
         }catch (\Exception $e){
             Db::rollback();
             return warning('更换失败');
