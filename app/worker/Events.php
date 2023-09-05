@@ -87,7 +87,7 @@ class Events
         try {
             $token=str_replace('bearer ','',$token);
             $jwtData = $provider->decode((string)$token);
-        } catch (Exception $exception) {
+        } catch (\Exception $exception) {
             self::closeClient($client_id);
         }
 
