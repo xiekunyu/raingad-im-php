@@ -1,8 +1,8 @@
 @font-face {
   font-family: "iconfont"; /* Project id 3565944 */
-  src: url('../fonts/iconfont.woff2?t=1659537814969') format('woff2'),
-       url('../fonts/iconfont.woff?t=1659537814969') format('woff'),
-       url('../fonts/iconfont.ttf?t=1659537814969') format('truetype');
+  src: url('../fonts/iconfont.woff2?t=1693989529907') format('woff2'),
+       url('../fonts/iconfont.woff?t=1693989529907') format('woff'),
+       url('../fonts/iconfont.ttf?t=1693989529907') format('truetype');
 }
 
 .iconfont {
@@ -11,6 +11,46 @@
   font-style: normal;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+}
+
+.icon-web:before {
+  content: "\e68b";
+}
+
+.icon-ico:before {
+  content: "\e646";
+}
+
+.icon-speaker:before {
+  content: "\e600";
+}
+
+.icon-ai16:before {
+  content: "\e684";
+}
+
+.icon-no-speaker:before {
+  content: "\e867";
+}
+
+.icon-iconqiehuanjingtou:before {
+  content: "\e60d";
+}
+
+.icon-maikefeng:before {
+  content: "\e62c";
+}
+
+.icon-maikefeng1:before {
+  content: "\e62f";
+}
+
+.icon-zhaoxiangjiqiehuan:before {
+  content: "\e866";
+}
+
+.icon-im-yuyin:before {
+  content: "\e667";
 }
 
 .icon-im-file:before {

@@ -63,15 +63,28 @@ class Events
             case 'pong':
                 break;
             case 'ping':
-                Gateway::sendToClient($client_id, json_encode(array(
-                    'type' => 'pong'
-                )));
+                self::sendStatus($client_id);
                 break;
             case 'bindUid':
                 self::auth($client_id,$message_data);
                 break;
         }
         return;
+   }
+
+   protected static function sendStatus($client_id){
+        $uid=$_SESSION['user_id'] ?? 0;
+        $multiport=false;
+        if($uid){
+            $arr=Gateway::getClientIdByUid($uid);
+            if(count($arr)>1){
+                $multiport=true;
+            }
+        }
+        Gateway::sendToClient($client_id, json_encode(array(
+            'type' => 'pong',
+            'multiport' => $multiport,
+        )));
    }
 
     //验证用户的真实性并绑定
@@ -100,6 +113,7 @@ class Events
             self::closeClient($client_id);
         }
         $_SESSION['user_id']=$userInfo['user_id'];
+        self::sendStatus($client_id);
     }
 
     //断开连接
