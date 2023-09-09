@@ -1,0 +1,1 @@
+import{_ as s,o as t,c as e,f as a,j as p}from"./index-6d49e736.js";const r=s({props:{type:{type:String,default:"primary"},pulse:{type:[Boolean,Number],default:!0}}},[["render",function(s,r,c,o,n,l){const u=p;return t(),e(u,{class:a(["sc-state",[{"sc-status-processing":c.pulse},"sc-state-bg--"+c.type]])},null,8,["class"])}],["__scopeId","data-v-58c8b561"]]);export{r as s};

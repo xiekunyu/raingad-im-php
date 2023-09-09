@@ -1,1 +1,0 @@
-import{_ as s,o as a,c as t,w as n,j as o,g as r,ag as c}from"./index-396795ab.js";const l=s({data:()=>({html:""}),onLoad:function(s){this.html=s.src}},[["render",function(s,l,e,d,u,f){const i=c,m=o;return a(),t(m,{class:""},{default:n((()=>[r(i,{src:u.html},null,8,["src"])])),_:1})}]]);export{l as default};
