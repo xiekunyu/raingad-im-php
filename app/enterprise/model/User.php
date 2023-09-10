@@ -312,6 +312,64 @@ class User extends BaseModel
       }else{
          return false;
       }
+   }
 
+   // 验证账号的合法性
+   public function checkAccount(&$data){
+      $user_id=$data['user_id'] ?? 0;
+      if($user_id){
+         $user=self::find($data['user_id']);
+         if(!$user){
+            $this->error='账户不存在';
+            return false;
+         }
+         if($user->user_id==1 && self::$uid!=1){
+            $this->error='超管账户只有自己才能修改';
+            return false;
+         }
+         $other=self::where([['account','=',$data['account']],['user_id','<>',$data['user_id']]])->find();
+         if($other){
+            $this->error='账户已存在';
+            return false;
+         }
+      }else{
+         $user=self::where('account',$data['account'])->find();
+         if($user){
+               $this->error='账户已存在';
+               return false;
+         }
+      }
+      $config=Config::getSystemInfo();
+      $regauth=$config['sysInfo']['regauth'] ?? 0;
+      $acType=\utils\Regular::check_account($data['account']);
+      switch($regauth){
+            case 1:
+               if($acType!=1){
+                  $this->error='当前系统只允许账号为手机号！';
+                  return false;
+               }
+               break;
+            case 2:
+               if($acType!=2){
+                  $this->error='当前系统只允许账号为邮箱！';
+                  return false;
+               }
+               break;
+            case 3:
+               // 验证账号是否为手机号或者邮箱
+               if(!$acType){
+                  $this->error='账户必须为手机号或者邮箱';
+                  return false;
+               }
+               break;
+            default:
+               break;
+      }
+
+      $data['is_auth'] =$regauth ? 1 : 0;
+      if($data['is_auth'] && $acType==2 && $data['email']==''){
+            $data['email'] =$data['account'];
+      }
+      return true;
    }
 }

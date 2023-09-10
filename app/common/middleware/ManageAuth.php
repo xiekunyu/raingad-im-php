@@ -23,9 +23,9 @@ class ManageAuth
                 'group/del',
                 'group/changeowner',
                 'group/delgroupuser',
-                // 'task/starttask',
-                // 'task/stoptask',
-                // 'config/setconfig'
+                'task/starttask',
+                'task/stoptask',
+                'config/setconfig'
             ];
             // 获取pathinfo信息
             $pathinfo = strtolower($request->pathinfo());

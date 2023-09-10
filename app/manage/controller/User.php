@@ -7,6 +7,7 @@
 namespace app\manage\controller;
 use app\BaseController;
 use app\enterprise\model\{User as UserModel,GroupUser,Friend};
+use app\manage\model\Config;
 use think\facade\Db;
 
 class User extends BaseController
@@ -45,19 +46,16 @@ class User extends BaseController
     {
         try{
             $data = $this->request->param();
-            $user=UserModel::where('account',$data['account'])->find();
-            if($user){
-                return warning('账户已存在');
-            }
-            // 验证账号是否为手机号或者邮箱
-            if(!\utils\Regular::is_email($data['account']) && !\utils\Regular::is_phonenumber($data['account'])){
-                return warning('账户必须为手机号或者邮箱');
+            $user=new UserModel();
+            $verify=$user->checkAccount($data);
+            if(!$verify){
+                return warning($user->getError());
             }
             $salt=\utils\Str::random(4);
             $data['password'] = password_hash_tp($data['password'],$salt);
             $data['salt'] =$salt;
+            $data['register_ip'] =$this->request->ip();
             $data['name_py'] = pinyin_sentence($data['realname']);
-            $user=new UserModel();
             $user->save($data);
             $data['user_id']=$user->user_id;
             return success('添加成功', $data);
@@ -71,21 +69,12 @@ class User extends BaseController
     {
         try{
             $data = $this->request->param();
-            // 验证账号是否为手机号或者邮箱
-            if(!\utils\Regular::is_email($data['account']) && !\utils\Regular::is_phonenumber($data['account'])){
-                return warning('账户必须为手机号或者邮箱');
+            $user=new UserModel();
+            $verify=$user->checkAccount($data);
+            if(!$verify){
+                return warning($user->getError());
             }
             $user=UserModel::find($data['user_id']);
-            if(!$user){
-                return warning('用户不存在');
-            }
-            if($user->user_id==1 && $this->userInfo['user_id']!=1){
-                return warning('超管账户只有自己才能修改');
-            }
-            $other=UserModel::where([['account','=',$data['account']],['user_id','<>',$data['user_id']]])->find();
-            if($other){
-                return warning('账户已存在');
-            }
             $user->account =$data['account'];
             $user->realname =$data['realname'];
             $user->email =$data['email'];

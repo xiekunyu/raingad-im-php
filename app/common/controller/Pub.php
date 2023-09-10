@@ -142,10 +142,6 @@ class Pub
                     return warning('邀请码已失效！');
                 }
             }
-            $user=User::where('account',$data['account'])->find();
-            if($user){
-                return warning('账户已存在');
-            }
             $code=$data['code'] ?? '';
             if($code){
                 if($code!=Cache::get($data['account'])){
@@ -153,39 +149,16 @@ class Pub
                 }
                 Cache::delete($data['account']);
             }
-            $config=Config::getSystemInfo();
-            $regauth=$config['sysInfo']['regauth'] ?? 0;
-            $acType=\utils\Regular::check_account($data['account']);
-            switch($regauth){
-                case 1:
-                    if($acType!=1){
-                        return warning('当前系统只允许手机注册！');
-                    }
-                    break;
-                case 2:
-                    if($acType!=2){
-                        return warning('当前系统只允许邮箱注册！');
-                    }
-                    break;
-                case 3:
-                   // 验证账号是否为手机号或者邮箱
-                    if(!$acType){
-                        return warning('账户必须为手机号或者邮箱');
-                    }
-                    break;
-                default:
-                   break;
+            $user=new User();
+            $verify=$user->checkAccount($data);
+            if(!$verify){
+                return warning($user->getError());
             }
             $salt=\utils\Str::random(4);
             $data['password'] = password_hash_tp($data['password'],$salt);
             $data['salt'] =$salt;
-            $data['is_auth'] =$regauth ? 1 : 0;
-            if($data['is_auth'] && $acType==2){
-                $data['email'] =$data['account'];
-            }
             $data['register_ip'] =$this->request->ip();
             $data['name_py'] = pinyin_sentence($data['realname']);
-            $user=new User();
             $user->save($data);
             $data['user_id']=$user->user_id;
             // 监听用户注册后的操作
