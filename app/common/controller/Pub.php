@@ -4,6 +4,7 @@ namespace app\common\controller;
 
 use think\App;
 use app\enterprise\model\{User,Group};
+use app\index\controller\Extension;
 use think\facade\Session;
 use think\facade\Cache;
 use think\facade\Db;
@@ -182,7 +183,11 @@ class Pub
     public function bindUid(){
         $client_id=$this->request->param('client_id');
         $user_id=$this->request->param('user_id');
-        $this->doBindUid($user_id,$client_id);
+        try{
+            $this->doBindUid($user_id,$client_id);
+        }catch(\Exception $e){
+            // 未找到用户
+        }
         return success('');
     }
 
@@ -208,10 +213,14 @@ class Pub
     // 下线通知
     public function offline(){
         $user_id=input('user_id');
-        $client_ids=Gateway::getClientIdByUid($user_id);
-        // 一个终端登录时才发送下线通知
-        if(count($client_ids)<2){
-            wsSendMsg(0,'isOnline',['id'=>$user_id,'is_online'=>0]);
+        try{
+            $client_ids=Gateway::getClientIdByUid($user_id);
+            // 一个终端登录时才发送下线通知
+            if(count($client_ids)<2){
+                wsSendMsg(0,'isOnline',['id'=>$user_id,'is_online'=>0]);
+            }
+        }catch(\Exception $e){
+            // 未找到用户
         }
         return success('');
     }
