@@ -8,6 +8,7 @@ use think\exception\ValidateException;
 use think\Validate;
 use app\manage\model\{Config};
 use think\facade\Cache;
+use thans\jwt\facade\JWTAuth;
 /**
  * 控制器基础类
  */
@@ -80,11 +81,10 @@ abstract class BaseController
         }
         // 验证版本，如果不一致，就需要退出重新登陆
         $version =config('app.app_version');
-        $oldVersion=cache('app_version');
+        $oldVersion=Cache::get('app_version');
         if($version!=$oldVersion){
-            cache('app_version',$version);
-            $authToken=request()->header('authToken');
-            Cache::delete($authToken);
+            Cache::set('app_version',$version);
+            JWTAuth::refresh();
             Cache::delete('systemInfo');
         }
     }

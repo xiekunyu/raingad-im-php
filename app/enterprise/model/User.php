@@ -306,6 +306,7 @@ class User extends BaseModel
          $user['is_group']=0;
          $user['is_top']=0;
          $user['is_notice']=1;
+         $user['is_online']=1;
          $user['type']='event';
          $user['index']=getFirstChart($user['realname']);
          return $user;
@@ -367,7 +368,8 @@ class User extends BaseModel
       }
 
       $data['is_auth'] =$regauth ? 1 : 0;
-      if($data['is_auth'] && $acType==2 && $data['email']==''){
+      $email=$data['email'] ?? '';
+      if($data['is_auth'] && $acType==2 && !$email){
             $data['email'] =$data['account'];
       }
       return true;

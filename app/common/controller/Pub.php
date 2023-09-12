@@ -164,7 +164,7 @@ class Pub
             $data['user_id']=$user->user_id;
             // 监听用户注册后的操作
             event('UserRegister',$data);
-            return success('添加成功', $data);
+            return success('注册成功', $data);
         }catch (\Exception $e){
             return error($e->getMessage());
         }
