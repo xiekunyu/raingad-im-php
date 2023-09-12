@@ -31,7 +31,7 @@ return [
             'port'   => env('redis.port', '6379'),
             'password' => env('redis.password', ''),
             // 缓存前缀
-            'prefix' => '',
+            'prefix' => env('redis.prefix', ''),
         ]
         // 更多的缓存连接
     ],
