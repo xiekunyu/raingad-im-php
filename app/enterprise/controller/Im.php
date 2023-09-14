@@ -53,6 +53,74 @@ class Im extends BaseController
         }
     }
 
+    //转发消息
+    public function forwardMessage()
+    {
+        $param = $this->request->param();
+        $userIds=$param['user_ids'] ?? [];
+        if(!$userIds || count($userIds)>5){
+            return warning('请选择转发的用户或者数量不操作5个！');
+        }
+        $msg_id=$param['msg_id'] ?? 0;
+        $message=Message::find($msg_id);
+        if(!$message){
+            return warning('消息不存在');
+        }
+        $message=$message->toArray();
+        $userInfo=$this->userInfo;
+        try{
+            $is_group=0;
+            $error=0;
+            $chatSetting=$this->chatSetting;
+            foreach($userIds as $k=>$v){
+                $msgInfo=$message;
+                if(strpos($v,'group')!==false){
+                    $is_group=1;
+                }else{
+                    $is_group=0;
+                }
+                if($is_group==0 && $chatSetting['simpleChat']==0){
+                    $error++;
+                    continue;
+                }
+                $msgInfo['id']=\utils\Str::getUuid();
+                $msgInfo['status']='successd';
+                $msgInfo['user_id']=$userInfo['user_id'];
+                $msgInfo['sendTime']=time()*1000;
+                $msgInfo['toContactId']=$v;
+                $msgInfo['content']=str_encipher($msgInfo['content'],false);
+                $msgInfo['fromUser']=[
+                    'id'=>$userInfo['user_id'],
+                    'avatar'=>avatarUrl($userInfo['avatar'],$userInfo['realname'],$userInfo['user_id'],120),
+                    'displayName'=>$userInfo['realname']
+                ];
+                $msgInfo['is_group']=$is_group;
+                // 如果是单聊，并且是社区模式，需要判断是否是好友
+                if($is_group==0 && $this->globalConfig['sysInfo']['runMode']==2){
+                    $friend=Friend::where(['friend_user_id'=>$this->uid,'create_user'=>$v])->find();
+                    if(!$friend){
+                        $error++;
+                        continue;
+                    }
+                    $otherFriend=Friend::where(['friend_user_id'=>$v,'create_user'=>$this->uid])->find();
+                    if(!$otherFriend){
+                        $error++;
+                        continue;
+                    }
+                }
+                Message::sendMessage($msgInfo);
+            }
+        }catch(\Exception $e){
+            return error($e->getMessage());
+        }
+        if ($error) {
+            $text='由于规则限制，转发失败'.$error.'条';
+        } else {
+            $text='转发成功';
+        }
+        return success($text);
+    }
+
     // 获取用户信息
     public function getUserInfo()
     {

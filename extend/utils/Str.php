@@ -575,4 +575,20 @@ class Str{
             'age'=>$age
         ];
     }
+
+    /**
+    * Universally Unique Identifier v4
+    *
+    * @param  int   $b
+    * @return UUID, if $b returns binary(16)
+    */
+    public static function getUuid($b = null)
+    {
+        if (function_exists('uuid_create')) {
+            $uuid = uuid_create();
+        } else {
+            $uuid = sprintf('%04x%04x-%04x-%04x-%04x-%04x%04x%04x', mt_rand(0, 0xffff), mt_rand(0, 0xffff), mt_rand(0, 0xffff), mt_rand(0, 0xfff) | 0x4000, mt_rand(0, 0x3fff) | 0x8000, mt_rand(0, 0xffff), mt_rand(0, 0xffff), mt_rand(0, 0xffff));
+        }
+        return $b ? pack('H*', str_replace('-', '', $uuid)) : $uuid;
+    }
 }

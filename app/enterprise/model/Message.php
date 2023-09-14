@@ -84,7 +84,9 @@ class Message extends BaseModel
         $type=$is_group?'group':'simple';
         $sendData=$param;
         $sendData['status']='succeed';
+        $sendData['msg_id']=$message->msg_id;
         $sendData['is_read']=0;
+        $sendData['to_user']=$toContactId;
         $sendData['sendTime']=(int)$sendData['sendTime'];
         //这里我也不知为啥单聊要把发送对象设置为自己的ID。
         if($is_group){

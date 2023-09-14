@@ -100,4 +100,22 @@ class Index
             return warning('二维码已失效');
         }
     }
+
+    protected function user($param)
+    {
+        $id=decryptIds($param['token']);
+        if(!$id){
+            return warning('二维码已失效');
+        }
+        $user=User::where(['user_id'=>$id])->field(User::$defaultField)->find();
+        if($user){
+            $user=$user->toArray();
+            $user['avatar']=avatarUrl($user['avatar'],$user['realname'],$user['user_id'],120);
+            $user['id']=$user['user_id'];
+            $user['action']='userInfo';
+            return success('',$user);
+        }else{
+            return warning('二维码已失效');
+        }
+    }
 }
