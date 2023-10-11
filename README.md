@@ -131,6 +131,17 @@ location / {
 		rewrite  ^(.*)$  /index.php?s=$1  last;   break;
 	}
 }
+
+#反向代理8282端口
+
+location /wss
+    {
+      proxy_pass http://127.0.0.1:8282;
+      proxy_http_version 1.1;
+      proxy_set_header Upgrade $http_upgrade;
+      proxy_set_header Connection "Upgrade";
+      proxy_set_header X-Real-IP $remote_addr;
+    }
 ```
 
 3. 访问你的ip或者域名即可进入自定义安装向导。
@@ -154,18 +165,7 @@ PS：如需开启聊天文件存入oss，需要在后台中进行配置，配置
 
 2. 消息服务需要放行 8282 端口，如需修改，请修改环境噢配置文件中`WORKEER` 板块的相应参数。windows用户请修改 [ `app\worker\start_gateway.php`] 中的 8282 端口。端口号根据情况需改，如果修改了端口号，需要将前端的程序修改并重新打包上传到项目的public目录下。
    
-3. 系统采用直接用域名作为websocket服务的地址，所以监听端口需要在网站的nginx中配置代理并监听8282端口。
-
-```
-   location /wss
-    {
-      proxy_pass http://127.0.0.1:8282;
-      proxy_http_version 1.1;
-      proxy_set_header Upgrade $http_upgrade;
-      proxy_set_header Connection "Upgrade";
-      proxy_set_header X-Real-IP $remote_addr;
-    }
-```
+3. 系统采用直接用域名作为websocket服务的地址，所以需要在网站的nginx中配置代理并监听8282端口，已在伪静态中写了代理配置的参数。
 
 4. 更多关于workerman的使用，请进入[workerman官网](https://www.workerman.net/)官网进行查阅。
 
@@ -182,7 +182,7 @@ PS：如需开启聊天文件存入oss，需要在后台中进行配置，配置
 | redis    | >= 5.0 |     |
 | workerman    | >= 4.0 |  用于消息服务部署  |
 
-作者提供本系统的安装服务，包括后端和前端部署到线上，保证项目的完美运行，200元/次，安装服务可赠送web端音视频通话源码，如有需要可以进群联系作者！
+作者提供本系统的安装服务，包括后端和前端部署到线上，保证项目的完美运行，200元/次，安装服务可赠送详细的安装教程以及接口文档，如有需要可以进群联系作者！
 
 #### 交流群
 如果有什么问题，请留言，或者加入我们的QQ群！
