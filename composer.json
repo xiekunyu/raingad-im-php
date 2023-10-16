@@ -1,6 +1,6 @@
 {
-    "name": "topthink/think",
-    "description": "the new thinkphp framework",
+    "name": "Raingad-IM",
+    "description": "一个基于TP的webim服务端",
     "type": "project",
     "keywords": [
         "framework",

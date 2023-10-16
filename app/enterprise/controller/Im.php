@@ -310,21 +310,46 @@ class Im extends BaseController
         $id = $param['id'];
         $message = Message::where(['id' => $id])->find();
         if ($message) {
+            // 如果时间超过了2分钟也不能撤回
+            $createTime=is_string($message['create_time']) ? strtotime($message['create_time']) : $message['create_time'];
+            if(time()-$createTime>120 && $message['is_group']==0){
+                return warning('超过2分钟不能撤回！');
+            }
             $text = "撤回了一条消息";
             $fromUserName = "对方";
             $toContactId = $message['to_user'];
             if ($message['is_group'] == 1) {
                 $fromUserName = $this->userInfo['realname'];
                 $toContactId = explode('-', $message['chat_identify'])[1];
+                // 如果是群聊消息撤回，需要判断是否是群主或者管理员，如果是则可以撤回
+                if($message['from_user']!=$this->userInfo['user_id']){
+                    $groupUser=GroupUser::where(['user_id'=>$this->userInfo['user_id'],'group_id'=>$toContactId])->find();
+                    if(!$groupUser || !in_array($groupUser['role'],[1,2])){
+                        return warning('您没有权限撤回该消息！');
+                    }
+                    $text='(管理员)撤回了成员的一条消息';
+                }
             }
             $message->content = str_encipher($text);
             $message->type = 'event';
             $message->is_undo = 1;
-            $message->create_time = time();
             $message->save();
-            $data = $message->toArray();
+            $info = $message->toArray();
+            // $data = $info;
             $data['content'] = $fromUserName . $text;
-            wsSendMsg($toContactId, 'undoMessage', $data, $message['is_group']);
+            $data['sendTime'] = $createTime * 1000;
+            $data['id'] = $info['id'];
+            $data['from_user'] = $info['from_user'];
+            $data['msg_id'] = $info['msg_id'];
+            $data['status'] = $info['status'];
+            $data['type'] = 'event';
+            $data['isMobile'] = $this->request->isMobile() ? 1 : 0;
+            wsSendMsg($toContactId, 'undoMessage', $data, $info['is_group']); 
+            if($info['is_group']==0){
+               // 给自己也发一份推送，多端同步
+                $data['content'] = "我". $text;
+                wsSendMsg($this->userInfo['user_id'], 'undoMessage', $data, $info['is_group']); 
+            }
             return success('');
         } else {
             return warning();

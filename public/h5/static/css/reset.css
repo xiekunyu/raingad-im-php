@@ -42,7 +42,7 @@
 	Example:		class="bk_gray radius"
 	Explain:		.bk_gray 边框|radius 圆角|round 椭圆 | circle 圆形
 */
-.radius-4{border-radius:8rpx}.radius-6{ border-radius:12rpx}.radius-8{ border-radius:16rpx}.radius-10{ border-radius:20rpx}.radius-12{ border-radius:24rpx}.radius-14{ border-radius:28rpx}.radius-16{ border-radius:32rpx}.radius-18{ border-radius:36rpx}.radius-20{ border-radius:40rpx}.radius-round{border-radius:50%; overflow:hidden}
+.radius-2{border-radius:4rpx}.radius-4{border-radius:8rpx}.radius-6{ border-radius:12rpx}.radius-8{ border-radius:16rpx}.radius-10{ border-radius:20rpx}.radius-12{ border-radius:24rpx}.radius-14{ border-radius:28rpx}.radius-16{ border-radius:32rpx}.radius-18{ border-radius:36rpx}.radius-20{ border-radius:40rpx}.radius-round{border-radius:50%; overflow:hidden}
 
 /*css3阴影
 	Name:			style_shadow

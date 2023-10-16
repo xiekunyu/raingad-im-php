@@ -121,18 +121,18 @@
 					  {{setCallTime()}}
 				  </div>
 			      <div class="calling-button">
-			        <div class="button" v-if="status==3" >
-			          <img class="image" src="./image/jieting.png" @click="answer()"/>
-			          <div class="text">接听</div>
+			        <div class="button" v-if="status!=0" >
+			          <img class="image" src="./image/guaduan.png" @click="hangup(true)"/>
+			          <div class="text">挂断</div> 
 			        </div>
 			        <div class="button switch-btn" v-if="status<3" >
 			          <img class="image-icon" :src="'./image/voice'+(voiceStatus ? '' : '-off')+'.png'" @click="switchVoice()"/>
 					  <div class="text">{{ voiceStatus ? '关闭' : '开启'}}麦克风</div> 
 			        </div>
-			        <div class="button" v-if="status!=0" >
-			          <img class="image" src="./image/guaduan.png" @click="hangup(true)"/>
-			          <div class="text">挂断</div> 
-			        </div>
+					<div class="button" v-if="status==3" >
+					  <img class="image" src="./image/jieting.png" @click="answer()"/>
+					  <div class="text">接听</div>
+					</div>
 			        <div class="button switch-btn" v-if="status<3" >
 						<template v-if="is_video">
 							<img class="image-icon" :src="'./image/video.png'" @click="exchangeVideo()"/>
@@ -159,8 +159,8 @@
 				]
 			  },{
 				  'urls': opt.stun ? opt.stun : ['stun:stun.callwithus.com'], // 自己搭建服务器地址
-				  "username":opt.stunUser ?? '',
-				  "credential":opt.stunPass ?? ''
+				  "username":opt.stunUser ? opt.stunUser : '',
+				  "credential":opt.stunPass ? opt.stunPass : ''
 			  }
 			],
 		  };
