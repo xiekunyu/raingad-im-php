@@ -42,6 +42,9 @@ class Friend extends BaseController
     {
         $param = $this->request->param();
         $user_id=$param['user_id'] ?? 0;
+        if($user_id==$this->uid){
+            return warning('不能添加自己为好友');
+        }
         $friend=FriendModel::where(['friend_user_id'=>$user_id,'create_user'=>$this->uid])->find();
         if($friend){
             if($friend->status==1){

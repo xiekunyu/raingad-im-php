@@ -327,7 +327,7 @@ class Im extends BaseController
                     if(!$groupUser || !in_array($groupUser['role'],[1,2])){
                         return warning('您没有权限撤回该消息！');
                     }
-                    $text='(管理员)撤回了成员的一条消息';
+                    $text='被(管理员)撤回了一条消息';
                 }
             }
             $message->content = str_encipher($text);
@@ -347,7 +347,7 @@ class Im extends BaseController
             wsSendMsg($toContactId, 'undoMessage', $data, $info['is_group']); 
             if($info['is_group']==0){
                // 给自己也发一份推送，多端同步
-                $data['content'] = "我". $text;
+                $data['content'] = "你". $text;
                 wsSendMsg($this->userInfo['user_id'], 'undoMessage', $data, $info['is_group']); 
             }
             return success('');
