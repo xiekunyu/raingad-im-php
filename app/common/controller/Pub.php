@@ -79,7 +79,8 @@ class Pub
             //如果登录信息中含有client——id则自动进行绑定
             $client_id=$this->request->param('client_id');
             if($client_id){
-                $this->doBindUid($userInfo['user_id'],$client_id);
+                $cid=$this->request->header('cid','');
+                $this->doBindUid($userInfo['user_id'],$client_id,$cid);
             }
             $update=[
                 'last_login_time'=>time(),
@@ -184,8 +185,9 @@ class Pub
     public function bindUid(){
         $client_id=$this->request->param('client_id');
         $user_id=$this->request->param('user_id');
+        $cid=$this->request->param('cid','');
         try{
-            $this->doBindUid($user_id,$client_id);
+            $this->doBindUid($user_id,$client_id,$cid);
         }catch(\Exception $e){
             // 未找到用户
         }
@@ -193,7 +195,7 @@ class Pub
     }
 
     // 执行绑定
-    public function doBindUid($user_id,$client_id){
+    public function doBindUid($user_id,$client_id,$cid=''){
         // 如果当前ID在线，将其他地方登陆挤兑下线
         if(Gateway::isUidOnline($user_id)){
             wsSendMsg($user_id,'offline',['id'=>$user_id,'client_id'=>$client_id,'isMobile'=>$this->request->isMobile()]);
@@ -207,6 +209,9 @@ class Pub
             foreach($group_ids as $v){
                 Gateway::joinGroup($client_id, $v); 
             }
+        }
+        if($cid){
+            bindCid($user_id,$cid);
         }
         wsSendMsg(0,'isOnline',['id'=>$user_id,'is_online'=>1]);
     }

@@ -498,6 +498,11 @@ function wsSendMsg($user, $type,  $data, $isGroup=0)
         } else {
             if (!$isGroup) {
                 $send = 'sendToUid';
+                // 如果是单聊和语音通话需要使用unipush推送
+                $event=$data['extends']['event'] ?? '';
+                if(in_array($type,['simple']) || ($event=='calling' && $type=='webrtc')){
+                    unipush($user,$data);
+                }
             } else {
                 $send = "sendToGroup";
             }
@@ -509,6 +514,60 @@ function wsSendMsg($user, $type,  $data, $isGroup=0)
     
 }
 
+// 绑定unipush的cid
+function bindCid($uid,$cid){
+    $url=env('unipush.url','');
+    if(!$url){
+        return false;
+    }
+    $data=[
+        'type'=>'bindCid',
+        'alias'=>[[
+            'cid'=>$cid,
+            'alias'=>$uid
+        ]]
+        
+    ];
+    try{
+        $data=json_encode($data);
+        utils\Curl::curl_post($url,$data,true,["Content-Type: application/json"]);
+    }catch(\Exception $e){
+        //忽略错误
+    }
+    
+}
+
+// unipush推送
+function unipush($toUser,$data){
+    $url=env('unipush.url','');
+    if(!$url){
+        return false;
+    }
+    $content='';
+    if($data['type']=='text'){
+        $content=Str::subStr($data['content'],0,50);
+    }else{
+        $content=getMsgType($data['type'],$data['extends']['type'] ?? 0);
+    }
+    // 这个推送不需要发给发送人
+    $fromUser=$data['fromUser']['id'] ?? '';
+    if(is_array($toUser)){
+        $toUser=array_diff($toUser,[$fromUser]);
+    }
+    $data=[
+        'type'=>'push',
+        'toUser'=>$toUser,
+        'title'=>$data['fromUser']['displayName'],
+        'content'=>$content,
+        'payload'=>$data
+    ];
+    try{
+        $data=json_encode($data);
+        utils\Curl::curl_post($url,$data,true,["Content-Type: application/json"]);
+    }catch(\Exception $e){
+        //忽略错误
+    }
+}
 
 // 预览文件
 function previewUrl($url){
@@ -869,4 +928,31 @@ function str_encipher($str,$encode=true,$key=''){
         $s=\utils\Aes::decrypt($str,$key) ?:'';
     }
     return $s;
+}
+
+// 推送时获取消息的类型
+function getMsgType($type,$callVideo=false){
+    $msgName='[暂不支持的消息类型]';
+    switch($type){
+        case 'image':
+            $msgName='[图片]';
+            break;
+        case 'voice':
+            $msgName='[语音]';
+            break;
+        case 'video':
+            $msgName='[视频]';
+            break;
+        case 'file':
+            $msgName='[文件]';
+            break;
+        case 'webrtc':
+            if($callVideo){
+                $msgName='[正在请求与您视频通话]';
+            }else{
+                $msgName='[正在请求与您语音通话]';
+            }
+            break;
+    }
+    return $msgName;
 }
