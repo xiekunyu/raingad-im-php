@@ -63,8 +63,12 @@ class Install
     //版本
     public function version()
     {
-        $res = include(CONF_PATH.'version.php'); 
-        return $res ? : array('VERSION' => '0.5.18','RELEASE' => '20210518'); 
+        $res = include(CONF_PATH.'app.php'); 
+        $data=[
+            'VERSION'=>$res['app_version'],
+            'RELEASE'=>$res['app_release'],
+        ];
+        return $data ? : array('VERSION' => '0.5.18','RELEASE' => '20210518'); 
     }    
 
     // 检查数据库
@@ -215,11 +219,15 @@ REGISTER_DEPLOY = true
 #配置预览功能，本系统主要使用第三方的预览工具，比如永中云转换，自带预览系统
 [PREVIEW]
 # 自带预览系统URL，主要用于预览媒体文件，已内置，必须要有最后的/斜杠
-own=http://view.riangad.com/
+own=
 # 永中云文件预览，主要用于文档预览，必须要有最后的/斜杠
 yzdcs= 
 # 永中云api code
 keycode=17444844212312
+
+[UNIPUSH]
+# unipush的云函数转url地址，主要用于推送
+url=
 
 # 配置对象储存，主要用于聊天文件储存，可以通过后台进行配置
 
