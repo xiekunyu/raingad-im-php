@@ -72,7 +72,7 @@ class Friend extends BaseController
         $msg=[
             'fromUser'=>[
                 'id'=>'system',
-                'nickname'=>'新朋友',
+                'displayName'=>'新朋友',
                 'avatar'=>'',
             ],
             'toContactId'=>'system',
