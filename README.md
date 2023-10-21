@@ -93,7 +93,7 @@ location / {
 	}
 }
 
-#反向代理8282端口
+#反向代理8282端口，无需修改内容
 
 location /wss
     {
@@ -123,7 +123,7 @@ PS：如需开启聊天文件存入oss，需要在后台中进行配置，配置
 
 1. 进入项目根目录 运行 `php think worker:gateway start -d`，或者运行 `php start.php start -d` 即可运行消息服务，测试时不要`-d`。windows下请直接运行根目录下的`start_for_win.bat`文件，由于Workerman在Windows下有诸多使用限制，所以正式环境建议用Linux系统，windows系统仅建议用于开发环境。
 
-2. 消息服务需要放行 8282 端口，如需修改，请修改环境噢配置文件中`WORKEER` 板块的相应参数。windows用户请修改 [ `app\worker\start_gateway.php`] 中的 8282 端口。端口号根据情况需改。
+2. 消息服务需要放行 8282 端口，如需修改，请修改环境噢配置文件中`WORKER` 板块的相应参数。windows用户请修改 [ `app\worker\start_gateway.php`] 中的 8282 端口。端口号根据情况需改。
    
 3. 系统采用直接用域名作为websocket服务的地址，所以需要在网站的nginx中配置代理并监听8282端口，已在伪静态中写了代理配置的参数。
 

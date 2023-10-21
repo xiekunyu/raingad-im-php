@@ -554,11 +554,13 @@ function unipush($toUser,$data){
     if(is_array($toUser)){
         $toUser=array_diff($toUser,[$fromUser]);
     }
+    $is_force=env('unipush.is_force',false);
     $data=[
         'type'=>'push',
         'toUser'=>$toUser,
         'title'=>$data['fromUser']['displayName'],
         'content'=>$content,
+        'force_notification'=>$is_force,
         'payload'=>$data
     ];
     try{

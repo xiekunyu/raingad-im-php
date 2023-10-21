@@ -227,7 +227,9 @@ keycode=17444844212312
 
 [UNIPUSH]
 # unipush的云函数转url地址，主要用于推送
-url=
+URL=
+# unipush直接推送通知栏还是app接收后再创建通知栏
+IS_FORCE=false
 
 # 配置对象储存，主要用于聊天文件储存，可以通过后台进行配置
 

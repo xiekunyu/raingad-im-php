@@ -682,6 +682,7 @@ class Im extends BaseController
         }
         try{
             $user->account=$account;
+            $user->is_auth=1;
             $user->save();
             return success('修改成功');
         }catch (\Exception $e){
