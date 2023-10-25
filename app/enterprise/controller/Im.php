@@ -232,6 +232,7 @@ class Im extends BaseController
                         $content = "对方" . $content;
                     }
                 }
+                $toContactId=$v['is_group'] ==1 ?  'group-'.$v['to_user'] : $v['to_user'];
                 $data[] = [
                     'msg_id' => $v['msg_id'],
                     'id' => $v['id'],
@@ -243,7 +244,7 @@ class Im extends BaseController
                     'download' => $v['file_id'] ? request()->domain().'/filedown/'.encryptIds($v['file_id']) : '',
                     'is_read' => $v['is_read'],
                     'is_group' => $v['is_group'],
-                    'toContactId' => $v['to_user'],
+                    'toContactId' => $toContactId,
                     'from_user' => $v['from_user'],
                     'file_id' => $v['file_id'],
                     'file_cate' => $v['file_cate'],
