@@ -573,16 +573,21 @@ function unipush($toUser,$data){
 
 // 预览文件
 function previewUrl($url){
-    $previewConf=config('preview');
-    $preview='';
-    $suffix=explode('.',$url);
-    $ext=$suffix[count($suffix)-1];
-    $media=['jpg','jpeg','png','bmp','gif','pdf','mp3','wav','wmv','amr','mp4','3gp','avi','m2v','mkv','mov','webp'];
-    $doc=['ppt','pptx','doc','docx','xls','xlsx','pdf'];
-    if(in_array($ext,$media) && $previewConf['own']){
-        $preview=$previewConf['own']."view.html?src=".$url;
-    }elseif(in_array($ext,$doc) && $previewConf['yzdcs']){
-        $preview=$previewConf['yzdcs'].'?k='.$previewConf['keycode'].'&url='.$url;
+    $previewUrl=env('preview.own','');
+    // $preview='';
+    // $suffix=explode('.',$url);
+    // $ext=$suffix[count($suffix)-1];
+    // $media=['jpg','jpeg','png','bmp','gif','pdf','mp3','wav','wmv','amr','mp4','3gp','avi','m2v','mkv','mov','webp'];
+    // $doc=['ppt','pptx','doc','docx','xls','xlsx','pdf'];
+    // if(in_array($ext,$media) && $previewConf['own']){
+    //     $preview=$previewConf['own']."view.html?src=".$url;
+    // }elseif(in_array($ext,$doc) && $previewConf['yzdcs']){
+    //     $preview=$previewConf['yzdcs'].'?k='.$previewConf['keycode'].'&url='.$url;
+    // }else{
+        
+    // }
+    if($previewUrl){
+        $preview=$previewUrl.$url;
     }else{
         $preview=rtrim(request()->domain(),'/')."/view.html?src=".$url;
     }
@@ -913,7 +918,7 @@ function getExtUrl($path){
     if(!file_exists(public_path().$extUrl)){
         $extUrl='/static/img/ext/folder.png';
     }
-    return request()->domain().$extUrl;
+    return rtrim(request()->domain(),'/').$extUrl;
 }
 
 // 字符串内容加解密函数

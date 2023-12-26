@@ -17,7 +17,14 @@ class Index
 
     public function view()
     {
-        return view::fetch();
+        $url=request()->param('src');
+        $suffix=explode('.',$url);
+        $ext=$suffix[count($suffix)-1];
+        return View::fetch('',[
+            'url'  => $url,
+            'ext'=>$ext,
+            'name'=>"预览文件"
+        ]);
     }
 
     //    头像生成

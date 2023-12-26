@@ -21,7 +21,7 @@ class User extends BaseModel
 
    protected $pk = "user_id";
    
-   public static $defaultField = 'user_id,realname,account,avatar,name_py,email,last_login_ip';
+   public static $defaultField = 'user_id,realname,realname as displayName,account,avatar,name_py,email,last_login_ip';
 
    protected $json = ['setting'];
    protected $jsonAssoc = true;

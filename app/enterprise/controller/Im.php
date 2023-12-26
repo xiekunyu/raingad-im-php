@@ -217,10 +217,13 @@ class Im extends BaseController
                 }
                 $content = str_encipher($v['content'],false);
                 $preview = '';
+                $ext='';
                 if (in_array($v['type'], $this->fileType)) {
                     $content = getFileUrl($content);
                     $preview = previewUrl($content);
+                    $ext=getExtUrl($content);
                 }
+                
                 $fromUser = $userList[$v['from_user']];
                 // 处理撤回的消息
                 if ($v['type'] == "event") {
@@ -251,6 +254,7 @@ class Im extends BaseController
                     'fileName' => $v['file_name'],
                     'fileSize' => $v['file_size'],
                     'fromUser' => $fromUser,
+                    'extUrl'=>$ext,
                     'extends'=>is_string($v['extends'])?json_decode($v['extends'],true) : $v['extends']
                 ];
             }
