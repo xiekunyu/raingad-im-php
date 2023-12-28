@@ -6,8 +6,8 @@
 return [
     'app_name' =>"Raingad-IM",
     'app_logo' =>"https://im.file.raingad.com/logo/logo.png",
-    'app_version' =>"3.2.2",
-    'app_release' =>"20231226",
+    'app_version' =>"3.2.3",
+    'app_release' =>"20231228",
     // 应用地址
     'app_host'         => env('app.host', ''),
     // 应用的命名空间
@@ -41,5 +41,9 @@ return [
      'aes_login_key' => env('AES_LOGIN_KEY', ''),
      //用户chat加密用的秘钥
      'aes_chat_key' => env('AES_CHAT_KEY', ''),
+    //  接口加密用的秘钥
+     'app_id' => env('APP_ID', ''),
+     'app_secret' => env('APP_SECRET', ''),
+     'api_status' => env('APP_API_STATUS', true),
 ];
 

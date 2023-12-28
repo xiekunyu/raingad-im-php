@@ -47,12 +47,25 @@ class Pub
 
     public function login(){
         $param=request()->param();
-        $userInfo=User::where(['account'=> $param['account']])->withoutField('register_ip,login_count,update_time,create_time')->find();
-        if($userInfo==null){
-            return warning('当前用户不存在！');
-        }elseif($userInfo['status']==0){
-            return warning('您的账号已被禁用');
+        $token=$param['token'] ?? '';
+        // token一键登录
+        if($token){
+            $apiStatus=config('app.api_status');
+            if(!$apiStatus){
+                return warning('接口已关闭');
+            }
+            $userInfo=Cache::get($token);
+            if(!$userInfo){
+                return warning('TOKEN已失效！');
+            }
         }else{
+            $userInfo=User::where(['account'=> $param['account']])->withoutField('register_ip,login_count,update_time,create_time')->find();
+            if($userInfo==null){
+                return warning('当前用户不存在！');
+            }
+            if($userInfo['status']==0){
+                return warning('您的账号已被禁用');
+            }
             $password=password_hash_tp($param['password'],$userInfo['salt']);
             $code=$param['code'] ?? '';
             if($code){
@@ -65,41 +78,41 @@ class Pub
                     return warning('密码错误！');
                 }
             }
-            $userInfo['avatar']=avatarUrl($userInfo['avatar'],$userInfo['realname'],$userInfo['user_id']);
-            //    如果用户已经有设置
-            $setting=$userInfo['setting'] ?: '';
-            if($setting){
-                $setting['hideMessageName']= $setting['hideMessageName']=='true' ? true : false;
-                $setting['hideMessageTime']= $setting['hideMessageTime']=='true' ? true : false;
-                $setting['avatarCricle']= $setting['avatarCricle']=='true' ? true : false;
-                $setting['isVoice']= $setting['isVoice']=='true' ? true : false;
-                $setting['sendKey']=(int)$setting['sendKey'];
-                $userInfo['setting']=$setting;
-            }
-            //如果登录信息中含有client——id则自动进行绑定
-            $client_id=$this->request->param('client_id');
-            if($client_id){
-                $cid=$this->request->header('cid','');
-                $this->doBindUid($userInfo['user_id'],$client_id,$cid);
-            }
-            $update=[
-                'last_login_time'=>time(),
-                'last_login_ip'=>$this->request->ip(),
-                'login_count'=>Db::raw('login_count+1')
-            ];
-            User::where('user_id',$userInfo['user_id'])->update($update);
-            $userInfo['qrUrl']=request()->domain().'/scan/u/'.encryptIds($userInfo['user_id']);
-            unset($userInfo['password'],$userInfo['salt']);
-            $userInfo['displayName']=$userInfo['realname'];
-            $userInfo['id']=$userInfo['user_id'];
-            $authToken=User::refreshToken($userInfo,$param['terminal'] ?? 'web');
-            $data=[
-                'sessionId'=>Session::getId(),
-                'authToken'=>$authToken,
-                'userInfo'=>$userInfo
-            ];
-            return success('登录成功！',$data);
-       }
+        }
+        $userInfo['avatar']=avatarUrl($userInfo['avatar'],$userInfo['realname'],$userInfo['user_id']);
+        //    如果用户已经有设置
+        $setting=$userInfo['setting'] ?: '';
+        if($setting){
+            $setting['hideMessageName']= $setting['hideMessageName']=='true' ? true : false;
+            $setting['hideMessageTime']= $setting['hideMessageTime']=='true' ? true : false;
+            $setting['avatarCricle']= $setting['avatarCricle']=='true' ? true : false;
+            $setting['isVoice']= $setting['isVoice']=='true' ? true : false;
+            $setting['sendKey']=(int)$setting['sendKey'];
+            $userInfo['setting']=$setting;
+        }
+        //如果登录信息中含有client——id则自动进行绑定
+        $client_id=$this->request->param('client_id');
+        if($client_id){
+            $cid=$this->request->header('cid','');
+            $this->doBindUid($userInfo['user_id'],$client_id,$cid);
+        }
+        $update=[
+            'last_login_time'=>time(),
+            'last_login_ip'=>$this->request->ip(),
+            'login_count'=>Db::raw('login_count+1')
+        ];
+        User::where('user_id',$userInfo['user_id'])->update($update);
+        $userInfo['qrUrl']=request()->domain().'/scan/u/'.encryptIds($userInfo['user_id']);
+        unset($userInfo['password'],$userInfo['salt']);
+        $userInfo['displayName']=$userInfo['realname'];
+        $userInfo['id']=$userInfo['user_id'];
+        $authToken=User::refreshToken($userInfo,$param['terminal'] ?? 'web');
+        $data=[
+            'sessionId'=>Session::getId(),
+            'authToken'=>$authToken,
+            'userInfo'=>$userInfo
+        ];
+        return success('登录成功！',$data);
    }
 
     //退出登录

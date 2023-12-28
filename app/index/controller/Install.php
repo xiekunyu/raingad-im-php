@@ -175,7 +175,9 @@ APP_DEBUG = true
 
 [APP]
 DEFAULT_TIMEZONE = Asia/Shanghai
-
+ID = a1b2c3d4e5f
+SECRET = GHJKUG123456sdfghjkl
+API_STATUS = true
 [DATABASE]
 TYPE = {$data['type']}
 HOSTNAME = {$data['hostname']}

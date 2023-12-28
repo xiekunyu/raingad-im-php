@@ -17,7 +17,7 @@ header('Access-Control-Allow-Origin:*');
 // 响应类型
 header('Access-Control-Allow-Methods:*');
 // 响应头设置
-header('Access-Control-Allow-Headers:x-requested-with,X_Requested_With,content-type,Authorization,clientId,sessionId,cid');
+header('Access-Control-Allow-Headers:x-requested-with,X_Requested_With,content-type,Authorization,clientId,sessionId,cid,X-Im-AppId,X-Im-Sign,X-Im-TimeStamp');
 // 定义配置文件目录和应用目录同级
 define('CONF_PATH', __DIR__.'/../config/');
 define('PUBLIC_PATH', __DIR__.'/');
