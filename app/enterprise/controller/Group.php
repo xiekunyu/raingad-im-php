@@ -266,7 +266,7 @@ class Group extends BaseController
             GroupModel::destroy($group_id);
             wsSendMsg($group_id,"removeGroup",['group_id'=>$param['id']],1);
             Db::commit();
-            return success();
+            return success('');
          }catch(Exception $e){
             Db::rollback();
             return error($e->getMessage());

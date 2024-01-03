@@ -253,7 +253,7 @@ class Pub
         $group_id=input('group_id');
         $group_id = explode('-', $group_id)[1];
         Gateway::joinGroup($client_id, $group_id); 
-        return success();
+        return success('');
     }
 
     // 获取系统配置信息

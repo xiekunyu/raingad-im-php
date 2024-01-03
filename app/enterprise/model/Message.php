@@ -108,6 +108,7 @@ class Message extends BaseModel
                 $pre=2;
             }
             $sendData['preview']=previewUrl($sendData['content'],$pre);
+            $sendData['extUrl']=getExtUrl($sendData['content']);
         }
         if($is_group==0){
             $toContactId=[$toContactId,$param['user_id']];
