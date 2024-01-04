@@ -54,6 +54,7 @@ class Upload extends BaseController
         if($info['ext']=='' && isset($data['ext'])){
             $info['ext']=$data['ext'];
         }
+        $info['ext']=strtolower($info['ext']);
         if(!in_array($info['ext'],$conf['fileExt'])){
             return shutdown('文件格式不支持');
         }
