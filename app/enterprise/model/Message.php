@@ -109,6 +109,7 @@ class Message extends BaseModel
             }
             $sendData['preview']=previewUrl($sendData['content'],$pre);
             $sendData['extUrl']=getExtUrl($sendData['content']);
+            $sendData['download']= $sendData['file_id'] ? request()->domain().'/filedown/'.encryptIds($sendData['file_id']) : '';
         }
         if($is_group==0){
             $toContactId=[$toContactId,$param['user_id']];
