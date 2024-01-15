@@ -61,6 +61,7 @@ class Message extends BaseModel
                 $content=str_replace($ossUrl,'',$param['content']);
             }
         }
+        $at=($param['at'] ?? null) ? implode(',',$param['at']) : null;
         $data=[
             'from_user'=>$param['user_id'],
             'to_user'=>$toContactId,
@@ -75,6 +76,7 @@ class Message extends BaseModel
             "file_cate"=>$param['file_cate'] ?? 0,
             'file_size'=>$fileSzie,
             'file_name'=>$fileName,
+            'at'=>$at,
             'extends'=>($param['extends'] ?? null) ? $param['extends'] : null,
         ];
         $message=new self();
