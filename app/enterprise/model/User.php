@@ -131,6 +131,9 @@ class User extends BaseModel
          $group = $group->toArray();
          $group_ids = arrayToString($group, 'group_id');
          $getGroupLastMsg = Db::name('message')->field($msgField)->where([['to_user', 'in', $group_ids], ['is_group', '=', 1], ['is_last', '=', 1]])->select();
+         $getAtMsg=Db::name('message')->field($msgField)->where([['to_user', 'in', $group_ids], ['is_group', '=', 1]])->whereFindInSet('at',$user_id)->group('to_user')->select();
+
+         // halt($getAtMsg);
          foreach ($group as $k => $v) {
             $setting = $v['setting'] ? json_decode($v['setting'], true) : ['manage' => 0, 'invite' => 1, 'nospeak' => 0];
             $group_id = 'group-' . $v['group_id'];
@@ -147,12 +150,25 @@ class User extends BaseModel
             $group[$k]['is_notice'] = $v['is_notice'];
             $group[$k]['is_top'] = $v['is_top'];
             $group[$k]['is_online'] = 1;
+            $group[$k]['is_at'] = 0;
             if ($getGroupLastMsg) {
-               foreach ($getGroupLastMsg as $val) {
+               foreach ($getGroupLastMsg as $key=>$val) {
                   if ($val['to_user'] == $v['group_id']) {
                      $group[$k]['type'] =$val['type'];
                      $group[$k]['lastContent'] = str_encipher($val['lastContent'],false);
                      $group[$k]['lastSendTime'] = $val['lastSendTime'] * 1000;
+                     // 已经赋值了删除掉提升下次循环的性能
+                     unset($getGroupLastMsg[$key]);
+                     break;
+                  }
+               }
+            }
+            if($getAtMsg){
+               foreach ($getAtMsg as $key=> $val) {
+                  if ($val['to_user'] == $v['group_id']) {
+                     $group[$k]['is_at'] = 1;
+                     // 已经赋值了删除掉提升下次循环的性能
+                     unset($getAtMsg[$key]);
                      break;
                   }
                }
@@ -177,6 +193,7 @@ class User extends BaseModel
          $list_chart[$k]['lastSendTime'] = time() * 1000;
          $list_chart[$k]['is_group'] = 0;
          $list_chart[$k]['setting'] = [];
+         $list_chart[$k]['is_at'] = 0;
          $list_chart[$k]['last_login_ip'] = $v['last_login_ip'];
          $list_chart[$k]['location'] =$v['last_login_ip'] ? implode(" ", \Ip::find($v['last_login_ip'])) : "未知";
          $is_online=0;
