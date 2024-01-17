@@ -36,7 +36,7 @@ class ClearMessage extends Task
 
     public function configure()
     {
-        //设置每天8点执行
+        //设置每天2点执行
         $this->dailyAt('02:00'); 
     }
 
@@ -46,7 +46,6 @@ class ClearMessage extends Task
      */
     protected function execute()
     {
-        $this->writeLog('任务开始执行');
         if(date('H:i')!='02:00'){
             return false;
         }
@@ -57,12 +56,12 @@ class ClearMessage extends Task
            if($status && $days){
                 $time=time() - ($days * $this->daytime);
                 $where[]=['create_time','<',$time];
-                // $where[]=['is_last','=',0];
+                $where[]=['is_last','=',0];
                 Message::where($where)->delete();
            }
-           $this->writeLog('消息清理成功');
+           print "****************消息清理成功******************\n";
         } catch (Exception $e) {
-            $this->writeLog('消息清理失败:'.$e->getMessage());
+            print '消息清理失败:'.$e->getMessage()."\n";
         }
     }
 }

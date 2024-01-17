@@ -190,6 +190,15 @@ class Im extends BaseController
         }
         $list = Message::getList($map, $where, 'msg_id desc', $listRows, $pageSize);
         $data = $this->recombileMsg($list);
+        // 如果是群聊并且是第一页消息，需要推送@数据给用户
+        if($param['is_group']==1 && $param['page']==1){
+            $atList=Db::name('message')->where(['chat_identify'=>$chat_identify,'is_group'=>1])->whereFindInSet('at',$this->userInfo['user_id'])->order('msg_id desc')->select();
+            $atData=$this->recombileMsg($atList,false);
+            wsSendMsg($this->userInfo['user_id'],'atMsgList',[
+                'list'=>$atData,
+                'count'=>count($atData)
+            ]);
+        }
         // 如果是消息管理器则不用倒序
         if (!isset($param['type'])) {
             $data = array_reverse($data);
@@ -197,12 +206,12 @@ class Im extends BaseController
         return success('', $data, $list->total());
     }
 
-    protected function recombileMsg($list)
+    protected function recombileMsg($list,$isPagination=true)
     {
         $data = [];
         $userInfo = $this->userInfo;
         if ($list) {
-            $listData = $list->toArray()['data'];
+            $listData = $isPagination ? $list->toArray()['data'] : $list;
             $userList = User::matchUser($listData, true, 'from_user', 120);
             foreach ($listData as $k => $v) {
                 // 屏蔽已删除的消息
@@ -236,6 +245,7 @@ class Im extends BaseController
                     }
                 }
                 $toContactId=$v['is_group'] ==1 ?  'group-'.$v['to_user'] : $v['to_user'];
+                $atList=($v['at'] ?? null) ? explode(',',$v['at']): [];
                 $data[] = [
                     'msg_id' => $v['msg_id'],
                     'id' => $v['id'],
@@ -247,6 +257,7 @@ class Im extends BaseController
                     'download' => $v['file_id'] ? request()->domain().'/filedown/'.encryptIds($v['file_id']) : '',
                     'is_read' => $v['is_read'],
                     'is_group' => $v['is_group'],
+                    'at' => $atList,
                     'toContactId' => $toContactId,
                     'from_user' => $v['from_user'],
                     'file_id' => $v['file_id'],
@@ -266,13 +277,14 @@ class Im extends BaseController
     public function setMsgIsRead()
     {
         $param = $this->request->param();
-        $this->setIsRead($param['is_group'], $param['toContactId']);
+        
         // 判断是否是一个二维数组
         if (is_array($param['messages'][0] ?? '')) {
            $messages=$param['messages'];
         } else {
             $messages=[$param['messages']];
         }
+        $this->setIsRead($param['is_group'], $param['toContactId'],$messages);
         if (!$param['is_group']) {
             wsSendMsg($param['fromUser'], 'isRead', $messages, 0);
         }
@@ -280,11 +292,15 @@ class Im extends BaseController
     }
 
     // 设置消息已读
-    protected function setIsRead($is_group, $to_user)
+    protected function setIsRead($is_group, $to_user,$messages=[])
     {
         if ($is_group) {
             $chat_identify = $to_user;
             $toContactId = explode('-', $to_user)[1];
+            // 将@消息放到定时任务中逐步清理
+            if($messages){
+                Message::setAtRead($messages,$this->userInfo['user_id']);
+            }
             // 更新群里面我的所有未读消息为0
             GroupUser::editGroupUser(['user_id' => $this->userInfo['user_id'], 'group_id' => $toContactId], ['unread' => 0]);
         } else {
@@ -693,5 +709,16 @@ class Im extends BaseController
         }catch (\Exception $e){
             return error('修改失败');
         }
+    }
+
+    // 阅读@消息
+    public function readAtMsg(){
+        $param = $this->request->param();
+        $message=Message::where('msg_id',$param['msg_id'])->value('at');
+        $atList=($message ?? null) ? explode(',',$message): [];
+        // 两个数组取差集
+        $newAtList = array_diff($atList, [$this->userInfo['user_id']]);
+        Message::where('msg_id',$param['msg_id'])->update(['at'=>implode(',',$newAtList)]);
+        return success('');
     }
 }

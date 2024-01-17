@@ -31,6 +31,7 @@ class Terminal
 
     protected $procStatus = null;
     protected $runType    = 1;
+    protected $process    = null;
 
 
     /**

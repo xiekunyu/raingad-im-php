@@ -7,7 +7,7 @@ namespace app\enterprise\model;
 
 use app\BaseModel;
 use think\facade\Db;
-use think\facade\Request;
+use think\facade\Cache;
 class Message extends BaseModel
 {
     protected $pk="msg_id";
@@ -61,7 +61,12 @@ class Message extends BaseModel
                 $content=str_replace($ossUrl,'',$param['content']);
             }
         }
-        $at=($param['at'] ?? null) ? implode(',',$param['at']) : null;
+        $atList=($param['at'] ?? null) ? $param['at']: [];
+        // 如果at里面有0，代表@所有人
+        if($atList && in_array(0,$atList)){
+            $atList=GroupUser::where(['group_id'=>$toContactId])->column('user_id');
+        }
+        $at=$atList ? implode(',',$atList) : null;
         $data=[
             'from_user'=>$param['user_id'],
             'to_user'=>$toContactId,
@@ -86,11 +91,12 @@ class Message extends BaseModel
         $type=$is_group?'group':'simple';
         $sendData=$param;
         $sendData['status']='succeed';
+        $sendData['at']=$atList;
         $sendData['msg_id']=$message->msg_id;
         $sendData['is_read']=0;
         $sendData['to_user']=$toContactId;
         $sendData['sendTime']=(int)$sendData['sendTime'];
-        //这里我也不知为啥单聊要把发送对象设置为自己的ID。
+        //这里单聊中发送对方的消息，对方是接受状态，自己是对方的联系人，要把发送对象设置为发送者的ID。
         if($is_group){
             $sendData['toContactId']=$param['toContactId'];
             // 将团队所有成员的未读状态+1
@@ -143,8 +149,18 @@ class Message extends BaseModel
         return true;
     }
 
-    public function matchData(){
-
+    // 将消息中的@用户加入到atListQueue中
+    public static function setAtread($messages,$user_id){
+        foreach($messages as $k=>$v){
+            if(!isset($v['at'])){
+                continue;
+            }
+            if($v['at'] && in_array($user_id,$v['at'])){
+               $atListQueue=Cache::get("atListQueue");
+               $atListQueue[$v['msg_id']][]=$user_id;
+               Cache::set("atListQueue",$atListQueue);
+            }
+        }
     }
 
 }

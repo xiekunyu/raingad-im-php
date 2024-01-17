@@ -36,7 +36,6 @@ class Task extends Command
 
         $rootPath = root_path();
 
-        // 配置任务，每隔20秒访问2次网站
         $task = new EasyTask();
 
         // 设置常驻内存
@@ -53,10 +52,22 @@ class Task extends Command
         // 消息推送
         $task->addCommand('php think worker:gateway start', 'worker', 0);
         // 定时任务
-        $task->addCommand('php think cron:schedule', 'schedule', 0);
-        // 律者队列
+        $task->addCommand('php think cron:run', 'schedule', 60);
+        // 消息队列
         $task->addCommand('php think queue:listen --sleep 0.3 --queue lvzhe', 'queue', 0);
         
+        // 定时删除运行日志
+        $task->addFunc(function () {
+            $rootPath = root_path();
+            $stdPath=$rootPath . 'runtime'.DIRECTORY_SEPARATOR.'easy_task'.DIRECTORY_SEPARATOR.'Std';
+            foreach (glob($stdPath . DIRECTORY_SEPARATOR . '*.std') as $file) {
+                if (is_file($file)) {
+                    print $file."清理文件\n";
+                    unlink($file);
+                }
+            }
+            print $stdPath."   文件清理成功\n";
+        }, 'clearStd', 86400);
 
         // 根据命令执行
         if ($action == 'start') {

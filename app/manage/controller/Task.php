@@ -26,7 +26,8 @@ class Task extends BaseController
     protected $taskNames = [
         'schedule' => '计划任务',
         'queue' => '消息队列',
-        'worker' => '消息推送'
+        'worker' => '消息推送',
+        'clearStd' => '清理日志',
     ];
 
     public function __construct(App $app)
@@ -46,13 +47,13 @@ class Task extends BaseController
         $data = $this->taskMsg();
 
         if (!count($data)) {
-            return warning('进程未启动');
+            return warning('');
         }
 
         foreach ($data as &$datum) {
             $expName = explode('_', $datum['name']);
 
-            $datum['remark'] = $this->taskNames[$expName[count($expName) - 1]];
+            $datum['remark'] = $this->taskNames[$expName[count($expName) - 1]] ?? "未知任务";
         }
         unset($datum);
         return success('', $data);

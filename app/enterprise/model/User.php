@@ -131,7 +131,7 @@ class User extends BaseModel
          $group = $group->toArray();
          $group_ids = arrayToString($group, 'group_id');
          $getGroupLastMsg = Db::name('message')->field($msgField)->where([['to_user', 'in', $group_ids], ['is_group', '=', 1], ['is_last', '=', 1]])->select();
-         $getAtMsg=Db::name('message')->field($msgField)->where([['to_user', 'in', $group_ids], ['is_group', '=', 1]])->whereFindInSet('at',$user_id)->group('to_user')->select();
+         $getAtMsg=Db::name('message')->field($msgField)->where([['to_user', 'in', $group_ids], ['is_group', '=', 1]])->whereFindInSet('at',$user_id)->select();
 
          // halt($getAtMsg);
          foreach ($group as $k => $v) {
@@ -166,10 +166,9 @@ class User extends BaseModel
             if($getAtMsg){
                foreach ($getAtMsg as $key=> $val) {
                   if ($val['to_user'] == $v['group_id']) {
-                     $group[$k]['is_at'] = 1;
+                     ++$group[$k]['is_at'];
                      // 已经赋值了删除掉提升下次循环的性能
                      unset($getAtMsg[$key]);
-                     break;
                   }
                }
             }
