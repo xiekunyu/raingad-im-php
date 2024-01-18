@@ -192,12 +192,19 @@ class Im extends BaseController
         $data = $this->recombileMsg($list);
         // 如果是群聊并且是第一页消息，需要推送@数据给用户
         if($param['is_group']==1 && $param['page']==1){
-            $atList=Db::name('message')->where(['chat_identify'=>$chat_identify,'is_group'=>1])->whereFindInSet('at',$this->userInfo['user_id'])->order('msg_id desc')->select();
-            $atData=$this->recombileMsg($atList,false);
-            wsSendMsg($this->userInfo['user_id'],'atMsgList',[
-                'list'=>$atData,
-                'count'=>count($atData)
-            ]);
+            $isPush=Cache::get('atMsgPush'.$chat_identify) ?? '';
+            $atList=Db::name('message')->where(['chat_identify'=>$chat_identify,'is_group'=>1])->whereFindInSet('at',$this->userInfo['user_id'])->order('msg_id desc')->select()->toArray();
+            $msgIda=array_column($atList,'msg_id');
+            // 如果两次推送at数据的列表不一样，则推送
+            if($isPush!=json_encode($msgIda)){
+                $atData=$this->recombileMsg($atList,false);
+                wsSendMsg($this->userInfo['user_id'],'atMsgList',[
+                    'list'=>$atData,
+                    'count'=>count($atData),
+                    'toContactId'=>$param['toContactId']
+                ]);
+                Cache::set('atMsgPush'.$chat_identify,json_encode($msgIda),60);
+            }
         }
         // 如果是消息管理器则不用倒序
         if (!isset($param['type'])) {
@@ -714,11 +721,14 @@ class Im extends BaseController
     // 阅读@消息
     public function readAtMsg(){
         $param = $this->request->param();
-        $message=Message::where('msg_id',$param['msg_id'])->value('at');
-        $atList=($message ?? null) ? explode(',',$message): [];
-        // 两个数组取差集
-        $newAtList = array_diff($atList, [$this->userInfo['user_id']]);
-        Message::where('msg_id',$param['msg_id'])->update(['at'=>implode(',',$newAtList)]);
+        $atList=Db::name('message')->where(['chat_identify'=>$param['toContactId'],'is_group'=>1])->whereFindInSet('at',$this->userInfo['user_id'])->order('msg_id desc')->select();
+        $atData=$this->recombileMsg($atList,false);
+        Message::setAtRead($atData,$this->userInfo['user_id']);
+        // $message=Message::where('msg_id',$param['msg_id'])->select();
+        // $atList=($message ?? null) ? explode(',',$message): [];
+        // // 两个数组取差集
+        // $newAtList = array_diff($atList, [$this->userInfo['user_id']]);
+        // Message::where('msg_id',$param['msg_id'])->update(['at'=>implode(',',$newAtList)]);
         return success('');
     }
 }

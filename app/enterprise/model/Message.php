@@ -64,7 +64,7 @@ class Message extends BaseModel
         $atList=($param['at'] ?? null) ? $param['at']: [];
         // 如果at里面有0，代表@所有人
         if($atList && in_array(0,$atList)){
-            $atList=GroupUser::where(['group_id'=>$toContactId])->column('user_id');
+            $atList=GroupUser::where([['group_id','=',$toContactId],['status','=',1],['user_id','<>',$param['user_id']]])->column('user_id');
         }
         $at=$atList ? implode(',',$atList) : null;
         $data=[

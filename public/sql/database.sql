@@ -143,6 +143,7 @@ CREATE TABLE IF NOT EXISTS `yu_message` (
   `create_time` int(13) NOT NULL DEFAULT '0' COMMENT '发送时间',
   `is_undo` tinyint(1) NOT NULL DEFAULT '0' COMMENT '是否撤回',
   `at` text COLLATE utf8mb4_unicode_ci COMMENT '提及某人',
+  `pid` int(11) NOT NULL DEFAULT '0' COMMENT '引用的消息ID',
   `file_id` int(11) NOT NULL DEFAULT '0' COMMENT '文件id',
   `file_cate` tinyint(1) NOT NULL DEFAULT '0' COMMENT '文件类型',
   `file_size` int(11) NOT NULL DEFAULT '0' COMMENT '文件大小',
