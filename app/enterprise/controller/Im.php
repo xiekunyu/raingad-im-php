@@ -565,6 +565,7 @@ class Im extends BaseController
             'is_group'=>0,
             'is_read'=>0,
             'fromUser'=>$userInfo,
+            'at'=>[],
             'extends'=>[
                 'type'=>$type,    //通话类型，1视频，0语音。
                 'status'=>$status, //，1拨打方，2接听方
