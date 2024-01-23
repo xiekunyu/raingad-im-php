@@ -169,6 +169,7 @@ class Im extends BaseController
         // 设置当前聊天消息为已读
         $chat_identify = $this->setIsRead($is_group, $param['toContactId']);
         $type = isset($param['type']) ? $param['type'] : '';
+        $is_at = isset($param['is_at']) ? $param['is_at'] : '';
         $map = ['chat_identify' => $chat_identify, 'status' => 1, 'is_group' => $is_group];
         $where = [];
         if ($type && $type != "all") {
@@ -181,6 +182,17 @@ class Im extends BaseController
         $keywords = isset($param['keywords']) ? $param['keywords'] : '';
         if ($keywords && in_array($type, ['text', 'all'])) {
             $where[] = ['content', 'like', '%' . $keywords . '%'];
+        }
+        // 如果是查询@数据
+        if($is_at){
+            $atList=Db::name('message')->where($map)->where($where)->whereFindInSet('at',$this->userInfo['user_id'])->order('msg_id desc')->select()->toArray();
+            if($atList){
+                $data = $this->recombileMsg($atList,false);
+                Message::setAtread($data,$this->userInfo['user_id']);
+                return success('', $data, count($data));
+            }else{
+                return success('', [], 0);
+            }
         }
         $listRows = $param['limit'] ?: 20;
         $pageSize = $param['page'] ?: 1;
