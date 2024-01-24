@@ -62,7 +62,7 @@
 	Example:		class="f-12|f-14|f-16|f-18|f-20|f-24|f-26|f-28|f-30"
 	Explain:		12rpx字体|14rpx字体|16rpx字体|18rpx字体|20rpx字体|24rpx字体|26rpx字体|28rpx字体|30rpx字体
 */
-.f-10{font-size:20rpx}.f-11{font-size:22rpx}.f-12{font-size:24rpx}.f-14{font-size:28rpx}.f-16{font-size:32rpx}.f-18{font-size:36rpx}.f-20{font-size:40rpx}.f-24{font-size:48rpx}.f-26{font-size:52rpx}.f-28{font-size:56rpx}.f-30{font-size:60rpx}.f-32{font-size:64rpx}.f-36{font-size:72rpx}.f-40{font-size:80rpx}
+.f-10{font-size:20rpx}.f-11{font-size:22rpx}.f-12{font-size:24rpx}.f-13{font-size:26rpx}.f-14{font-size:28rpx}.f-16{font-size:32rpx}.f-18{font-size:36rpx}.f-20{font-size:40rpx}.f-24{font-size:48rpx}.f-26{font-size:52rpx}.f-28{font-size:56rpx}.f-30{font-size:60rpx}.f-32{font-size:64rpx}.f-36{font-size:72rpx}.f-40{font-size:80rpx}
 
 /*3.1.14 文字行距
 	Name:			mod_line-height
@@ -302,4 +302,12 @@
  
  .cu-list>.cu-item .move.third {
  	width: 450upx !important;
+ }
+ 
+ .emoji-image{
+	 margin: 0 6rpx;
+ }
+ 
+ .manage-content{
+ 	text-align: left;
  }

@@ -345,10 +345,12 @@ class Group extends BaseController
          $param = $this->request->param();
          $uid=$this->userInfo['user_id'];
          $group_id = explode('-', $param['group_id'])[1];
-         // event('GroupChange', ['action' => 'joinGroup', 'group_id' => $group_id, 'param' => $param]);
-         // exit();
          $inviteUid=$param['inviteUid'] ?? '';
          $groupUserCount=GroupUser::where(['group_id'=>$group_id,'status'=>1])->count();
+         $groupUser=GroupUser::where(['group_id'=>$group_id,'user_id'=>$uid])->find();
+         if($groupUser){
+            return warning('您已经加入该群！');
+         }
          if(($groupUserCount+1) > $this->chatSetting['groupUserMax'] && $this->chatSetting['groupUserMax']!=0){
             return warning("人数不能超过".$this->chatSetting['groupUserMax']."人！");
          }
