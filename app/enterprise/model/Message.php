@@ -61,7 +61,7 @@ class Message extends BaseModel
                 $content=str_replace($ossUrl,'',$param['content']);
             }
         }
-        $atList=($param['at'] ?? null) ? $param['at']: [];
+        $atList=($param['at'] ?? null) ? array_map('intval', $param['at']): [];
         // 如果at里面有0，代表@所有人
         if($atList && in_array(0,$atList)){
             $atList=GroupUser::where([['group_id','=',$toContactId],['status','=',1],['user_id','<>',$param['user_id']]])->column('user_id');
