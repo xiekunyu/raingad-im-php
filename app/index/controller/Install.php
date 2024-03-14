@@ -395,7 +395,7 @@ INFO;
             ['name'=>'openssl','alias'=>'openssl', 'value'=>'开启',  'status'=>'ok','description'=>"OPENSSL扩展"],
             ['name'=>'pcntl','alias'=>'pcntl', 'value'=>'开启',  'status'=>'ok','description'=>"pcntl扩展，消息推送必须开启"],
             ['name'=>'posix','alias'=>'posix', 'value'=>'开启',  'status'=>'ok','description'=>"posix扩展，消息推送必须开启"],
-            ['name'=>'event','alias'=>'event', 'value'=>'开启',  'status'=>'ok','description'=>"event选择安装,处理消息推送高并发"],
+            ['name'=>'event','alias'=>'event', 'value'=>'开启',  'status'=>'ok','description'=>"event扩展（可选安装）,处理消息推送高并发"],
         ];
         foreach($items as $k=>$v){
             $status='ok';
