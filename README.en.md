@@ -73,7 +73,7 @@ composer install
 ```
 or
 
-- 【Recommended】Download the full source code and put it on your own server. Take a look at the 'distribution on the right' at the top of the gitee project home page and download the latest release in the distribution.
+- 【Recommended】Download the full source code and put it on your own server. Take a look at the  [（releases）](https://gitee.com/raingad/im-instant-chat/releases) at the top of the gitee project home page and download the latest release in the distribution.
 
 #### Start installation
 1. Create a website by pointing the site's running directory to the 'public' directory in the project root.

@@ -1,0 +1,1 @@
+import{_ as s,o,c as a,w as t,f as n,v as c,ai as e}from"./index-01d5b8eb.js";const r=s({data:()=>({html:""}),onLoad:function(s){console.log(s.src),this.html=decodeURIComponent(s.src)}},[["render",function(s,r,l,d,f,i){const m=e,u=n;return o(),a(u,{class:""},{default:t((()=>[c(m,{src:f.html},null,8,["src"])])),_:1})}]]);export{r as default};

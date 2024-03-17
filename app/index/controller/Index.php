@@ -3,6 +3,7 @@ namespace app\index\controller;
 
 use app\enterprise\model\{File,Group,User};
 use think\facade\View;
+use app\manage\model\Config;
 
 class Index
 {
@@ -124,5 +125,34 @@ class Index
         }else{
             return warning('二维码已失效');
         }
+    }
+
+    // app下载页
+    public function downApp(){
+        $config=Config::where('name','sysInfo')->value('value');
+        $andriod='';
+        $winUrl='';
+        if(is_file(PUBLIC_PATH . "app.apk")){
+            $andriod=request()->domain()."/app.apk";
+        }
+        if(is_file(PUBLIC_PATH . "app.exe")){
+            $winUrl=request()->domain()."/app.exe";
+        }
+        $client=[
+            'andriod_appid'=>env('app.andriod_appid',''),
+            'andriod_webclip'=>env('app.andriod_webclip','') ? : $andriod,
+            'ios_appid'=>env('app.ios_appid',''),
+            'ios_webclip'=>env('app.ios_webclip',''),
+            'win_webclip'=>env('app.win_webclip','') ? : $winUrl,
+
+        ];
+        $noUrl=false;
+        if(!$client['andriod_appid'] && !$client['andriod_webclip']  && !$client['ios_appid'] && !$client['ios_webclip']){
+           $noUrl=true;
+        }
+        View::assign('noUrl',$noUrl);
+        View::assign('client',$client);
+        View::assign('config',$config);
+        return View::fetch();
     }
 }

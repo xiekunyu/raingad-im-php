@@ -178,6 +178,17 @@ DEFAULT_TIMEZONE = Asia/Shanghai
 ID = a1b2c3d4e5f
 SECRET = GHJKUG123456sdfghjkl
 API_STATUS = true
+# 安卓包名，如果上架了市场，根据市场ID跳转市场
+ANDRIOD_APPID = 
+#安卓下载地址，如果未设置会检测根目录是否有app.apk
+ANDRIOD_WEBCLIP =
+#APPSTORE市场ID
+IOS_APPID =
+#IOS下载地址，如果没有市场的ID则使用下载地址
+IOS_WEBCLIP =
+#windows下载地址
+WIN_WEBCLIP =
+
 [DATABASE]
 TYPE = {$data['type']}
 HOSTNAME = {$data['hostname']}

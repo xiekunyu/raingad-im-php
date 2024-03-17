@@ -13,3 +13,4 @@ Route::rule('avatar/:str/:s/:uid','index/avatar');
 Route::rule('view','index/index/view');
 Route::rule('filedown/:file_id','index/download');
 Route::rule('scan/:action/:token','index/scanQr');
+Route::rule('downapp','index/index/downapp');

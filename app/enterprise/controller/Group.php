@@ -245,7 +245,7 @@ class Group extends BaseController
             return warning('您的权限不够！');
          }
          $url=GroupModel::setGroupAvatar($group_id);
-         wsSendMsg($group_id,"removeUser",['group_id'=>$param['id'],'avatar'=>$url],1);
+         wsSendMsg($group_id,"removeUser",['group_id'=>$param['id'],'avatar'=>$url,'user_id'=>$user_id],1);
          return success('删除成功');
       }
 

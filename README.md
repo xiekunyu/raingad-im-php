@@ -81,7 +81,7 @@ git clone https://gitee.com/raingad/im-instant-chat.git
 composer install
 ```
 或者
-- 【推荐使用】下载完整源码放到自己的服务器上。请注意看gitee项目主页顶部 `右侧的发行版`，请在发行版中下载最新发布的版本。
+- 【推荐使用】下载完整源码放到自己的服务器上。请注意看gitee项目主页顶部右侧 [（发行版）](https://gitee.com/raingad/im-instant-chat/releases) ，请在发行版中下载最新发布的版本。
 
 #### 开始安装
 1. 创建网站，把网站的运行目录指向项目根目录下的 `public` 目录。
