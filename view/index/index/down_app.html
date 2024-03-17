@@ -386,7 +386,7 @@
                 <li class="ipa-with">
                     <span class="l"><span>兼容性</span></span>
                     <div class="r">
-                        <span>需要iOS 12.0 或更高版本，需要Android8.0以上或者更高版本的安卓手机</span>
+                        <span>需要iOS 9.0 或更高版本，需要Android8.0以上或者更高版本的安卓手机</span>
                     </div>
                 </li>
                 <li>
@@ -572,6 +572,8 @@
             <span>下载windows版本</span>
         </a>
     </div>
+    {else/}
+       暂未上传桌面版安装包
     {/if}
     <div class="tipss">声明：本平台仅提供下载托管，APP内容由开发者负责，与本平台无关</div>
 </div>
@@ -649,8 +651,9 @@ $(function () {
         $('#install-btn').attr('href', appStoreUrl);
         location.href = appStoreUrl;
       } else if (ios_webclip !== '') {
+        // location.href=ios_webclip;
         $('#gomchelp').show();
-        $('#install-btn').attr('href', './' + ios_webclip);
+        $('#install-btn').attr('href', ios_webclip);
         $('#gomchelp-btn').on('click', function () {
           setTimeout(function () {
             if (confirm) {
