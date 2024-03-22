@@ -106,14 +106,20 @@ class Upload extends BaseController
         
         if($message){
             // 自动获取视频第一帧,视频并且是使用的阿里云
-            if($message['type']=='video' && $this->disk=='aliyun'){
-                $message['extends']['poster']=$this->url.$ret['src'].'?x-oss-process=video/snapshot,t_1000,m_fast,w_800,f_png';
-            }else{
-                $message['extends']['poster']='https://im.file.raingad.com/static/image/video.png';
+            if($message['type']=='video'){
+                if($this->disk=='aliyun'){
+                    $message['extends']['poster']=$this->url.$ret['src'].'?x-oss-process=video/snapshot,t_1000,m_fast,w_800,f_png';
+                }else{
+                    $message['extends']['poster']='https://im.file.raingad.com/static/image/video.png';
+                }
             }
             // 如果发送的文件是图片、视频、音频则将消息类型改为对应的类型
             if(in_array($fileType,[2,3,4])){
                 $message['type']=$filecate;
+            }
+            if($message['type']=='image'){
+                $extends=$this->getImageSizeInfo($info['path']);
+                $message['extends']=$extends;
             }
             $newFile=new FileModel;
             // 录音就不保存了
@@ -203,6 +209,25 @@ class Upload extends BaseController
         } catch(\Exception $e) {
             return $e->getMessage().$e->getLine();
         }
+    }
+
+    // 获取图片的尺寸
+    protected function getImageSizeInfo($file){
+        $extends=[];
+        // 如果图片获取图片的尺寸
+        $imageSize = getimagesize($file);
+        $extends['width']=$imageSize[0];
+        $extends['height']=$imageSize[1];
+        // 如果宽大于高则为横图，宽度填充模式，否则为竖图，高度填充模式
+        if($imageSize[0]>=$imageSize[1]){
+            $extends['fixMode']=1;  // 宽度填充
+        }else{
+            $extends['fixMode']=2;  // 高度填充
+        }
+        if($imageSize[0]<200 && $imageSize[1]<240){
+            $extends['fixMode']=3;    // 小图
+        }
+        return $extends;
     }
 
 
