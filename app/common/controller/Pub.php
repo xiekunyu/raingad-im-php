@@ -311,5 +311,57 @@ class Pub
             return success($res['msg']);
         }
     }
+
+    // 检查app版本升级
+    public function checkVersion(){
+        $oldRelease=$this->request->param('release',0);
+        $setupPage=$this->request->param('setupPage',false);
+        $config=Config::where('name','sysInfo')->value('value');
+        $version=env('app.version','4.0.4');
+        $release=env('app.release',20240322);
+        $data=[
+            'versionName'=>$version,
+            'versionCode'=>$release,
+            'updateType'=>env('app.update_type','solicit'),
+            'versionInfo'=>env('app.update_info',''),
+            'downloadUrl'=>'',
+        ];
+        // 是否手动检测更新，是的话就不能强制更新或者静默更新
+        if($setupPage){
+            $data['updateType']='solicit';
+        }
+        // 如果旧版本大于等于当前版本则不更新
+        if($oldRelease>=$release){
+            return success('',$data);
+        }
+        $isMobile=request()->isMobile();
+        $downUrl='';
+        $andriod='';
+        // 手机端则返回apk地址，PC端则返回exe地址
+        if($isMobile){
+            $platform=$this->request->param('platform',1101);
+            $packageName=$config['name']."_Setup_".$version.".apk";
+            if(is_file(PUBLIC_PATH . "app.apk")){
+                $andriod=request()->domain()."/app.apk";
+            }elseif(is_file(PUBLIC_PATH . '/'.$packageName)){
+                $andriod=request()->domain()."/". $packageName;
+            }
+            // 如果是ios则返回ios地址
+            if($platform==1101){
+                $downUrl=env('app.andriod_webclip','') ? : $andriod;
+            }else{
+                $downUrl=env('app.ios_webclip','');
+            }
+        }else{
+            $packageName=$config['name']."_Setup_".$version.".exe";
+            if(is_file(PUBLIC_PATH . "app.exe")){
+                $downUrl=request()->domain()."/app.exe";
+            }elseif(is_file(PUBLIC_PATH . '/'.$packageName)){
+                $downUrl=request()->domain()."/". $packageName;
+            }
+        }
+        $data['downloadUrl']=$downUrl;
+        return success('',$data);
+    }
     
 }

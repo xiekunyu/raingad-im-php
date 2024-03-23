@@ -178,6 +178,15 @@ DEFAULT_TIMEZONE = Asia/Shanghai
 ID = a1b2c3d4e5f
 SECRET = GHJKUG123456sdfghjkl
 API_STATUS = true
+
+# 版本信息
+VERSION = 4.0.4
+RELEASE = 20240322
+# forcibly 强制更新, solicit 弹窗确认更新, silent 静默更新
+UPDATE_TYPE = solicit
+# 更新说明
+UPDATE_INFO = 修复若干bug，优化性能
+
 # 安卓包名，如果上架了市场，根据市场ID跳转市场
 ANDRIOD_APPID = 
 #安卓下载地址，如果未设置会检测根目录是否有app.apk
