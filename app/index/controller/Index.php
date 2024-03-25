@@ -10,7 +10,7 @@ class Index
 
     public function index()
     {
-        if (!file_exists(PUBLIC_PATH . "install.lock")) {
+        if (!file_exists(PACKAGE_PATH . "install.lock")) {
             return redirect(url('index/install/index'));
         }
         return redirect("/index.html");
@@ -130,21 +130,16 @@ class Index
     // app下载页
     public function downApp(){
         $config=Config::where('name','sysInfo')->value('value');
-        $andriod='';
-        $winUrl='';
-        if(is_file(PUBLIC_PATH . "app.apk")){
-            $andriod=request()->domain()."/app.apk";
-        }
-        if(is_file(PUBLIC_PATH . "app.exe")){
-            $winUrl=request()->domain()."/app.exe";
-        }
+        $andriod=getAppDowmUrl($config,'andriod');
+        $winUrl=getAppDowmUrl($config,'windows');
+        $macUrl=getAppDowmUrl($config,'mac');
         $client=[
             'andriod_appid'=>env('app.andriod_appid',''),
             'andriod_webclip'=>env('app.andriod_webclip','') ? : $andriod,
             'ios_appid'=>env('app.ios_appid',''),
             'ios_webclip'=>env('app.ios_webclip',''),
             'win_webclip'=>env('app.win_webclip','') ? : $winUrl,
-
+            'mac_webclip'=>env('app.mac_webclip','') ? : $macUrl
         ];
         $noUrl=false;
         if(!$client['andriod_appid'] && !$client['andriod_webclip']  && !$client['ios_appid'] && !$client['ios_webclip']){
@@ -154,5 +149,25 @@ class Index
         View::assign('client',$client);
         View::assign('config',$config);
         return View::fetch();
+    }
+
+    // 下载APP
+    public function downloadApp(){
+        $config=Config::where('name','sysInfo')->value('value');
+        $version=env('app.version','4.0.4');
+        $platform=request()->param('platform','windows');
+        if($platform=='andriod'){
+            $packageName=$config['name']."_Setup_".$version.".apk";
+        }elseif($platform=='mac'){
+            $packageName=$config['name']."_Setup_".$version.".dmg";
+        }else{
+            $packageName=$config['name']."_Setup_".$version.".exe";
+        }
+        $file=PACKAGE_PATH . $packageName;
+        if(is_file($file)){
+            return \utils\File::download($file, $packageName);
+        }else{
+            return warning('文件不存在');
+        }
     }
 }

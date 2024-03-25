@@ -340,12 +340,7 @@ class Pub
         // 手机端则返回apk地址，PC端则返回exe地址
         if($isMobile){
             $platform=$this->request->param('platform',1101);
-            $packageName=$config['name']."_Setup_".$version.".apk";
-            if(is_file(PUBLIC_PATH . "app.apk")){
-                $andriod=request()->domain()."/app.apk";
-            }elseif(is_file(PUBLIC_PATH . '/'.$packageName)){
-                $andriod=request()->domain()."/". $packageName;
-            }
+            $andriod=getAppDowmUrl($config,'andriod');
             // 如果是ios则返回ios地址
             if($platform==1101){
                 $downUrl=env('app.andriod_webclip','') ? : $andriod;
@@ -353,12 +348,7 @@ class Pub
                 $downUrl=env('app.ios_webclip','');
             }
         }else{
-            $packageName=$config['name']."_Setup_".$version.".exe";
-            if(is_file(PUBLIC_PATH . "app.exe")){
-                $downUrl=request()->domain()."/app.exe";
-            }elseif(is_file(PUBLIC_PATH . '/'.$packageName)){
-                $downUrl=request()->domain()."/". $packageName;
-            }
+            $downUrl=env('app.win_webclip','') ?: getAppDowmUrl($config,'windows');
         }
         $data['downloadUrl']=$downUrl;
         return success('',$data);

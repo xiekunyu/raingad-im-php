@@ -36,7 +36,7 @@ class Install
     {
         $protocol = strpos(strtolower($_SERVER['SERVER_PROTOCOL']), 'https') === false ? 'http' : 'https';
 
-        if (file_exists(PUBLIC_PATH . "install.lock")) {
+        if (file_exists(PACKAGE_PATH . "install.lock")) {
             echo "<meta http-equiv='content-type' content='text/html; charset=UTF-8'> <script>alert('请勿重复安装!');location.href='".$protocol."://".$_SERVER["HTTP_HOST"]."';</script>";
             die();     
         }
@@ -74,7 +74,7 @@ class Install
     // 检查数据库
     public function checkDatabase(){
          
-        if (file_exists(PUBLIC_PATH . "install.lock")) {
+        if (file_exists(PACKAGE_PATH . "install.lock")) {
             return warning('请勿重复安装!');       
         } 
         if (!file_exists(PUBLIC_PATH . "sql/database.sql")) {
@@ -150,12 +150,12 @@ class Install
                     $temp_sql = $v.';';
                     Db::query($temp_sql);
                 } catch(\Exception $e) {
-                    touch(PUBLIC_PATH . "install.lock");
+                    touch(PACKAGE_PATH . "install.lock");
                     return error('数据库sql安装出错，请操作数据库手动导入sql文件'.$e->getMessage());
                 }
             }
         } 
-        touch(PUBLIC_PATH . "install.lock");
+        touch(PACKAGE_PATH . "install.lock");
         return success('安装成功',['status'=>$this->status],$install_count);
     }
 
@@ -179,13 +179,14 @@ ID = a1b2c3d4e5f
 SECRET = GHJKUG123456sdfghjkl
 API_STATUS = true
 
-# 版本信息
-VERSION = 4.0.4
-RELEASE = 20240322
-# forcibly 强制更新, solicit 弹窗确认更新, silent 静默更新
+# 移动端app版本信息
+VERSION = 4.1.0
+# 根据该参数确定版本，版本比移动罐的版本大就会提示更新
+RELEASE = 20240323
+# forcibly 强制更新, solicit弹窗确认更新, silent 静默更新
 UPDATE_TYPE = solicit
-# 更新说明
-UPDATE_INFO = 修复若干bug，优化性能
+# 更新说明，换行用\n
+UPDATE_INFO = 1、修复若干bug \n2、优化用户体验
 
 # 安卓包名，如果上架了市场，根据市场ID跳转市场
 ANDRIOD_APPID = 
@@ -504,6 +505,7 @@ INFO;
             ['path'=>root_path().'extend', 'dir'=>'extend', 'value'=>'读写', 'type'=>'dir','status'=>'ok'],
             ['path'=> root_path().'runtime', 'dir'=>'runtime', 'value'=>'读写', 'type'=>'dir','status'=>'ok'],
             ['path'=>root_path().'public', 'dir'=>'public', 'value'=>'读写', 'type'=>'dir','status'=>'ok'],
+            ['path'=>root_path().'unpackage', 'dir'=>'unpackage', 'value'=>'读写', 'type'=>'dir','status'=>'ok'],
             ['path'=>root_path().'config', 'dir'=>'config', 'value'=>'读写', 'type'=>'file','status'=>'ok'],
         ];
         $status=1;

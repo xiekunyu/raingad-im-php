@@ -963,3 +963,23 @@ function getMsgType($type,$callVideo=false){
     }
     return $msgName;
 }
+
+// 获取app的下载链接
+function getAppDowmUrl($config,$platform='andriod'){
+    $version=env('app.version','1.0.0');
+    if($platform=='windows'){
+        $packageName=$config['name']."_Setup_".$version.".exe";
+        $path="/downloadApp/windows";
+    }elseif($platform=='mac'){
+        $packageName=$config['name']."_Setup_".$version.".dmg";
+        $path="/downloadApp/mac";
+    }else{
+        $packageName=$config['name']."_Setup_".$version.".apk";
+        $path="/downloadApp/andriod";
+    }
+    if(is_file(PACKAGE_PATH . $packageName)){
+        return rtrim(request()->domain(),'/').$path;
+    }else{
+        return '';
+    }
+}

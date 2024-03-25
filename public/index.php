@@ -21,6 +21,7 @@ header('Access-Control-Allow-Headers:x-requested-with,X_Requested_With,content-t
 // 定义配置文件目录和应用目录同级
 define('CONF_PATH', __DIR__.'/../config/');
 define('PUBLIC_PATH', __DIR__.'/');
+define('PACKAGE_PATH', __DIR__.'/../unpackage/');
 // 执行HTTP应用并响应
 $http = (new App())->http;
 
