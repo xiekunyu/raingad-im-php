@@ -965,16 +965,17 @@ function getMsgType($type,$callVideo=false){
 }
 
 // 获取app的下载链接
-function getAppDowmUrl($config,$platform='andriod'){
-    $version=env('app.version','1.0.0');
+function getAppDowmUrl($platform='andriod'){
+    $config=config('version.'.$platform);
+    $name=config('version.app_name');
     if($platform=='windows'){
-        $packageName=$config['name']."_Setup_".$version.".exe";
+        $packageName=$name."_Setup_".$config['version'].".exe";
         $path="/downloadApp/windows";
     }elseif($platform=='mac'){
-        $packageName=$config['name']."_Setup_".$version.".dmg";
+        $packageName=$name."_Setup_".$config['version'].".dmg";
         $path="/downloadApp/mac";
     }else{
-        $packageName=$config['name']."_Setup_".$version.".apk";
+        $packageName=$name."_Setup_".$config['version'].".apk";
         $path="/downloadApp/andriod";
     }
     if(is_file(PACKAGE_PATH . $packageName)){

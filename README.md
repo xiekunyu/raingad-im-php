@@ -50,6 +50,9 @@ Raingad-IM是一个开源的即时通信demo，需要前后端配合使用，主
 
 前端技术栈：`vue2+Lemon-IMUI+element-UI`
 
+桌面端：`vue2+Lemon-IMUI+element-UI + electron`
+
+移动端：`uniapp for vue3 + pinia`
 
 ### 安装教程
 > 安装程序需要有一定的PHP经验和服务器运维经验，如果没有请加入交流群联系作者，作者提供付费部署服务！

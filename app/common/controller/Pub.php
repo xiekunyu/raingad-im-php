@@ -316,14 +316,19 @@ class Pub
     public function checkVersion(){
         $oldRelease=$this->request->param('release',0);
         $setupPage=$this->request->param('setupPage',false);
+        $platform=$this->request->param('platform',1101);
         $config=Config::where('name','sysInfo')->value('value');
-        $version=env('app.version','4.0.4');
-        $release=env('app.release',20240322);
+        if($platform==1101){
+            $teminal='andriod';
+        }else{
+            $teminal='ios';
+        }
+        $versionInfo=config('version.'.$teminal);
         $data=[
-            'versionName'=>$version,
-            'versionCode'=>$release,
-            'updateType'=>env('app.update_type','solicit'),
-            'versionInfo'=>env('app.update_info',''),
+            'versionName'=>$versionInfo['version'],
+            'versionCode'=>$versionInfo['release'],
+            'updateType'=>$versionInfo['update_type'],
+            'versionInfo'=>$versionInfo['update_info'],
             'downloadUrl'=>'',
         ];
         // 是否手动检测更新，是的话就不能强制更新或者静默更新
@@ -331,24 +336,16 @@ class Pub
             $data['updateType']='solicit';
         }
         // 如果旧版本大于等于当前版本则不更新
-        if($oldRelease>=$release){
+        if($oldRelease>=$versionInfo['release']){
             return success('',$data);
         }
-        $isMobile=request()->isMobile();
         $downUrl='';
-        $andriod='';
-        // 手机端则返回apk地址，PC端则返回exe地址
-        if($isMobile){
-            $platform=$this->request->param('platform',1101);
-            $andriod=getAppDowmUrl($config,'andriod');
-            // 如果是ios则返回ios地址
-            if($platform==1101){
-                $downUrl=env('app.andriod_webclip','') ? : $andriod;
-            }else{
-                $downUrl=env('app.ios_webclip','');
-            }
+        $andriod=getAppDowmUrl('andriod');
+        // 如果是ios则返回ios地址
+        if($platform==1101){
+            $downUrl=env('app.andriod_webclip','') ? : $andriod;
         }else{
-            $downUrl=env('app.win_webclip','') ?: getAppDowmUrl($config,'windows');
+            $downUrl=env('app.ios_webclip','');
         }
         $data['downloadUrl']=$downUrl;
         return success('',$data);

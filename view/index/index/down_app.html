@@ -49,6 +49,8 @@
         .base-info .base-info-r .install-btn{display:inline-block;height:1.6rem;width:6.5rem;border-radius:.8rem;background:#0477f9;border:1px solid #0477f9;text-align:center;color:#fff;font-size:.85rem;bottom:.35rem;left:0;line-height:1.5rem}
         .install-win{display:inline-block;height:1.6rem;border-radius:.8rem;background:#0477f9;border:1px solid #0477f9;text-align:center;color:#fff;font-size:.85rem;line-height:1.5rem;padding: 2px 10px;}
         .install-win:hover{text-decoration:none;background-color:#338bef;color:#fff}
+        .install-mac{display:inline-block;height:1.6rem;border-radius:.8rem;background:#00bd09;border:none;text-align:center;color:#fff;font-size:.85rem;line-height:1.5rem;padding: 2px 10px;}
+        .install-mac:hover{text-decoration:none;background-color:#00e40b;color:#fff}
         .base-info .base-info-r .disabled-install-btn{display:inline-block;height:1.6rem;width:6.5rem;border-radius:.8rem;background:#888d94;border:1px solid #888d94;text-align:center;color:#fff;font-size:.85rem;bottom:.35rem;left:0;line-height:1.5rem}
         .base-info .base-info-r .loading{height:18px;margin-right:4px;vertical-align:-3px}
         .base-info .base-info-r .install-btn:hover{text-decoration:none;background-color:#338bef}
@@ -98,7 +100,7 @@
         .information-info .information-list>li .r{margin-left:1.5rem;-webkit-box-flex:1;-ms-flex:1;flex:1;text-align:right;line-height:1rem}
         .disclaimer{padding:10px;color:#999;background:#f9f9f9}
         .pc-box{display:none;text-align:center;z-index:2;position:relative}
-        .pc-logo{width:160px;height:160px;border-radius:20px;overflow:hidden;margin:0 auto}
+        .pc-logo{width:120px;height:120px;border-radius:20px;overflow:hidden;margin:0 auto}
         .pc-logo img{display:block;width:100%;height:100%}
         .pc-box>p{font-size:20px;font-weight:400;line-height:1.5em}
         .pc-box .code{margin:30px auto 10px;width:200px;height:200px}
@@ -156,6 +158,7 @@
         .to_btn span{ display:block; float:right;}
         .to_btn .android_open img{ display:inline-block; width:150px; height:34px;}
         .no_scroll{height:100%;overflow:hidden}
+        .bg-green{background-color:#00bd09}
     </style>
 </head>
 <body>
@@ -566,15 +569,26 @@
     <p>{$config.name}</p>
     <div id="app_code" class="code"></div>
     <br>
-    {if condition="!empty($client.win_webclip)"}
-    <div class="state-normal">
-        <a class="install-btn install-win" href="{$client.win_webclip}" target="_blank">
-            <span>下载windows版本</span>
-        </a>
+    <div style="display: flex;justify-content: center;width:400px;margin:0 auto" align="center">
+        {if condition="!empty($client.win_webclip)"}
+        <div class="state-normal" style="margin-right:20px">
+            <a class="install-btn install-win" href="{$client.win_webclip}" target="_blank">
+                <span>下载win版本</span>
+            </a>
+        </div>
+        {/if}
+        {if condition="!empty($client.mac_webclip)"}
+        <div class="state-normal" style="margin-left:20px">
+            <a class="install-btn install-mac" href="{$client.mac_webclip}" target="_blank">
+                <span>下载MAC版本</span>
+            </a>
+        </div>
+        {/if}
+        {if condition="empty($client.win_webclip) && empty($client.mac_webclip)"}
+            暂未上传桌面版安装包
+        {/if}
     </div>
-    {else/}
-       暂未上传桌面版安装包
-    {/if}
+    
     <div class="tipss">声明：本平台仅提供下载托管，APP内容由开发者负责，与本平台无关</div>
 </div>
 </body>

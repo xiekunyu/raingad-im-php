@@ -130,9 +130,9 @@ class Index
     // app下载页
     public function downApp(){
         $config=Config::where('name','sysInfo')->value('value');
-        $andriod=getAppDowmUrl($config,'andriod');
-        $winUrl=getAppDowmUrl($config,'windows');
-        $macUrl=getAppDowmUrl($config,'mac');
+        $andriod=getAppDowmUrl('andriod');
+        $winUrl=getAppDowmUrl('windows');
+        $macUrl=getAppDowmUrl('mac');
         $client=[
             'andriod_appid'=>env('app.andriod_appid',''),
             'andriod_webclip'=>env('app.andriod_webclip','') ? : $andriod,
@@ -153,15 +153,15 @@ class Index
 
     // 下载APP
     public function downloadApp(){
-        $config=Config::where('name','sysInfo')->value('value');
-        $version=env('app.version','4.0.4');
         $platform=request()->param('platform','windows');
+        $config=config('version.'.$platform);
+        $name=config('version.app_name');
         if($platform=='andriod'){
-            $packageName=$config['name']."_Setup_".$version.".apk";
+            $packageName=$name."_Setup_".$config['version'].".apk";
         }elseif($platform=='mac'){
-            $packageName=$config['name']."_Setup_".$version.".dmg";
+            $packageName=$name."_Setup_".$config['version'].".dmg";
         }else{
-            $packageName=$config['name']."_Setup_".$version.".exe";
+            $packageName=$name."_Setup_".$config['version'].".exe";
         }
         $file=PACKAGE_PATH . $packageName;
         if(is_file($file)){
