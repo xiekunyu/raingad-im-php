@@ -367,7 +367,7 @@ function getFirstChart($str)
     $str = str_replace(' ', '', $str);
     // 过滤特殊符号
     $str = preg_replace('/[^\x{4e00}-\x{9fa5}A-Za-z0-9]/u', '', $str);
-    if (empty($str)) {
+    if (empty($str) || is_numeric($str)) {
         return '#';
     }
     $char = ord($str[0]);
