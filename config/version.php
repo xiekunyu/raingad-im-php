@@ -8,7 +8,7 @@
 return [
     'app_name'=>'Raingad-IM',
     'andriod' => [
-        'version' => '4.1.0',
+        'version' => '4.1.1',
         'release' => '20240323',
         'url' =>env('app.andriod_webclip',''),
         'update_info' => '1.修复了一些bug\n2.优化了一些功能',
@@ -22,7 +22,7 @@ return [
         'update_type' => 'solicit',
     ],
     'windows' => [
-        'version' => '4.1.0',
+        'version' => '4.1.2',
         'release' => '20240328',
         'url' => env('app.win_webclip',''),
         'update_info' => '1.增加自动更新机制',
@@ -36,7 +36,7 @@ return [
         'update_type' => 'solicit',
     ],
     'serve' => [
-        'version' => '4.0.0',
+        'version' => '4.1.2',
         'release' => '20240323',
         'url' => '',
         'update_info' => '1.修复了一些bug\n2.优化了一些功能',
