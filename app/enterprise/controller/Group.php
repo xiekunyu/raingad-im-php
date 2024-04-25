@@ -110,7 +110,22 @@ class Group extends BaseController
          $groupUser=new GroupUser;
          $groupUser->saveAll($data);
          $url=GroupModel::setGroupAvatar($group_id);
+         // 更新原来群聊的头像和成员列表
          wsSendMsg($group_id,"addGroupUser",['group_id'=>$param['id'],'avatar'=>$url],1);
+         // 给新成员添加新群聊信息
+         $groupInfo=GroupModel::find($group_id);
+         $groupInfo['displayName']=$groupInfo['name'];
+         $groupInfo['role']=3;
+         $groupInfo['id']='group-'.$group_id;
+         $groupInfo['avatar']=avatarUrl($url,$groupInfo['name'],$group_id,120);
+         $groupInfo['is_group']=1;
+         $groupInfo['lastContent']=$this->userInfo['realname'].' 邀请你加入群聊';
+         $groupInfo['lastSendTime']=time()*1000;
+         $groupInfo['index']="[2]群聊";
+         $groupInfo['is_notice']=1;
+         $groupInfo['is_top']=0;
+         $groupInfo['type']="text";
+         wsSendMsg($user_ids, 'addGroup', $groupInfo);
          return success('添加成功');
       }catch(Exception $e){
          return error($e->getMessage());
