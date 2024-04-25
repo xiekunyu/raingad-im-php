@@ -4,6 +4,7 @@ namespace app\index\controller;
 use app\enterprise\model\{File,Group,User};
 use think\facade\View;
 use app\manage\model\Config;
+use app\Request;
 
 class Index
 {
@@ -12,6 +13,9 @@ class Index
     {
         if (!file_exists(PACKAGE_PATH . "install.lock")) {
             return redirect(url('index/install/index'));
+        }
+        if(request()->isMobile() && !env('app.demon_mode',false)){
+            return redirect("/h5");
         }
         return redirect("/index.html");
     }
