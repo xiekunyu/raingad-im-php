@@ -8,10 +8,10 @@
 return [
     'app_name'=>'Raingad-IM',
     'andriod' => [
-        'version' => '4.1.3',
-        'release' => '20240418',
+        'version' => '4.1.4',
+        'release' => '20240428',
         'url' =>env('app.andriod_webclip',''),
-        'update_info' => '1.修复关闭私聊还能继续音视频通话的BUG\n 2.优化注册功能的账号提示',
+        'update_info' => '1.增加探索页面的演示\n2.修复了一些bug',
         'update_type' => 'solicit',
     ],
     'ios' => [

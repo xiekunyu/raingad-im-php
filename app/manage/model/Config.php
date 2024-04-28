@@ -16,7 +16,7 @@ class Config extends BaseModel
     public static function getSystemInfo($update=false){
         $name='systemInfo';
         // $auth=request()->header('Authorization');
-        $nameFields=['sysInfo','fileUpload','chatInfo'];
+        $nameFields=['sysInfo','fileUpload','chatInfo','compass'];
         // 如果是登录状态才会返回chatINfo
         // if($auth){
         //     $name='all'.$name;
