@@ -36,8 +36,8 @@ return [
         'update_type' => 'solicit',
     ],
     'serve' => [
-        'version' => '4.1.3',
-        'release' => '20240323',
+        'version' => '4.1.4',
+        'release' => '20240506',
         'url' => '',
         'update_info' => '1.修复了一些bug\n2.优化了一些功能',
         'update_type' => 'solicit',
