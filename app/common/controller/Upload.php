@@ -48,7 +48,7 @@ class Upload extends BaseController
         }
         $conf=Config::where(['name'=>'fileUpload'])->value('value');
         if($conf['size']*1024*1024 < $info['size']){
-            return shutdown('文件大小超过限制');
+            return shutdown(lang('file.uploadLimit',['size'=>$conf['size']]));
         }
         // 兼容uniapp文件上传
         if($info['ext']=='' && isset($data['ext'])){
@@ -56,7 +56,7 @@ class Upload extends BaseController
         }
         $info['ext']=strtolower($info['ext']);
         if(!in_array($info['ext'],$conf['fileExt'])){
-            return shutdown('文件格式不支持');
+            return shutdown(lang('file.typeNotSupport'));
         }
         $fileType=getFileType($info['ext']);
         if($fileType==2){
@@ -146,7 +146,7 @@ class Upload extends BaseController
         try{
             $file=request()->file('file');
             $info=$this->upload($param,$file);
-            return success("上传成功",$info);
+            return success(lang('file.uploadOk'),$info);
         } catch(\Exception $e) {
             return error($e->getMessage());
         }
@@ -180,7 +180,7 @@ class Upload extends BaseController
             $file=request()->file('file');
             $info=$this->upload($param,$file,'image/'.date('Y-m-d').'/');
             $url=$this->url.$info['src'];
-            return success("上传成功",$url);
+            return success(lang('file.uploadOk'),$url);
         } catch(\Exception $e) {
             return error($e->getMessage());
         }
@@ -195,7 +195,7 @@ class Upload extends BaseController
             $info=$this->upload($param,$file,'avatar/'.$uid.'/');
             User::where(['user_id'=>$uid])->update(['avatar'=>$info['src']]);
             $url=$this->url.$info['src'];
-            return success("上传成功",$url);
+            return success(lang('file.uploadOk'),$url);
         } catch(\Exception $e) {
             return error($e->getMessage());
         }

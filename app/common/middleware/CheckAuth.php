@@ -15,14 +15,14 @@ class CheckAuth
 
             //token有误
             if (get_class($exception) == TokenInvalidException::class) {
-                return shutdown('登陆信息有误 请重新登录', -1);
+                return shutdown(lang('user.loginError'), -1);
             }
 
             $errorMsgArr = [
-                'Must have token' => '请先登陆系统',
-                'The token is in blacklist.' => '登陆已失效 请重新登陆',
-                'The token is expired.' => '登陆已过期 请重新登陆',
-                'The token is in blacklist grace period list.' => '登陆已过期 请重新登陆'
+                'Must have token' => lang('user.mustToken'),
+                'The token is in blacklist.' => lang('user.blacklist'),
+                'The token is expired.' => lang('user.expired'),
+                'The token is in blacklist grace period list.' => lang('user.expired')
             ];
             return shutdown($errorMsgArr[$exception->getMessage()] ?? $exception->getMessage(), -1);
         }
@@ -32,7 +32,7 @@ class CheckAuth
         $userInfo = str_encipher($userInfo,false, config('app.aes_token_key'));
 
         if (!$userInfo) {
-            return shutdown('用户信息有误，请重新登陆', -1);
+            return shutdown(lang('user.loginError'), -1);
         }
         //解析json
         $userInfo = (array)json_decode($userInfo, true);

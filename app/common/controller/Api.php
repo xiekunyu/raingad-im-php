@@ -48,12 +48,12 @@ class Api
     {
         $data = $this->request->param();
         if(!isset($data['account']) || !isset($data['realname'])){
-            return warning('缺少参数');
+            return warning(lang('system.parameterError'));
         }
         $user=new User();
         $verify=$user->checkAccount($data);
         if(!$verify){
-            return success('账号已存在');
+            return success(lang('user.exist'));
         }
         $salt=\utils\Str::random(4);
         $data['password'] = password_hash_tp(rand(100000,999999),$salt);
@@ -65,7 +65,7 @@ class Api
         $data['open_id']=encryptIds($user->user_id);
         // 监听用户注册后的操作
         event('UserRegister',$data);
-        return success('注册成功', $data);
+        return success(lang('user.registerOk'), $data);
     }
 
     // 用户登录
@@ -74,16 +74,16 @@ class Api
         $param=$this->request->param();
         $isMobile=$param['is_mobile'] ?? false;
         if(!isset($param['account']) || !isset($param['open_id'])){
-            return warning('缺少参数');
+            return warning(lang('system.parameterError'));
         }
         $userInfo=User::where(['account'=> $param['account']])->withoutField('register_ip,login_count,update_time,create_time')->find();
         if(!$userInfo){
-            return warning('当前用户不存在！');
+            return warning(lang('user.exist'));
         }
         try{
             $hash_id=decryptIds($param['open_id']);
             if($hash_id!=$userInfo['user_id']){
-                return warning('当前用户不存在！');
+                return warning(lang('user.exist'));
             }
         }catch (\Exception $e){
             return error($e->getMessage());
@@ -97,7 +97,7 @@ class Api
         }else{
             $url=rtrim(request()->domain(),'/').'/#/login?token='.$md5;
         }
-        return success('登录成功',$url);
+        return success(lang('user.loginOk'),$url);
         
     }
    

@@ -43,14 +43,14 @@ class Friend extends BaseController
         $param = $this->request->param();
         $user_id=$param['user_id'] ?? 0;
         if($user_id==$this->uid){
-            return warning('不能添加自己为好友');
+            return warning(lang('friend.notAddOwn'));
         }
         $friend=FriendModel::where(['friend_user_id'=>$user_id,'create_user'=>$this->uid])->find();
         if($friend){
             if($friend->status==1){
-                return warning('你们已经是好友了');
+                return warning(lang('friend.already'));
             }elseif($friend->status==2){
-                return warning('你已经申请过了，请等待对方同意');
+                return warning(lang('friend.repeatApply'));
             }
         }
         $status=2;
@@ -72,13 +72,13 @@ class Friend extends BaseController
         $msg=[
             'fromUser'=>[
                 'id'=>'system',
-                'displayName'=>'新朋友',
+                'displayName'=>lang('friend.new'),
                 'avatar'=>'',
             ],
             'toContactId'=>'system',
             'id'=>uniqid(),
             'is_group'=>2,
-            'content'=>"添加您为好友",
+            'content'=>lang('friend.apply'),
             'status'=>'succeed',
             'sendTime'=>time()*1000,
             'type'=>'event',
@@ -87,7 +87,7 @@ class Friend extends BaseController
         ];
         // 发送好友申请
         wsSendMsg($user_id,'simple',$msg);
-        return success('添加成功');
+        return success(lang('system.addOk'));
     }
 
     // 接受或者拒绝好友申请
@@ -96,7 +96,7 @@ class Friend extends BaseController
         $param = $this->request->param();
         $friend=FriendModel::find($param['friend_id']);
         if(!$friend){
-            return warning('申请不存在');
+            return warning(lang('friend.notApply'));
         }
         $map=[
             'friend_id'=>$param['friend_id']
@@ -111,7 +111,7 @@ class Friend extends BaseController
             $newFriend=FriendModel::where($data)->find();
             if($newFriend){
                 FriendModel::where($data)->update(['status'=>1]);
-                return success('你们已经是好友了');
+                return success(lang('friend.already'));
             }else{
                 $data['status']=1;
                 FriendModel::create($data);
@@ -127,7 +127,7 @@ class Friend extends BaseController
             }
             
         }
-        return success('操作成功');
+        return success('');
     }
 
 
@@ -138,14 +138,14 @@ class Friend extends BaseController
         $map=['friend_user_id'=>$param['id'],'create_user'=>$this->uid];
         $friend=FriendModel::where($map)->find();
         if(!$friend){
-            return warning('好友不存在');
+            return warning(lang('friend.not'));
         }
         // 需要删除双方的好友关系
         FriendModel::where($map)->delete();
         FriendModel::where(['friend_user_id'=>$this->uid,'create_user'=>$param['id']])->delete();
         // 性质和删除群聊一样
         wsSendMsg($param['id'],'removeGroup',['group_id'=>$this->uid]);
-        return success('删除成功');
+        return success(lang('system.delOk'));
     }
 
     // 设置好友备注
@@ -153,10 +153,10 @@ class Friend extends BaseController
     {
         $param = $this->request->param();
         if(!$param['nickname']){
-            return warning('备注不能为空');
+            return warning(lang('system.notNull'));
         }
         FriendModel::update(['nickname'=>$param['nickname']],['friend_id'=>$param['friend_id']]);
-        return success('设置成功');
+        return success(lang('system.delOk'));
     }
 
     // 获取最新的一条和申请的总数

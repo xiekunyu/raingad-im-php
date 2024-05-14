@@ -71,7 +71,7 @@ class Config extends BaseController
             // 更新系统缓存
             Conf::getSystemInfo(true);
         }
-        return success('保存成功');
+        return success('');
     }
 
     /**
@@ -91,12 +91,12 @@ class Config extends BaseController
     public function sendTestEmail(){
         $email=$this->request->param('email');
         if(!$email || !(\utils\Regular::is_email($email))){
-            return warning('请输入正确的邮箱');
+            return warning(lang('email.input'));
         }
         $conf=Conf::where(['name'=>'smtp'])->value('value');
         $mail=new \mail\Mail($conf);
-        $mail->sendEmail([$email],'测试邮件','这是一封测试邮件，当您收到之后表明您的所有配置都是正确的！');
-        return success('发送成功');
+        $mail->sendEmail([$email],lang('email.testTitle'),lang('email.testContent'));
+        return success(lang('system.sendOk'));
 
     } 
 }

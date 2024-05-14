@@ -52,30 +52,30 @@ class Pub
         if($token){
             $apiStatus=config('app.api_status');
             if(!$apiStatus){
-                return warning('接口已关闭');
+                return warning(lang('system.apiClose'));
             }
             $userInfo=Cache::get($token);
             if(!$userInfo){
-                return warning('TOKEN已失效！');
+                return warning(lang('user.tokenFailure'));
             }
         }else{
             $userInfo=User::where(['account'=> $param['account']])->withoutField('register_ip,login_count,update_time,create_time')->find();
             if($userInfo==null){
-                return warning('当前用户不存在！');
+                return warning(lang('user.exist'));
             }
             if($userInfo['status']==0){
-                return warning('您的账号已被禁用');
+                return warning(lang('user.forbid'));
             }
             $password=password_hash_tp($param['password'],$userInfo['salt']);
             $code=$param['code'] ?? '';
             if($code){
                 if($code!=Cache::get($param['account'])){
-                    return warning('验证码错误！');
+                    return warning(lang('user.codeErr'));
                 }
                 Cache::delete($param['account']);
             }else{
                 if($password!=$userInfo['password']){
-                    return warning('密码错误！');
+                    return warning(lang('user.passError'));
                 }
             }
         }
@@ -112,7 +112,7 @@ class Pub
             'authToken'=>$authToken,
             'userInfo'=>$userInfo
         ];
-        return success('登录成功！',$data);
+        return success(lang('user.loginOk'),$data);
    }
 
     //退出登录
@@ -120,7 +120,7 @@ class Pub
         try {
             $jwtData = JWTAuth::auth();
         } catch (\Exception $e) {
-            return success('退出成功！');
+            return success(lang('user.logoutOk'));
         }
 
         $userInfo = $jwtData['info']->getValue();
@@ -128,7 +128,7 @@ class Pub
         $userInfo = str_encipher($userInfo,false, config('app.aes_token_key'));
 
         if (!$userInfo) {
-            return success('退出成功！');
+            return success(lang('user.logoutOk'));
         }
         //解析json
         $userInfo = (array)json_decode($userInfo, true);
@@ -140,7 +140,7 @@ class Pub
             wsSendMsg(0,'isOnline',['id'=>$userInfo['user_id'],'is_online'=>0]);
         }
         JWTAuth::invalidate(JWTAuth::token()->get());
-        return success('退出成功！');
+        return success(lang('user.logoutOk'));
     }
 
     // 注册用户
@@ -152,16 +152,16 @@ class Pub
             if($systemInfo['sysInfo']['regtype']==2){
                 $inviteCode=$data['inviteCode'] ?? '';
                 if(!$inviteCode){
-                    return warning('当前系统已关闭注册功能！');
+                    return warning(lang('user.closeRegister'));
                 }
                 if(!Cache::get($inviteCode)){
-                    return warning('邀请码已失效！');
+                    return warning(lang('user.inviteCode'));
                 }
             }
             $code=$data['code'] ?? '';
             if($code){
                 if($code!=Cache::get($data['account'])){
-                    return warning('验证码错误！');
+                    return warning(lang('user.codeErr'));
                 }
                 Cache::delete($data['account']);
             }
@@ -179,7 +179,7 @@ class Pub
             $data['user_id']=$user->user_id;
             // 监听用户注册后的操作
             event('UserRegister',$data);
-            return success('注册成功', $data);
+            return success(lang('user.registerOk'), $data);
         }catch (\Exception $e){
             return error($e->getMessage());
         }
@@ -278,20 +278,20 @@ class Pub
         };
         $acType=\utils\Regular::check_account($account);
         if(!$acType){
-            return warning('账户必须为手机号或者邮箱');
+            return warning(lang('user.accountVerify'));
         }
-        if(Cache::get($account.'_time')) return warning('请一分钟后再试！');
+        if(Cache::get($account.'_time')) return warning(lang('user.waitMinute'));
         if($type==1){
-            $text='登录账户';
+            $text=lang('user.loginAccount');
             $actions="login";
         }elseif($type==2){
-            $text='注册账户';
+            $text=lang('user.registerAccount');
             $actions="register";
         }elseif($type==3){
-            $text='修改密码';
+            $text=lang('user.editPass');
             $actions="changePassword";
         }else{
-            $text="修改账户";
+            $text=lang('user.editAccount');
             $actions="changeUserinfo";
         }
         $code=rand(100000,999999);
@@ -302,7 +302,7 @@ class Pub
             $conf['temp']='code';
             $mail=new \mail\Mail($conf);
             $mail->sendEmail([$account],$text,$code);
-            return success('发送成功');
+            return success(lang('system.sendOk'));
         }else{
             $parmes=[
                 'code'=>$code

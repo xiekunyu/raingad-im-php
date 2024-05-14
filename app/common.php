@@ -15,33 +15,33 @@ use \utils\Str;
  * @param array $extend    扩展数据
  * @param int $count    总数
  */
-function success($msg = '操作成功', $data = '', $count = 0, $page = 1, $code = 0)
+function success($msg, $data = '', $count = 0, $page = 1, $code = 0)
 {
-    return ret($code, $msg, $data, $count, $page);
+    return ret($code, $msg ? : lang('system.success'), $data, $count, $page);
 }
 
 /**
  * 返回警告json信息
  */
-function warning($msg = '操作失败', $data = '', $count = 0, $page = 1 , $code = 400)
+function warning($msg, $data = '', $count = 0, $page = 1 , $code = 400)
 {
-    return success($msg, $data, $count, $page, $code);
+    return success($msg ? : lang('system.fail'), $data, $count, $page, $code);
 }
 
 /**
  * 返回错误json信息
  */
-function error($msg = '操作失败', $code = 502)
+function error($msg, $code = 502)
 {
-    return ret($code, '系统错误：'.$msg);
+    return ret($code, lang('system.error').'：'.$msg ? : lang('system.fail'));
 }
 
 /**
  * 提前终止信息
  */
-function shutdown($msg = '禁止访问', $code = 401)
+function shutdown($msg, $code = 401)
 {
-    exit(json_encode(['code' => $code, 'msg' => $msg, 'data' => []]));
+    exit(json_encode(['code' => $code, 'msg' => $msg?:lang('system.forbidden'), 'data' => []]));
 }
 
 
@@ -182,7 +182,7 @@ function decryptIds($str)
         }
         if ($result['code'] == 200) {
             $data['code'] = 200;
-            $data['msg'] = '短信发送成功';
+            $data['msg'] = lang('system.sendOK');
         } else {
             $data['code'] = $result['code'];
             $data['msg'] = $result['msg'];
@@ -230,7 +230,7 @@ function getHost($url){
 function circleAvatar($str,$s,$uid=0,$is_save=0,$save_path=''){
     //定义输出为图像类型
     header("content-type:image/png");
-    $str =$str?:"律者";
+    $str =$str?:"A";
     $uid =$uid?:rand(0,10);
     $text=\utils\Str::getLastName($str,2);
     $width = $height = $s?:80;
@@ -941,25 +941,25 @@ function str_encipher($str,$encode=true,$key=''){
 
 // 推送时获取消息的类型
 function getMsgType($type,$callVideo=false){
-    $msgName='[暂不支持的消息类型]';
+    $msgName=lang('messageType.other');
     switch($type){
         case 'image':
-            $msgName='[图片]';
+            $msgName=lang('messageType.image');
             break;
         case 'voice':
-            $msgName='[语音]';
+            $msgName=lang('messageType.voice');
             break;
         case 'video':
-            $msgName='[视频]';
+            $msgName=lang('messageType.video');
             break;
         case 'file':
-            $msgName='[文件]';
+            $msgName=lang('messageType.file');
             break;
         case 'webrtc':
             if($callVideo){
-                $msgName='[正在请求与您视频通话]';
+                $msgName=lang('messageType.webrtcAudio');
             }else{
-                $msgName='[正在请求与您语音通话]';
+                $msgName=lang('messageType.webrtcVideo');
             }
             break;
     }

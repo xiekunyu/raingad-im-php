@@ -45,11 +45,11 @@ class Group extends BaseController
         $user_id = $this->request->param('user_id');
         $group=GroupModel::where('group_id',$group_id)->find();
         if(!$group){
-            return warning('群组不存在');
+            return warning(lang('group.exist'));
         }
         $user=UserModel::where('user_id',$user_id)->find();
         if(!$user){
-            return warning('用户不存在');
+            return warning(lang('user.exist'));
         }
         Db::startTrans();
         try{
@@ -59,10 +59,10 @@ class Group extends BaseController
             $group->save();
             wsSendMsg($group_id,"changeOwner",['group_id'=>'group-'.$group_id,'user_id'=>$user_id],1);
             Db::commit();
-            return success('保存成功');
+            return success('');
         }catch (\Exception $e){
             Db::rollback();
-            return warning('更换失败');
+            return warning('');
         }
     }
 
@@ -72,7 +72,7 @@ class Group extends BaseController
         $group_id = $this->request->param('group_id');
         $group=GroupModel::where('group_id',$group_id)->find();
         if(!$group){
-            return warning('群组不存在');
+            return warning(lang('group.exist'));
         }
         Db::startTrans();
         try{
@@ -82,10 +82,10 @@ class Group extends BaseController
             GroupModel::destroy($group_id);
             wsSendMsg($group_id,"removeGroup",['group_id'=>'group-'.$group_id],1);
             Db::commit();
-            return success('解散成功');
+            return success('');
         }catch (\Exception $e){
             Db::rollback();
-            return warning('解散失败');
+            return warning('');
         }
     }
 
@@ -96,7 +96,7 @@ class Group extends BaseController
         $group_id = $param['group_id'];
         $group=GroupModel::where('group_id',$group_id)->find();
         if(!$group){
-            return warning('群组不存在');
+            return warning(lang('group.exist'));
         }
         $user_ids=$param['user_ids'];
         $data=[];
@@ -113,7 +113,7 @@ class Group extends BaseController
             $groupUser->saveAll($data);
             $url=GroupModel::setGroupAvatar($group_id);
             wsSendMsg($group_id,"addGroupUser",['group_id'=>"group-".$group_id,'avatar'=>$url],1);
-            return success('添加成功');
+            return success(lang('system.addOk'));
         }catch(\Exception $e){
                 return error($e->getMessage());
         }
@@ -126,16 +126,16 @@ class Group extends BaseController
         $group_id = $param['group_id'];
         $group=GroupModel::where('group_id',$group_id)->find();
         if(!$group){
-            return warning('群组不存在');
+            return warning(lang('group.exist'));
         }
         $user_id=$param['user_id'];
         $groupUser=GroupUser::where(['group_id'=>$group_id,'user_id'=>$user_id])->find();
         if($groupUser){
             $groupUser->delete();
             wsSendMsg($group_id,"removeUser",['group_id'=>'group-'.$group_id],1);
-            return success('删除成功');
+            return success('');
         }else{
-            return warning('删除失败！');
+            return warning('');
         }
         
     }
@@ -146,7 +146,7 @@ class Group extends BaseController
        $group_id = $param['group_id'];
         $group=GroupModel::where('group_id',$group_id)->find();
         if(!$group){
-            return warning('群组不存在');
+            return warning(lang('group.exist'));
         }
        $user_id=$param['user_id'];
        $role=$param['role'];
@@ -155,9 +155,9 @@ class Group extends BaseController
           $groupUser->role=$role;
           $groupUser->save();
           wsSendMsg($group_id,"setManager",['group_id'=>'group-'.$group_id],1);
-          return success('设置成功');
+          return success('');
        }else{
-          return warning('设置失败！');
+          return warning('');
        }
        
     }

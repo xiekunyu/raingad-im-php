@@ -77,14 +77,14 @@ class Group extends BaseController
       $group_id = explode('-', $param['id'])[1];
       $role=GroupUser::where(['group_id'=>$group_id,'user_id'=>$this->userInfo['user_id']])->value('role');
       if($role>2){
-         return warning('你没有操作权限，只有群主和群管理员才可以修改！');
+         return warning(lang('group.notAuth'));
       }
       GroupModel::where(['group_id' => $group_id])->update(['name' => $param['displayName'],'name_py'=>pinyin_sentence($param['displayName'])]);
       $param['editUserName'] = $this->userInfo['realname'];
       $action='editGroupName';
       event('GroupChange', ['action' => $action, 'group_id' => $group_id, 'param' => $param]);
       wsSendMsg($group_id, $action, $param, 1);
-      return success('修改成功');
+      return success(lang('system.editOk'));
    }
 
    // 添加群成员
@@ -95,7 +95,7 @@ class Group extends BaseController
       $user_ids=$param['user_ids'];
       $groupUserCount=GroupUser::where(['group_id'=>$group_id,'status'=>1])->count();
       if((count($user_ids) + $groupUserCount) > $this->chatSetting['groupUserMax'] && $this->chatSetting['groupUserMax']!=0){
-         return warning("人数不能超过".$this->chatSetting['groupUserMax']."人！");
+         return warning(lang('group.userLimit',['userMax'=>$this->chatSetting['groupUserMax']]));
       }
       $data=[];
       try{
@@ -119,14 +119,14 @@ class Group extends BaseController
          $groupInfo['id']='group-'.$group_id;
          $groupInfo['avatar']=avatarUrl($url,$groupInfo['name'],$group_id,120);
          $groupInfo['is_group']=1;
-         $groupInfo['lastContent']=$this->userInfo['realname'].' 邀请你加入群聊';
+         $groupInfo['lastContent']=lang('group.invite',['username'=>$this->userInfo['realname']]);
          $groupInfo['lastSendTime']=time()*1000;
-         $groupInfo['index']="[2]群聊";
+         $groupInfo['index']="[2]".lang('group.name');
          $groupInfo['is_notice']=1;
          $groupInfo['is_top']=0;
          $groupInfo['type']="text";
          wsSendMsg($user_ids, 'addGroup', $groupInfo);
-         return success('添加成功');
+         return success(lang('system.addOk'));
       }catch(Exception $e){
          return error($e->getMessage());
       }
@@ -140,16 +140,16 @@ class Group extends BaseController
          $user_id=$param['user_id'];
          $role=$param['role'];
          if(!GroupUser::checkAuth(['group_id'=>$group_id,'user_id'=>$uid])){
-            return warning('您没有操作权限！');
+            return warning(lang('system.notAuth'));
          }
          $groupUser=GroupUser::where(['group_id'=>$group_id,'user_id'=>$user_id])->find();
          if($groupUser){
             $groupUser->role=$role;
             $groupUser->save();
             wsSendMsg($group_id,"setManager",['group_id'=>$param['id']],1);
-            return success('设置成功');
+            return success(lang('system.settingOk'));
          }else{
-            return warning('设置失败！');
+            return warning('');
          }
          
       }
@@ -160,13 +160,13 @@ class Group extends BaseController
          $uid=$this->userInfo['user_id'];
          $user_ids=$param['user_ids'];
          if($this->chatSetting['groupChat']==0){
-            return warning("您没有创建群聊的权限！");
+            return warning(lang('system.notAuth'));
          }
          if(count($user_ids)>$this->chatSetting['groupUserMax'] && $this->chatSetting['groupUserMax']!=0){
-            return warning("人数不能超过".$this->chatSetting['groupUserMax']."人！");
+            return warning(lang('group.userLimit',['userMax'=>$this->chatSetting['groupUserMax']]));
          }
          if(count($user_ids)<=1){
-            return warning("请至少选择两人！");
+            return warning(lang('group.atLeast'));
          }
          // 将自己也加入群聊
          $user_ids[]=$this->userInfo['user_id'];
@@ -176,7 +176,7 @@ class Group extends BaseController
             $create=[
                'create_user'=>$uid,
                'owner_id'=>$uid,
-               'name'=>"群聊",
+               'name'=>lang('group.name'),
                'name_py'=>"qunliao",
                'setting'=>json_encode($setting),
             ];
@@ -215,9 +215,9 @@ class Group extends BaseController
                'id'=>'group-'.$group_id,
                'avatar'=>avatarUrl($url,$create['name'],$group_id,120),
                'is_group'=>1,
-               'lastContent'=>$this->userInfo['realname'].' 创建了群聊',
+               'lastContent'=>lang('group.add',['username'=>$this->userInfo['realname']]),
                'lastSendTime'=>time()*1000,
-               'index'=>"[2]群聊",
+               'index'=>"[2]".lang('group.name'),
                'is_notice'=>1,
                'is_top'=>0,
                'setting'=>$setting,
@@ -226,7 +226,7 @@ class Group extends BaseController
             Message::create([
                'from_user'=>$uid,
                'to_user'=>$group_id,
-               'content'=>str_encipher('创建了群聊'),
+               'content'=>str_encipher(lang('group.add',['username'=>''])),
                'type'=>'event',
                'is_group'=>1,
                'is_read'=>1,
@@ -251,17 +251,17 @@ class Group extends BaseController
          $user_id=$param['user_id'];
          $role=GroupUser::where(['group_id'=>$group_id,'user_id'=>$uid])->value('role');
          if($role>2 && $user_id!=$uid){
-            return warning('您没有操作权限！');
+            return warning(lang('system.notAuth'));
          }
          $groupUser=GroupUser::where(['group_id'=>$group_id,'user_id'=>$user_id])->find();
          if(($groupUser && $groupUser['role']>$role) || $user_id==$uid){
             GroupUser::destroy($groupUser->id);
          }else{
-            return warning('您的权限不够！');
+            return warning(lang('system.notAuth'));
          }
          $url=GroupModel::setGroupAvatar($group_id);
          wsSendMsg($group_id,"removeUser",['group_id'=>$param['id'],'avatar'=>$url,'user_id'=>$user_id],1);
-         return success('删除成功');
+         return success(lang('system.delOk'));
       }
 
       // 解散团队
@@ -271,7 +271,7 @@ class Group extends BaseController
          $group_id = explode('-', $param['id'])[1];
          $role=GroupUser::where(['group_id'=>$group_id,'user_id'=>$uid])->value('role');
          if($role>1){
-            return warning('您没有操作权限！');
+            return warning(lang('system.notAuth'));
          }
          Db::startTrans();
          try{
@@ -294,12 +294,12 @@ class Group extends BaseController
          $uid=$this->userInfo['user_id'];
          $group_id = explode('-', $param['id'])[1];
          if($param['notice']==''){
-            return warning('请输入内容！');
+            return warning(lang('system.notNull'));
          }
          $role=GroupUser::where(['group_id'=>$group_id,'user_id'=>$uid])->value('role');
-         // if($role>2){
-         //    return warning('您没有操作权限！');
-         // }
+         if($role>2){
+            return warning(lang('system.notAuth'));
+         }
          GroupModel::update(['notice'=>$param['notice']],['group_id'=>$group_id]);
          wsSendMsg($group_id,"setNotice",['group_id'=>$param['id'],'notice'=>$param['notice']],1);
          return success('');
@@ -312,7 +312,7 @@ class Group extends BaseController
          $group_id = explode('-', $param['id'])[1];
          $role=GroupUser::where(['group_id'=>$group_id,'user_id'=>$uid])->value('role');
          if($role!=1){
-            return warning('您没有操作权限！');
+            return warning(lang('system.notAuth'));
          }
          $setting=json_encode($param['setting']);
          GroupModel::update(['setting'=>$setting],['group_id'=>$group_id]);
@@ -364,10 +364,10 @@ class Group extends BaseController
          $groupUserCount=GroupUser::where(['group_id'=>$group_id,'status'=>1])->count();
          $groupUser=GroupUser::where(['group_id'=>$group_id,'user_id'=>$uid])->find();
          if($groupUser){
-            return warning('您已经加入该群！');
+            return warning(lang('group.alreadyJoin'));
          }
          if(($groupUserCount+1) > $this->chatSetting['groupUserMax'] && $this->chatSetting['groupUserMax']!=0){
-            return warning("人数不能超过".$this->chatSetting['groupUserMax']."人！");
+            return warning(lang('group.userLimit',['userMax'=>$this->chatSetting['groupUserMax']]));
          }
          try{
             $data=[
@@ -381,7 +381,7 @@ class Group extends BaseController
             $action='joinGroup';
             event('GroupChange', ['action' => $action, 'group_id' => $group_id, 'param' => $param]);
             wsSendMsg($group_id,"addGroupUser",['group_id'=>$param['group_id'],'avatar'=>$url],1);
-            return success('加入成功');
+            return success(lang('group.joinOk'));
          }catch(Exception $e){
             return error($e->getMessage());
          }
@@ -396,15 +396,15 @@ class Group extends BaseController
         $uid=$this->userInfo['user_id'];
         $group=GroupModel::where('group_id',$group_id)->find();
         if(!$group){
-            return warning('群组不存在');
+            return warning(lang('group.exist'));
         }
         $user=User::where('user_id',$user_id)->find();
         if(!$user){
-            return warning('用户不存在');
+            return warning(lang('user.exist'));
         }
         $role=GroupUser::where(['group_id'=>$group_id,'user_id'=>$uid])->value('role');
         if($role>1){
-           return warning('您没有操作权限！');
+           return warning(lang('system.notAuth'));
         }
         Db::startTrans();
         try{
@@ -414,10 +414,10 @@ class Group extends BaseController
             $group->save();
             wsSendMsg($group_id,"changeOwner",['group_id'=>'group-'.$group_id,'user_id'=>$user_id],1);
             Db::commit();
-            return success('转让成功');
+            return success('');
         }catch (\Exception $e){
             Db::rollback();
-            return warning('更换失败');
+            return warning('');
         }
     }
 }

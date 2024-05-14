@@ -28,7 +28,7 @@ class Index
         return View::fetch('',[
             'url'  => $url,
             'ext'=>$ext,
-            'name'=>"预览文件"
+            'name'=>lang('file.preview')
         ]);
     }
 
@@ -43,12 +43,12 @@ class Index
     {
         
         if (strpos($_SERVER['HTTP_USER_AGENT'], 'MicroMessenger') !== false) {
-            throw new \think\Exception('请使用浏览器下载!',400);
+            throw new \think\Exception(lang('file.browserDown'),400);
         }
         $param = request()->param();
         $file_id = $param['file_id'] ?? 0;
         if (!$file_id) {
-            throw new \think\Exception('参数错误', 502);
+            throw new \think\Exception(lang('system.parameterError'), 502);
         }
         try {
             $file_id = decryptIds($file_id);
@@ -57,7 +57,7 @@ class Index
         }
         $file = File::find($file_id);
         if (!$file) {
-            throw new \think\Exception('该文件不存在!',404);
+            throw new \think\Exception(lang('file.exist'),404);
         }
         $file = $file->toArray();
         // 兼容本地文件下载
@@ -83,7 +83,7 @@ class Index
             ];
             $a=$actions[$action] ?? '';
             if(!$a){
-                return warning('二维码已失效');
+                return warning(lang('scan.failure'));
             }
             return $this->$a($param);
         }else{
@@ -95,7 +95,7 @@ class Index
     {
         $token=authcode(urldecode($param['realToken']),"DECODE", 'qr');
         if(!$token){
-            return warning('二维码已失效');
+            return warning(lang('scan.failure'));
         }
         $groupInfo=explode('-',$token);
         $uid=$groupInfo[0];
@@ -109,7 +109,7 @@ class Index
             $group['action']='groupInfo';
             return success('',$group);
         }else{
-            return warning('二维码已失效');
+            return warning(lang('scan.failure'));
         }
     }
 
@@ -117,7 +117,7 @@ class Index
     {
         $id=decryptIds($param['token']);
         if(!$id){
-            return warning('二维码已失效');
+            return warning(lang('scan.failure'));
         }
         $user=User::where(['user_id'=>$id])->field(User::$defaultField)->find();
         if($user){
@@ -127,7 +127,7 @@ class Index
             $user['action']='userInfo';
             return success('',$user);
         }else{
-            return warning('二维码已失效');
+            return warning(lang('scan.failure'));
         }
     }
 
@@ -171,7 +171,7 @@ class Index
         if(is_file($file)){
             return \utils\File::download($file, $packageName);
         }else{
-            return warning('文件不存在');
+            return warning(lang('file.exist'));
         }
     }
 }

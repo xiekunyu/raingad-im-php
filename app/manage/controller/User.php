@@ -58,9 +58,9 @@ class User extends BaseController
             $data['name_py'] = pinyin_sentence($data['realname']);
             $user->save($data);
             $data['user_id']=$user->user_id;
-            return success('添加成功', $data);
+            return success(lang('system.addOk'), $data);
         }catch (\Exception $e){
-            return error('添加失败');
+            return error(lang('system.addFail'));
         }
     }
 
@@ -87,9 +87,9 @@ class User extends BaseController
             $user->status =$data['status'];
             $user->name_py= pinyin_sentence($data['realname']);
             $user->save();
-            return success('修改成功', $data);
+            return success(lang('system.editOk'), $data);
         }catch (\Exception $e){
-            return error('修改失败');
+            return error(lang('system.editFail'));
         }
     }
 
@@ -99,7 +99,7 @@ class User extends BaseController
         $user_id = $this->request->param('user_id');
         $user=UserModel::find($user_id);
         if(!$user || $user->user_id==1){
-            return warning('用户不存在');
+            return warning(lang('user.exist'));
         }
         Db::startTrans();
         try{
@@ -109,7 +109,7 @@ class User extends BaseController
             GroupUser::where('user_id', $user_id)->delete();
             UserModel::destroy($user_id);
             Db::commit();
-            return success('删除成功');
+            return success(lang('system.delOk'));
         }catch (\Exception $e){
             Db::rollback();
             return error($e->getMessage());
@@ -122,14 +122,14 @@ class User extends BaseController
         $user_id = $this->request->param('user_id');
         $user=UserModel::find($user_id);
         if(!$user){
-            return warning('用户不存在');
+            return warning(lang('user.exist'));
         }
         try{
             $status = $this->request->param('status',0);
             UserModel::where('user_id', $user_id)->update(['status'=>$status]);
-            return success('修改成功');
+            return success('');
         }catch (\Exception $e){
-            return error('修改失败');
+            return error('');
         }
     }
 
@@ -139,7 +139,7 @@ class User extends BaseController
         $user_id = $this->request->param('user_id');
         $user=UserModel::find($user_id);
         if(!$user){
-            return error('用户不存在');
+            return error(lang('user.exist'));
         }
         $user->avatar=avatarUrl($user->avatar,$user->realname,$user->user_id,120);
         $location='';
@@ -157,14 +157,14 @@ class User extends BaseController
         $user_id = $this->request->param('user_id');
         $user=UserModel::find($user_id);
         if(!$user){
-            return warning('用户不存在');
+            return warning(lang('user.exist'));
         }
         try{
             $role = $this->request->param('role');
             UserModel::where('user_id', $user_id)->update(['role'=>$role]);
-            return success('修改成功');
+            return success('');
         }catch (\Exception $e){
-            return error('修改失败');
+            return error('');
         }
     }
 
@@ -174,7 +174,7 @@ class User extends BaseController
         $user_id = $this->request->param('user_id');
         $user=UserModel::find($user_id);
         if(!$user){
-            return warning('用户不存在');
+            return warning(lang('user.exist'));
         }
         try{
             $password = $this->request->param('password','');
@@ -183,9 +183,9 @@ class User extends BaseController
                 $user->password= password_hash_tp($password,$salt);
             }
             $user->save();
-            return success('修改成功');
+            return success('');
         }catch (\Exception $e){
-            return error('修改失败');
+            return error('');
         }
     }
 

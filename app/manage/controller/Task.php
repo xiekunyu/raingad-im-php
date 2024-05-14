@@ -24,10 +24,10 @@ class Task extends BaseController
     protected $rootPath;
 
     protected $taskNames = [
-        'schedule' => '计划任务',
-        'queue' => '消息队列',
-        'worker' => '消息推送',
-        'clearStd' => '清理日志',
+        'schedule' => lang('task.schedule'),
+        'queue' => lang('task.queue'),
+        'worker' => lang('task.worker'),
+        'clearStd' => lang('task.clearStd'),
     ];
 
     public function __construct(App $app)
@@ -53,7 +53,7 @@ class Task extends BaseController
         foreach ($data as &$datum) {
             $expName = explode('_', $datum['name']);
 
-            $datum['remark'] = $this->taskNames[$expName[count($expName) - 1]] ?? "未知任务";
+            $datum['remark'] = $this->taskNames[$expName[count($expName) - 1]] ?? lang('task.null');
         }
         unset($datum);
         return success('', $data);
@@ -67,20 +67,20 @@ class Task extends BaseController
     {
         if(strpos(strtolower(PHP_OS), 'win') === 0)
         {
-            return warning("windows启动请运行根目录下的：start_for_win.bat");
+            return warning(lang('task.winRun'));
         }
 
         if (count($this->taskMsg())) {
-            return warning('进程已启动');
+            return warning(lang('task.alreadyRun'));
         }
 
         // 启动
         $out = Terminal::instance(2)->exec('php think task start');
         if (!count($this->analysisMsg($out))) {
-            return warning('启动失败');
+            return warning(lang('task.startFile'));
         }
 
-        return success('启动成功');
+        return success(lang('task.startOk'));
     }
 
     /**
@@ -90,13 +90,13 @@ class Task extends BaseController
     public function stopTask()
     {
         if (!count($this->taskMsg())) {
-            return warning('进程未启动');
+            return warning(lang('task.notRun'));
         }
 
         // 强制停止
         Terminal::instance(2)->exec('php think task stop force');
 
-        return success('停止成功');
+        return success('');
     }
 
     /**
@@ -113,7 +113,7 @@ class Task extends BaseController
             $expName = explode('_', $name);
             $name    = $expName[count($expName) - 1];
             if (!file_exists($path . 'exec_' . $name . '.std')) {
-                return warning('日志不存在');
+                return warning(lang('task.logExist'));
             }
         }
 
@@ -134,12 +134,12 @@ class Task extends BaseController
             $expName = explode('_', $name);
             $name    = $expName[count($expName) - 1];
             if (!file_exists($path . 'exec_' . $name . '.std')) {
-                return warning('日志不存在');
+                return warning(lang('task.logExist'));
             }
         }
 
         file_put_contents($path . 'exec_' . $name . '.std', '');
-        return success('清理成功');
+        return success('');
     }
 
 

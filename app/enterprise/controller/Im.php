@@ -32,24 +32,24 @@ class Im extends BaseController
         $is_group=$param['is_group']??0;
         $chatSetting=$this->chatSetting;
         if($is_group==0 && $chatSetting['simpleChat']==0){
-            return warning('目前禁止用户私聊！');
+            return warning(lang('im.forbidChat'));
         }
         // 如果是单聊，并且是社区模式，需要判断是否是好友
         if($is_group==0 && $this->globalConfig['sysInfo']['runMode']==2){
             $friend=Friend::where(['friend_user_id'=>$this->uid,'create_user'=>$param['toContactId']])->find();
             if(!$friend){
-                return warning('您不在TA的好友列表，不能发消息！');
+                return warning(lang('im.notFirend'));
             }
             $otherFriend=Friend::where(['friend_user_id'=>$param['toContactId'],'create_user'=>$this->uid])->find();
             if(!$otherFriend){
-                return warning('TA还不是您的好友，不能发消息！');
+                return warning(lang('im.friendNot'));
             }
         }
         $data = Message::sendMessage($param);
         if ($data) {
             return success('', $data);
         } else {
-            return error('发送失败');
+            return error(lang('system.sendFail'));
         }
     }
 
@@ -59,12 +59,12 @@ class Im extends BaseController
         $param = $this->request->param();
         $userIds=$param['user_ids'] ?? [];
         if(!$userIds || count($userIds)>5){
-            return warning('请选择转发的用户或者数量不操作5个！');
+            return warning(lang('im.forwardLimit',['count'=>5]));
         }
         $msg_id=$param['msg_id'] ?? 0;
         $message=Message::find($msg_id);
         if(!$message){
-            return warning('消息不存在');
+            return warning(lang('im.exist'));
         }
         $message=$message->toArray();
         $userInfo=$this->userInfo;
@@ -114,9 +114,9 @@ class Im extends BaseController
             return error($e->getMessage());
         }
         if ($error) {
-            $text='由于规则限制，转发失败'.$error.'条';
+            $text=lang('im.forwardRule',['count'=>$error]);
         } else {
-            $text='转发成功';
+            $text=lang('im.forwardOk');
         }
         return success($text);
     }
@@ -127,7 +127,7 @@ class Im extends BaseController
         $user_id = $this->request->param('user_id');
         $user=User::find($user_id);
         if(!$user){
-            return error('用户不存在');
+            return error(lang('user.exist'));
         }
         $user->avatar=avatarUrl($user->avatar,$user->realname,$user->user_id,120);
         // 查询好友关系
@@ -256,11 +256,11 @@ class Im extends BaseController
                 // 处理撤回的消息
                 if ($v['type'] == "event") {
                     if ($v['from_user'] == $userInfo['user_id']) {
-                        $content = "你" . $content;
+                        $content = lang('im.you'). $content;
                     } elseif ($v['is_group'] == 1) {
                         $content = $fromUser['realname'] . $content;
                     } else {
-                        $content = "对方" . $content;
+                        $content = lang('im.other') . $content;
                     }
                 }
                 $toContactId=$v['is_group'] ==1 ?  'group-'.$v['to_user'] : $v['to_user'];
@@ -340,7 +340,7 @@ class Im extends BaseController
             User::where(['user_id' => $this->userInfo['user_id']])->update(['setting' => $param]);
             return success('');
         }
-        return warning('设置失败');
+        return warning('');
     }
 
     // 撤回消息
@@ -353,10 +353,10 @@ class Im extends BaseController
             // 如果时间超过了2分钟也不能撤回
             $createTime=is_string($message['create_time']) ? strtotime($message['create_time']) : $message['create_time'];
             if(time()-$createTime>120 && $message['is_group']==0){
-                return warning('超过2分钟不能撤回！');
+                return warning(lang('im.redoLimitTime',['limit'=>2]));
             }
-            $text = "撤回了一条消息";
-            $fromUserName = "对方";
+            $text = lang('im.redo');
+            $fromUserName = lang('im.other');
             $toContactId = $message['to_user'];
             if ($message['is_group'] == 1) {
                 $fromUserName = $this->userInfo['realname'];
@@ -365,9 +365,9 @@ class Im extends BaseController
                 if($message['from_user']!=$this->userInfo['user_id']){
                     $groupUser=GroupUser::where(['user_id'=>$this->userInfo['user_id'],'group_id'=>$toContactId])->find();
                     if(!$groupUser || !in_array($groupUser['role'],[1,2])){
-                        return warning('您没有权限撤回该消息！');
+                        return warning(lang('system.notAuth'));
                     }
-                    $text='被(管理员)撤回了一条消息';
+                    $text=lang('im.manageRedo');
                 }
             }
             $message->content = str_encipher($text);
@@ -387,7 +387,7 @@ class Im extends BaseController
             wsSendMsg($toContactId, 'undoMessage', $data, $info['is_group']); 
             if($info['is_group']==0){
                // 给自己也发一份推送，多端同步
-                $data['content'] = "你". $text;
+                $data['content'] =lang('im.you'). $text;
                 wsSendMsg($this->userInfo['user_id'], 'undoMessage', $data, $info['is_group']); 
             }
             return success('');
@@ -412,7 +412,7 @@ class Im extends BaseController
             } else {
                 if ($message['del_user'] > 0) {
                     $message->where($map)->delete();
-                    return success('删除成功！');
+                    return success(lang('system.delOk'));
                 }
             }
             $message->save();
@@ -532,36 +532,36 @@ class Im extends BaseController
         }
         switch($code){
             case 902:
-                $content='已取消通话';
+                $content=lang('webRtc.cancel');
                 break;
             case 903:
-                $content='已拒绝';
+                $content=lang('webRtc.refuse');
                 break;
             case 905:
-                $content='未接通';
+                $content=lang('webRtc.notConnected');
                 break;
             case 906:
-                $content='通话时长 '.date("i:s",$callTime);
+                $content=lang('duration',['time'=>date("i:s",$callTime)]);
                 break;
             case 907:
-                $content='忙线中';
+                $content=lang('webRtc.busy');
                 break;
             case 908:
-                $content='其他端已操作';
+                $content=lang('webRtc.other');
                 break;
             default:
-                $content=$type==1 ?'视频通话' : '语音通话';
+                $content=$type==1 ?lang('webRtc.video') : lang('webRtc.audio');
                 break;
         }
         switch($event){
             case 'calling':
-                $content=$type==1 ?'视频通话' : '语音通话';
+                $content=$type==1 ?lang('webRtc.video'): lang('webRtc.audio');
                 break;
             case 'acceptRtc':
-                $content='接听通话请求';
+                $content=lang('webRtc.answer');
                 break;
             case 'iceCandidate':
-                $content='数据交换中';
+                $content=lang('webRtc.exchange');
                 break;
         }
         $userInfo=$this->userInfo;
@@ -614,7 +614,7 @@ class Im extends BaseController
         }elseif($event=='hangup'){
             $message=Message::where(['id'=>$id])->find();
             if(!$message){
-                return error('通话失败！');
+                return error(lang('webRtc.fail'));
             }
             if($message){
                 $message->content=str_encipher($content);
@@ -641,27 +641,27 @@ class Im extends BaseController
     public function editPassword()
     {
         if(env('app.demon_mode',false)){
-            return warning('演示模式不支持修改');
+            return warning(lang('system.demoMode'));
         }
         
         $user_id = $this->userInfo['user_id'];
         $user=User::find($user_id);
         if(!$user){
-            return warning('用户不存在');
+            return warning(lang('user.exist'));
         }
         $account=$user->account;
         $code=$this->request->param('code','');
         $originalPassword = $this->request->param('originalPassword', '');
         if($code){
             if(Cache::get($account)!=$code){
-                return warning('验证码不正确！');
+                return warning(lang('user.codeErr'));
             }
         }elseif($originalPassword){
             if(password_hash_tp($originalPassword,$user->salt)!= $user->password){
-                return warning('原密码不正确！');
+                return warning(lang('user.passErr'));
             }
         }else{
-            return warning('参数错误！');
+            return warning(lang('system.parameterError'));
         }
         try{
             $password = $this->request->param('password','');
@@ -670,9 +670,9 @@ class Im extends BaseController
                 $user->password= password_hash_tp($password,$salt);
             }
             $user->save();
-            return success('修改成功');
+            return success(lang('system.editOk'));
         }catch (\Exception $e){
-            return error('修改失败');
+            return error(lang('system.editFail'));
         }
     }
 
@@ -682,7 +682,7 @@ class Im extends BaseController
             $data = $this->request->param();
             $user=User::find($this->uid);
             if(!$user){
-                return warning('用户不存在');
+                return warning(lang('user.exist'));
             }
             $user->realname =$data['realname'];
             $user->email =$data['email'];
@@ -690,7 +690,7 @@ class Im extends BaseController
             $user->sex =$data['sex'];
             $user->name_py= pinyin_sentence($data['realname']);
             $user->save();
-            return success('修改成功', $data);
+            return success(lang('system.editOk'), $data);
         }catch (\Exception $e){
             return error($e->getMessage());
         }
@@ -699,35 +699,35 @@ class Im extends BaseController
     // 修改账户
     public function editAccount(){
         if(env('app.demon_mode',false)){
-            return warning('演示模式不支持修改');
+            return warning(lang('system.demoMode'));
         }
         $code=$this->request->param('code','');
         $newCode=$this->request->param('newCode','');
         $account=$this->request->param('account','');
         $isUser=User::where('account',$account)->find();
         if($isUser){
-            return warning('账户已存在');
+            return warning(lang('user.already'));
         }
         $user=User::find($this->uid);
         if(!$user){
-            return warning('用户不存在');
+            return warning(lang('user.exist'));
         }
         // 如果已经认证过了，则需要验证验证码
         if($user->is_auth){
             if(Cache::get($user->account)!=$code){
-                return warning('验证码不正确！');
+                return warning(lang('user.codeErr'));
             }
         }
         if(Cache::get($account)!=$newCode){
-            return warning('新账户验证码不正确！');
+            return warning(lang('user.newCodeErr'));
         }
         try{
             $user->account=$account;
             $user->is_auth=1;
             $user->save();
-            return success('修改成功');
+            return success(lang('system.editOk'));
         }catch (\Exception $e){
-            return error('修改失败');
+            return error(lang('system.editFail'));
         }
     }
 
