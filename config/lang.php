@@ -15,7 +15,14 @@ return [
     // 多语言cookie变量
     'cookie_var'      => 'think_lang',
     // 扩展语言包
-    'extend_list'     => [],
+    'extend_list'     => [
+        'zh-cn'    => [
+            app()->getBasePath() . 'lang/zh_cn.php',
+        ],
+        'en-en'    => [
+            app()->getBasePath() . 'lang/en_en.php',
+        ],
+    ],
     // Accept-Language转义为对应语言包名称
     'accept_language' => [
         'zh-hans-cn' => 'zh-cn',

@@ -23,12 +23,7 @@ class Task extends BaseController
      */
     protected $rootPath;
 
-    protected $taskNames = [
-        'schedule' => lang('task.schedule'),
-        'queue' => lang('task.queue'),
-        'worker' => lang('task.worker'),
-        'clearStd' => lang('task.clearStd'),
-    ];
+    protected $taskNames = [];
 
     public function __construct(App $app)
     {
@@ -36,6 +31,12 @@ class Task extends BaseController
 
         $this->rootPath = root_path();
         chdir($this->rootPath);
+        $this->taskNames = [
+            'schedule' => lang('task.schedule'),
+            'queue' => lang('task.queue'),
+            'worker' => lang('task.worker'),
+            'clearStd' => lang('task.clearStd'),
+        ];
     }
 
     /**
