@@ -17,7 +17,7 @@ use \utils\Str;
  */
 function success($msg, $data = '', $count = 0, $page = 1, $code = 0)
 {
-    return ret($code, $msg ? : lang('system.success'), $data, $count, $page);
+    return ret($code, $msg, $data, $count, $page);
 }
 
 /**
