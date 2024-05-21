@@ -109,7 +109,6 @@ location /wss
    
 4. Access your IP or domain name to enter the custom installation wizard.
    
-5. Access your IP or domain name to enter the custom installation wizard.
 
 #### If installation fails
 1.  Enter  `public\sql\database.sql`  to import the database into your own database.
@@ -121,7 +120,7 @@ location /wss
 ### Start the message push service
 Because the chat software needs to use websockt, so we need to start workerman, the system has built-in corresponding services, you can manage the home page in the background to run services, but the first use needs to be debugged.
 
-1. Enter the project root directory to run `php think worker:gateway start -d`, or run `php start.php start -d` to run the message service. Do not use `- d` during testing. Under windows, run the `start_for_ win.bat` file in the root directory directly. Since there are many restrictions on the use of Workerman under Windows, it is recommended to use Linux system in formal environment, while windows system is only recommended for development environment.
+1. Enter the project root directory to run `php think worker:gateway start`, or run `php start.php start` to run the message service. Do not use `- d` during testing. Under windows, run the `start_for_ win.bat` file in the root directory directly. Since there are many restrictions on the use of Workerman under Windows, it is recommended to use Linux system in formal environment, while windows system is only recommended for development environment.
 
 2. The message service needs to release port 8282. If you need to modify it, please modify the corresponding parameters in the `WORKER` section of the environment configuration file. For windows users, please modify port 8282 in [`app\worker\start_gateway.php`]. The port number needs to be changed according to the situation.
    

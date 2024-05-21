@@ -69,13 +69,20 @@ Raingad-IM是一个开源的即时通信demo，需要前后端配合使用，主
 | redis    | >= 5.0 |     | 7.0 |
 
 **重要操作**
+>使用宝塔面板更易安装
+
+<b style="color:red">以下内容，非常重要！！！！！</b>
 
 1、PHP需要安装扩展：`redis` `fileinfo`
 
 2、PHP需要取消禁用函数：`shell_exec` `proc_open` `pcntl_exec` `pcntl_alarm` `pcntl_fork` `pcntl_waitpid` `pcntl_wait` `pcntl_signal` `pcntl_signal_dispatch` `putenv`
 
 #### 源码下载
-- 克隆代码到本地： 
+
+第一种方式：下载发行版【推荐】
+- 【推荐使用】下载完整源码放到自己的服务器上。请注意看gitee项目主页顶部 [发行版](https://gitee.com/raingad/im-instant-chat/releases) ，请在发行版中下载最新发布的版本。
+
+第二种方式：克隆代码到本地，开发内容实时推送，不兼容，有BUG。
 ``` 
 git clone https://gitee.com/raingad/im-instant-chat.git
 ```
@@ -83,11 +90,10 @@ git clone https://gitee.com/raingad/im-instant-chat.git
 ```
 composer install
 ```
-或者
-- 【推荐使用】下载完整源码放到自己的服务器上。请注意看gitee项目主页顶部右侧 [（发行版）](https://gitee.com/raingad/im-instant-chat/releases) ，请在发行版中下载最新发布的版本。
+
 
 #### 开始安装
-1. 创建网站，把网站的运行目录指向项目根目录下的 `public` 目录。
+1. 把代码上传至服务器，将整个目录权限给 `www` 用户，并赋予 `755`权限，创建网站，把网站的运行目录指向项目根目录下的 `public` 目录。
 
 2. 开启伪静态和设置反向代理，下面只展示nginx的伪静态和反向代理配置，apache的请自行百度或者使用chatGPT转换。
 
@@ -102,7 +108,7 @@ location / {
 	}
 }
 
-#反向代理8282端口，无需修改内容
+#反向代理8282端口
 
 location /wss
     {
@@ -116,7 +122,7 @@ location /wss
 
 3. 如果有域名并且要使用音视频通话、语音消息等服务还需要配置证书来开启HTTPS，可以使用免费的 `Let's Encrypt` 证书，如果不需要这些服务，可以直接使用HTTP协议，但是功能会受限。
    
-4. 访问你的ip或者域名即可进入自定义安装向导，如果访问出现错误请参考下一节安装失败的第二项，将环境配置文件的 `APP_DEBUG` 打开，看报错情况。
+4. 访问你的ip或者域名即可进入自定义安装向导，如果访问出错，就是自己的准备工作没有按照要求进行，请检查。
    
 5. 先参考下一章“启动消息推送服务”，再来安装程序最佳。
 
@@ -128,9 +134,11 @@ location /wss
 PS：如需开启聊天文件存入oss，需要在后台中进行配置，配置后不要再对环境配置文件进行修改。
 
 ### 启动消息推送服务
-因为是聊天软件需要用到websockt，所以我们需要启动workerman，系统已经内置了相应的服务，可以在后台管理首页进行运行服务，但是首次使用需要先进行调试。
+因为是聊天软件需要用到websockt，所以我们需要启动workerman，系统已经内置了相应的服务，可以在后台管理首页进行运行服务。
 
-1. 进入项目根目录 运行 `php think worker:gateway start -d`，或者运行 `php start.php start -d` 即可运行消息服务，测试时不要`-d`。windows下请直接运行根目录下的`start_for_win.bat`文件，由于Workerman在Windows下有诸多使用限制，所以正式环境建议用Linux系统，windows系统仅建议用于开发环境。
+**但是首次使用需要先进行调试**。
+
+1. 进入项目根目录 运行 `php think worker:gateway start`，或者运行 `php start.php start` 即可运行消息服务。windows下请直接运行根目录下的`start_for_win.bat`文件，由于Workerman在Windows下有诸多使用限制，所以正式环境建议用Linux系统，windows系统仅建议用于开发环境。
 
 2. 消息服务需要放行 8282 端口，如需修改，请修改环境噢配置文件中`WORKER` 板块的相应参数。windows用户请修改 [ `app\worker\start_gateway.php`] 中的 8282 端口。端口号根据情况需改。
    
@@ -142,12 +150,11 @@ PS：如需开启聊天文件存入oss，需要在后台中进行配置，配置
 
 ### 安装部署服务
 
-作者提供本系统的安装服务，包括后端和前端部署到线上，可手把手教学，保证项目的完美运行，200元/次，安装服务可赠送详细的安装教程以及接口文档，如有需要可以进群联系作者！
+作者提供本系统的安装服务，包括后端和前端部署到线上，保证项目的完美运行，200元/次，安装服务可赠送详细的安装教程以及接口文档，如有需要可以进群联系作者！
 
 ### 交流群
 如果有什么问题，请留言，或者加入我们的QQ群！
 
 创作不易，点个star吧，【请先点Star后才可以申请加入交流群，否则不予通过】
 
-[QQ 交流群：336921267](https://jq.qq.com/?_wv=1027&k=jMQAt9lh) 
-
+[QQ 交流群：336921267](https://jq.qq.com/?_wv=1027&k=jMQAt9lh)
