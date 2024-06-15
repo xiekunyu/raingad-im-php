@@ -14,9 +14,10 @@ class Index
         if (!file_exists(PACKAGE_PATH . "install.lock")) {
             return redirect(url('index/install/index'));
         }
-        if(request()->isMobile() && !env('app.demon_mode',false)){
-            return redirect("/h5");
-        }
+        // 自动跳转后无法注册
+        // if(request()->isMobile() && !env('app.demon_mode',false)){
+        //     return redirect("/h5");
+        // }
         return redirect("/index.html");
     }
 

@@ -37,7 +37,11 @@ return [
     ],
     'serve' => [
         'version' => '4.1.5',
+<<<<<<< HEAD
         'release' => '20240615',
+=======
+        'release' => '20240531',
+>>>>>>> a5eb08d2594a01cc977ccd9d199338dde112cff7
         'url' => '',
         'update_info' => '1.增加群公告消息通知\n2.优化了一些功能',
         'update_type' => 'solicit',

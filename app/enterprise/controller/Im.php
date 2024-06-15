@@ -541,7 +541,7 @@ class Im extends BaseController
                 $content=lang('webRtc.notConnected');
                 break;
             case 906:
-                $content=lang('duration',['time'=>date("i:s",$callTime)]);
+                $content=lang('webRtc.duration',['time'=>date("i:s",$callTime)]);
                 break;
             case 907:
                 $content=lang('webRtc.busy');
