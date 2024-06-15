@@ -49,7 +49,9 @@ return [
         'add'=>"{:username}创建了群聊",
         'atLeast'=>"请至少选择两人！",
         'alreadyJoin'=>'您已经加入该群！',
-        'exist'=>"群聊不存在"
+        'exist'=>"群聊不存在",
+        'notice'=>"群公告",
+        'all'=>"所有人",
     ],
     'user'=>[
         'exist'=>"用户不存在",

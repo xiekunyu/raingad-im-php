@@ -7,6 +7,7 @@ use app\enterprise\model\{User,Group as GroupModel,GroupUser,Message};
 use think\Exception;
 use think\facade\Db;
 use app\common\controller\Upload;
+use utils\Str;
 
 class Group extends BaseController
 {
@@ -301,7 +302,20 @@ class Group extends BaseController
             return warning(lang('system.notAuth'));
          }
          GroupModel::update(['notice'=>$param['notice']],['group_id'=>$group_id]);
-         wsSendMsg($group_id,"setNotice",['group_id'=>$param['id'],'notice'=>$param['notice']],1);
+         $msg=[
+            'id'=>\utils\Str::getUuid(),
+            'user_id'=>$uid,
+            'content'=>'<b>'.lang('group.notice').'：</b>&nbsp;@'.lang('group.all').'<br/>'.$param['notice'].'<br/>',
+            'toContactId'=>$param['id'],
+            'sendTime'=>time()*1000,
+            'type'=>'text',
+            'is_group'=>1,
+            'status'=>'succeed',
+            'fromUser'=>$this->userInfo,
+            'at'=>[0]
+        ];
+         Message::sendMessage($msg);
+         // wsSendMsg($group_id,"setNotice",['group_id'=>$param['id'],'notice'=>$param['notice']],1);
          return success('');
       }
 

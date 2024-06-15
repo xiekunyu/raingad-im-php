@@ -36,10 +36,10 @@ return [
         'update_type' => 'solicit',
     ],
     'serve' => [
-        'version' => '4.1.4',
-        'release' => '20240506',
+        'version' => '4.1.5',
+        'release' => '20240615',
         'url' => '',
-        'update_info' => '1.修复了一些bug\n2.优化了一些功能',
+        'update_info' => '1.增加群公告消息通知\n2.优化了一些功能',
         'update_type' => 'solicit',
     ],
 ];

@@ -50,7 +50,9 @@ return [
         'add' => "{:username} has created a group chat",  
         'atLeast' => "Please select at least two people!",  
         'alreadyJoin' => "You are already in this group!",  
-        'exist' => "The group chat does not exist"  
+        'exist' => "The group chat does not exist",
+        'notice'=>"Announcement",
+        'all'=>"All",
     ],
     'user' => [  
         'exist' => "User does not exist",  
