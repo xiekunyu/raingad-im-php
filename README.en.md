@@ -1,3 +1,5 @@
+[简体中文](./README.md) | English 
+
 # Instant Messaging
 
 ### Introduce
@@ -50,13 +52,13 @@ You need to install the running environment first. The BAOTA server is recommend
 
 |  environment | version | remark | Recommended |
 | --------- | ---- | ---- | ---|
-| linux    | >= 7.0 |  The following versions were not tested   | 7.9 |
+| linux（centOS）    | >= 7.0 |  The following versions were not tested   | 7.9 |
 | nginx    | >= 1.17 |     | latest |
 | php | >= 7.1 |  incompatible php8    | 7.3 |
 | mysql    | >= 5.7 | Must be 5.7 and above     | 5.7 |
 | redis    | >= 5.0 |     | 7.0 |
 
-**重要操作**
+**Important operation**
 
 1. PHP needs to install an extension : `redis` `fileinfo`
 
@@ -80,7 +82,7 @@ or
 
 
 
-2. Enable pseudo-static and set the reverse proxy, the following only shows the pseudo-static and reverse proxy configuration of nginx, apache please Baidu or use chatGPT conversion.
+2. Enable pseudo-static and set the reverse proxy, the following only shows the pseudo-static and reverse proxy configuration of nginx, Apache is not supported for the time being.
 
 
 ``` 
