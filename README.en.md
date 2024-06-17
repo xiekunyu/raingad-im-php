@@ -45,6 +45,9 @@ Front-end technology stack：`vue2+Lemon-IMUI+element-UI`
 
 
 ### Installation
+
+> Due to the particularity of instant messaging, it is strictly prohibited to use the source code for Trojan horses, viruses, pornography, gambling, fraud and other industries in violation of local laws and regulations, as well as to engage in criminal activities, such as the use of this software for illegal activities, will be reported to the relevant departments and assist the relevant administrative law enforcement agencies to check!
+
 > The installation program needs to have some experience in PHP and server operation and maintenance, if not, please join the communication group to contact the author, the author provides paid deployment services!
 
 #### Preparatory work
@@ -65,17 +68,7 @@ You need to install the running environment first. The BAOTA server is recommend
 2. PHP needs to undisable the function : `shell_exec` `proc_open` `pcntl_exec` `pcntl_alarm` `pcntl_fork` `pcntl_waitpid` `pcntl_wait` `pcntl_signal` `pcntl_signal_dispatch` `putenv`
 
 #### Source code download
-- Clone to local ： 
-``` 
-git clone https://gitee.com/raingad/im-instant-chat.git
-```
-- 进入项目目录，执行： 
-```
-composer install
-```
-or
-
-- 【Recommended】Download the full source code and put it on your own server. Take a look at the  [（releases）](https://gitee.com/raingad/im-instant-chat/releases) at the top of the gitee project home page and download the latest release in the distribution.
+Download the full source code and put it on your own server. Take a look at the  [（releases）](https://gitee.com/raingad/im-instant-chat/releases) at the top of the gitee project home page and download the latest release in the distribution.
 
 #### Start installation
 1. Create a website by pointing the site's running directory to the 'public' directory in the project root.
