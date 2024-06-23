@@ -22,7 +22,7 @@ return [
         'update_type' => 'solicit',
     ],
     'windows' => [
-        'version' => '4.1.3',
+        'version' => '4.1.4',
         'release' => '20240328',
         'url' => env('app.win_webclip',''),
         'update_info' => '1.增加自动更新机制',
