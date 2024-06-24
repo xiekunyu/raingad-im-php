@@ -434,4 +434,31 @@ class Group extends BaseController
             return warning('');
         }
     }
+
+      // 清理群消息
+      public function clearMessage()
+      {
+         $id = $this->request->param('id');
+         $group_id = explode('-', $id)[1];
+         $uid=$this->userInfo['user_id'];
+         $group=GroupModel::where('group_id',$group_id)->find();
+         if(!$group){
+            return warning(lang('group.exist'));
+         }
+         $role=GroupUser::where(['group_id'=>$group_id,'user_id'=>$uid])->value('role');
+         // 如果是群主或者后台管理员才有权限
+         if($role>1 || $this->userInfo['role']==0){
+            return warning(lang('system.notAuth'));
+         }
+         Db::startTrans();
+         try{
+            Message::where(['chat_identify'=>$id])->delete();
+            wsSendMsg($group_id,"clearMessage",['group_id'=>'group-'.$group_id],1);
+            Db::commit();
+            return success('');
+         }catch (\Exception $e){
+            Db::rollback();
+            return warning('');
+         }
+      }
 }

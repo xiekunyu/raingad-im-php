@@ -83,6 +83,7 @@ class Message extends BaseModel
             'file_size'=>$fileSzie,
             'file_name'=>$fileName,
             'at'=>$at,
+            'pid'=>$param['pid'] ?? 0,
             'extends'=>($param['extends'] ?? null) ? $param['extends'] : null,
         ];
         $message=new self();
