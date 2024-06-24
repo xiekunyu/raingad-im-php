@@ -18,8 +18,13 @@ class GroupUser extends BaseModel
    }
 
    // 获取团队成员列表
-   public static function getGroupUser($map){
-      $data=self::where($map)->order('role asc')->select();
+   public static function getGroupUser($map,$listRows,$pageSize=1){
+      if($listRows){
+         $list=self::where($map)->order('role asc')->paginate(['list_rows'=>$listRows,'page'=>$pageSize]);
+         $data=$list->toArray()['data'];
+      }else{
+         $data=self::where($map)->order('role asc')->select();
+      }
       return User::matchAllUser($data,true,'user_id');
    }
 

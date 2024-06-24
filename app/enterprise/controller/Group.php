@@ -32,8 +32,19 @@ class Group extends BaseController
       $param = $this->request->param();
       try {
          $group_id = explode('-', $param['group_id'])[1];
-         $data = GroupUser::getGroupUser(['group_id' => $group_id]);
-         return success('', $data);
+         $listRows = $this->request->param('limit',0);
+         $pageSize = $this->request->param('page',1);
+         $map=['group_id' => $group_id];
+         if($listRows){
+            $list=GroupUser::where($map)->order('role asc')->paginate(['list_rows'=>$listRows,'page'=>$pageSize]);
+            $data=$list->toArray()['data'];
+            $count=$list->total();
+         }else{
+            $data=GroupUser::where($map)->order('role asc')->select();
+            $count=count($data);
+         }
+         $data =User::matchAllUser($data,true,'user_id');
+         return success('', $data,$count);
       } catch (Exception $e) {
          return error($e->getMessage());
       }
@@ -447,12 +458,15 @@ class Group extends BaseController
          }
          $role=GroupUser::where(['group_id'=>$group_id,'user_id'=>$uid])->value('role');
          // 如果是群主或者后台管理员才有权限
-         if($role>1 || $this->userInfo['role']==0){
+         if($role>1 && $this->userInfo['role']==0){
             return warning(lang('system.notAuth'));
          }
          Db::startTrans();
          try{
+            // 删除所有消息
             Message::where(['chat_identify'=>$id])->delete();
+            // 该群聊的所有未读置为0
+            GroupUser::where('group_id',$group_id)->update(['unread'=>0]);
             wsSendMsg($group_id,"clearMessage",['group_id'=>'group-'.$group_id],1);
             Db::commit();
             return success('');

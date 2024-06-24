@@ -179,6 +179,12 @@ class Im extends BaseController
                 $where[] = ['type', '<>', 'event'];
             }
         }
+        // 群聊查询入群时间以后的消息
+        if($is_group){
+            $group_id = explode('-', $param['toContactId'])[1];
+            $createTime=GroupUser::where(['group_id'=> $group_id,'user_id'=>$this->userInfo['user_id']])->value('create_time');
+            $where[] = ['create_time', '>', $createTime];
+        }
         $keywords = isset($param['keywords']) ? $param['keywords'] : '';
         if ($keywords && in_array($type, ['text', 'all'])) {
             $where[] = ['content', 'like', '%' . $keywords . '%'];
