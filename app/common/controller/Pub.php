@@ -165,6 +165,8 @@ class Pub
                 }
                 Cache::delete($data['account']);
             }
+            // 接入用户名检测服务
+            event('GreenText',['content'=>$data['realname'],'service'=>"nickname_detection"]);
             $user=new User();
             $verify=$user->checkAccount($data);
             if(!$verify){

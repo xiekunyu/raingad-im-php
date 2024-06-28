@@ -158,7 +158,9 @@ class Group extends BaseController
          if($groupUser){
             $groupUser->role=$role;
             $groupUser->save();
-            wsSendMsg($group_id,"setManager",['group_id'=>$param['id']],1);
+            $avatar=GroupModel::where(['group_id'=>$group_id])->value('avatar');
+            $url=avatarUrl($avatar);
+            wsSendMsg($group_id,"setManager",['group_id'=>$param['id'],'user_id'=>$user_id,'avatar'=>$url],1);
             return success(lang('system.settingOk'));
          }else{
             return warning('');
@@ -304,6 +306,8 @@ class Group extends BaseController
       public function setNotice(){
          $param = $this->request->param();
          $uid=$this->userInfo['user_id'];
+         // 公告内容检测服务
+         event('GreenText',['content'=>$param['notice'],'service'=>"comment_detection"]);
          $group_id = explode('-', $param['id'])[1];
          if($param['notice']==''){
             return warning(lang('system.notNull'));

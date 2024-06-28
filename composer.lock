@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "674bc39f3462a2a4238e15002063fa0d",
+    "content-hash": "781ab1eaed9a5274608800b1bfbc9248",
     "packages": [
         {
             "name": "adbario/php-dot-notation",
@@ -2786,6 +2786,44 @@
                 "thinkphp"
             ],
             "time": "2021-04-27T00:41:08+00:00"
+        },
+        {
+            "name": "topthink/think-api",
+            "version": "v1.0.31",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/top-think/think-api.git",
+                "reference": "5cf168dc93ec8e183c36a599357f67c07668f90c"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://mirrors.huaweicloud.com/repository/php/topthink/think-api/v1.0.31/topthink-think-api-v1.0.31.zip",
+                "reference": "5cf168dc93ec8e183c36a599357f67c07668f90c",
+                "shasum": ""
+            },
+            "require": {
+                "guzzlehttp/guzzle": "^6.5 || ^7.0",
+                "topthink/think-helper": "^1.0 || ^3.1"
+            },
+            "require-dev": {
+                "phpunit/phpunit": "^7.0"
+            },
+            "type": "library",
+            "autoload": {
+                "psr-4": {
+                    "think\\api\\": "src"
+                }
+            },
+            "license": [
+                "Apache-2.0"
+            ],
+            "authors": [
+                {
+                    "name": "yunwuxin",
+                    "email": "448901948@qq.com"
+                }
+            ],
+            "time": "2024-05-24T05:23:08+00:00"
         },
         {
             "name": "topthink/think-captcha",

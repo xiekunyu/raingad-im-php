@@ -179,6 +179,9 @@ ID = a1b2c3d4e5f
 SECRET = GHJKUG123456sdfghjkl
 API_STATUS = true
 
+# thinkapi的令牌，目前只用于敏感词过滤，其他接口自行接入
+THINKAPI_TOKEN =
+
 # 安卓包名，如果上架了市场，根据市场ID跳转市场
 ANDRIOD_APPID = 
 #安卓下载地址，如果未设置会检测根目录是否有app.apk

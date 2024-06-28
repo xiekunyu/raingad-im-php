@@ -12,6 +12,7 @@ return [
         'LogWrite' => [],
         'UserRegister'=>['app\common\listener\UserRegister'],
         'GroupChange'=>['app\enterprise\listener\GroupChange'],
+        'GreenText'=>['app\common\listener\GreenText'],
     ],
 
     'subscribe' => [

@@ -6,8 +6,8 @@
 return [
     'app_name' =>"Raingad-IM",
     'app_logo' =>"https://im.file.raingad.com/logo/logo.png",
-    'app_version' => '4.1.6',
-    'app_release' =>"20240531",
+    'app_version' => '4.2.0',
+    'app_release' =>"20240628",
     // 应用地址
     'app_host'         => env('app.host', ''),
     // 应用的命名空间
@@ -45,5 +45,7 @@ return [
      'app_id' => env('APP_ID', ''),
      'app_secret' => env('APP_SECRET', ''),
      'api_status' => env('APP_API_STATUS', true),
+     //thinkAPI的令牌
+     'thinkapi_token' => env('APP_THINKAPI_TOKEN', ''),
 ];
 

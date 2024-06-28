@@ -37,6 +37,10 @@ class Message extends BaseModel
 
          //    发送消息
     public static function sendMessage($param){
+        if($param['type']=='text'){
+            // 接入聊天内容检测服务
+            event('GreenText',['content'=>$param['content'],'service'=>"chat_detection"]);
+        }
         $toContactId=$param['toContactId'];
         $is_group=$param['is_group']?:0;
         if(!$is_group){
