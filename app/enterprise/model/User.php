@@ -100,12 +100,14 @@ class User extends BaseModel
       if (!$field) {
          $field = self::$defaultField;
       }
-      $friendList = Friend::getFriend(['create_user' => $user_id]);
+      
       $config=Config::getSystemInfo();
       // 如果是社区模式，就只查询自己的好友，如果是企业模式，就查询所有用户
       if($config['sysInfo']['runMode']==1){
+         $friendList = Friend::getFriend(['create_user' => $user_id]);
          $list = self::where($map)->field($field)->select();
       }else{
+         $friendList = Friend::getFriend(['create_user' => $user_id,'status'=>1]);
          $userList = array_keys($friendList);
          $list = self::where($map)->where('user_id', 'in', $userList)->field($field)->select();
       }
