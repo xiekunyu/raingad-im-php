@@ -690,6 +690,10 @@ class Im extends BaseController
             if(!$user){
                 return warning(lang('user.exist'));
             }
+            // 接入用户名检测服务
+            event('GreenText',['content'=>$data['realname'],'service'=>"nickname_detection"]);
+            // 个性签名检测服务
+            event('GreenText',['content'=>$data['motto'],'service'=>"comment_detection"]);
             $user->realname =$data['realname'];
             $user->email =$data['email'];
             $user->motto=$data['motto'];
