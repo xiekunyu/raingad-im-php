@@ -20,7 +20,7 @@
     ],
     "require": {
         "php": ">=7.1.0",
-        "topthink/framework": "^6.0.0",
+        "topthink/framework": "6.0.15",
         "topthink/think-orm": "^2.0",
         "jasny/sso": "^0.3.0",
         "xiaodi/think-pullword": "^1.0",
