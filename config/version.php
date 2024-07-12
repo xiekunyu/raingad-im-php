@@ -8,10 +8,10 @@
 return [
     'app_name'=>'Raingad-IM',
     'andriod' => [
-        'version' => '4.2.0',
-        'release' => '20240628',
+        'version' => '4.2.1',
+        'release' => '20240712',
         'url' =>env('app.andriod_webclip',''),
-        'update_info' => '1.增加消息引用功能呢过\n2.增加第三方敏感词检测\n3.修复了一些bug',
+        'update_info' => '1.修复群聊打开联系人时消息错乱\n2.修改在线状态的展示方式\n3.优化消息少时也展示在底部',
         'update_type' => 'solicit',
     ],
     'ios' => [
@@ -36,8 +36,8 @@ return [
         'update_type' => 'solicit',
     ],
     'serve' => [
-        'version' => '4.2.0',
-        'release' => '20240628',
+        'version' => '4.2.1',
+        'release' => '20240712',
         'url' => '',
         'update_info' => '1.增加群公告消息通知\n2.优化了一些功能',
         'update_type' => 'solicit',
