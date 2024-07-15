@@ -6,8 +6,8 @@
 return [
     'app_name' =>"Raingad-IM",
     'app_logo' =>"https://im.file.raingad.com/logo/logo.png",
-    'app_version' => '4.2.0',
-    'app_release' =>"20240628",
+    'app_version' => '4.2.1',
+    'app_release' =>"20240712",
     // 应用地址
     'app_host'         => env('app.host', ''),
     // 应用的命名空间
