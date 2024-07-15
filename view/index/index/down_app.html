@@ -1,538 +1,167 @@
 <!DOCTYPE html>
-<html lang="zh-CN">
-<head>
-    <meta http-equiv="Content-Type" content="text/html;charset=utf-8">
-    <meta http-equiv="Content-Language" content="zh-CN">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=1.0,maximum-scale=1.0, user-scalable=no">
-    <meta property="og:title" content="{$config.name}">
-    <meta property="og:image" content="{$config.logo}">
-    <meta property="og:description" content="">
-    <title>{$config.name}-{$config.description}</title>
-    <link href="__STATIC__/downapp/vendors/swiper/css/swiper.min.css" rel="stylesheet">
-    <link href="__STATIC__/downapp/captcha/disk/slidercaptcha.css" rel="stylesheet">
-    <link href="__STATIC__/downapp/vendors/bootstrap/css/bootstrap.min.css" rel="stylesheet"/>
-    <link href="__STATIC__/downapp/css/app.27d0dcfa.css" rel="stylesheet"/>
-    <link href="__STATIC__/downapp/css/chunk-vendors.4f943ae2.css" rel="stylesheet"/>
-    <script src="__STATIC__/downapp/js/jquery.min.js"></script>
-    <script src="__STATIC__/downapp/js/jquery.cookie.js"></script>
-    <script src="__STATIC__/downapp/vendors/bootstrap/js/bootstrap.min.js"></script>
-    <script src="__STATIC__/downapp/vendors/qrcode/qrcode.min.js"></script>
-    <script src="__STATIC__/downapp/vendors/swiper/js/swiper.min.js"></script>
-    <script src="__STATIC__/downapp/captcha/disk/slidercaptcha.js"></script>
-    <script src="https://cdn.bootcss.com/vConsole/3.3.4/vconsole.min.js"></script>
-    <style>
-        #app{font-family:Avenir,Helvetica,Arial,sans-serif;-webkit-font-smoothing:antialiased;-moz-osx-font-smoothing:grayscale;color:#2c3e50}
-        .header-background{width:100%;height:175px;background-position:center top;background-size:cover;background-repeat:no-repeat}
-        .container{padding:0}
-        *,body,figure{padding:0;margin:0}
-        ol,ul{list-style-type:none}
-        .inner-image{display:block;-o-object-fit:cover;object-fit:cover;width:inherit;height:inherit}
-        @media screen and (min-width:320px){html{font-size:14px}
-        }
-        @media screen and (min-width:360px){html{font-size:16px}
-        }
-        @media screen and (min-width:400px){html{font-size:18px}
-        }
-        @media screen and (min-width:440px){html{font-size:20px}
-        }
-        @media screen and (min-width:480px){html{font-size:22px}
-        }
-        @media screen and (min-width:640px){html{font-size:28px}
-        }
-        .base-info{padding:1.25rem 1.45rem;margin:0 auto;display:-webkit-box;display:-ms-flexbox;display:flex;-webkit-box-orient:horizontal;-webkit-box-direction:normal;-ms-flex-direction:row;flex-direction:row}
-        .base-info .base-info-l{border-radius:.8rem;overflow:hidden;width:6.5rem;height:6.5rem;-webkit-box-sizing:border-box;box-sizing:border-box;-ms-flex-negative:0;flex-shrink:0;border:1px solid #e0e0e0}
-        .base-info .base-info-l>img{width:100%;height:100%}
-        .base-info .base-info-r{position:relative;margin-left:1.2rem;flex:1}
-        .base-info .base-info-r .title{margin-top:.35rem;font-weight:700;font-size:1.25rem}
-        .base-info .base-info-r .category,.base-info .base-info-r .title{word-break:break-all;display:-webkit-box;-webkit-line-clamp:1;-webkit-box-orient:vertical;overflow:hidden;font-size:1.5rem}
-        .base-info .base-info-r .category{color:#999;font-size:1rem}
-        .base-info .base-info-r .install-btn{display:inline-block;height:1.6rem;width:6.5rem;border-radius:.8rem;background:#0477f9;border:1px solid #0477f9;text-align:center;color:#fff;font-size:.85rem;bottom:.35rem;left:0;line-height:1.5rem}
-        .install-win{display:inline-block;height:1.6rem;border-radius:.8rem;background:#0477f9;border:1px solid #0477f9;text-align:center;color:#fff;font-size:.85rem;line-height:1.5rem;padding: 2px 10px;}
-        .install-win:hover{text-decoration:none;background-color:#338bef;color:#fff}
-        .install-mac{display:inline-block;height:1.6rem;border-radius:.8rem;background:#00bd09;border:none;text-align:center;color:#fff;font-size:.85rem;line-height:1.5rem;padding: 2px 10px;}
-        .install-mac:hover{text-decoration:none;background-color:#00e40b;color:#fff}
-        .base-info .base-info-r .disabled-install-btn{display:inline-block;height:1.6rem;width:6.5rem;border-radius:.8rem;background:#888d94;border:1px solid #888d94;text-align:center;color:#fff;font-size:.85rem;bottom:.35rem;left:0;line-height:1.5rem}
-        .base-info .base-info-r .loading{height:18px;margin-right:4px;vertical-align:-3px}
-        .base-info .base-info-r .install-btn:hover{text-decoration:none;background-color:#338bef}
-        .base-info .base-info-r .clr{margin-top:1.8em}
-        .base-info .base-info-r .arouse{float:right;height:30px;line-height:30px;border-radius:15px;text-align:center;font-size:12px;color:#067afe}
-        .base-info .base-info-r .arouse b{display:inline-block;vertical-align:middle;width:20px;height:20px;line-height:20px;margin:-2px 5px 0 0;text-align:center;background:#067afe;color:#fff;border-radius:100%}
-        .rate-info{padding-top:1rem;margin:0 1.45rem;display:-webkit-box;display:-ms-flexbox;display:flex;-webkit-box-orient:horizontal;-webkit-box-direction:normal;-ms-flex-direction:row;flex-direction:row;-webkit-box-pack:justify;-ms-flex-pack:justify;justify-content:space-between;border-top:1px solid #eee}
-        .rate-info .rate p strong{font-size:1rem;font-weight:700;color:#888}
-        .rate-info .rate>img{width:5rem;margin-left:5px}
-        .rate-info .rate>p{color:#999;font-size:.75rem}
-        .rate-info .classification strong{color:#8e8f92;font-size:1rem}
-        .rate-info .classification>p{color:#999;font-size:.75rem}
-        .rate-info .rate p{padding-bottom:.25rem}
-        .rate-info .classification,.rate-info .rate{text-align:center}
-        .rate-info .classification p{padding-bottom:.25rem}
-        .rate-info .rate-line-between{width:1px;background-color:#e7e7e7;height:3rem;margin:.5rem .5rem 0 .5rem}
-        .comment-info{border-top:1px solid #eee;padding:1rem 0;margin:0 1.45rem}
-        .comment-info .comment-info-title{margin-bottom:.85rem;font-size:1.25rem;font-weight:bolder}
-        .comment-info .comment-info-content{display:-webkit-box;display:-ms-flexbox;display:flex;-webkit-box-orient:horizontal;-webkit-box-direction:normal;-ms-flex-direction:row;flex-direction:row}
-        .comment-info .comment-info-content .comment-info-l>strong{font-size:3.75rem;line-height:3.5rem;color:#4a4a4e;font-weight:700}
-        .comment-info .comment-info-content .comment-info-l>p{width:5.6875rem;text-align:center;color:#7b7b7b;margin-top:.625rem}
-        .comment-info .comment-info-content .comment-info-r{margin-left:2rem;-webkit-box-flex:1;-ms-flex-positive:1;flex-grow:1}
-        .comment-info .comment-info-content .comment-info-r .comment-star-list>li{margin-top:.3rem;line-height:0;display:-webkit-box;display:-ms-flexbox;display:flex;-webkit-box-orient:horizontal;-webkit-box-direction:normal;-ms-flex-direction:row;flex-direction:row;-webkit-box-align:center;-ms-flex-align:center;align-items:center}
-        .comment-info .comment-info-content .comment-info-r .comment-star-list .comment-star{position:relative;width:2.875rem;height:.4375rem}
-        .comment-info .comment-info-content .comment-info-r .comment-star-list .comment-star>img{display:block;width:100%;height:100%}
-        .comment-info .comment-info-content .comment-info-r .comment-star-list .comment-star>div{position:absolute;left:0;top:0;height:100%;background:#fff}
-        .comment-info .comment-info-content .comment-info-r .comment-star-list .comment-progress{position:relative;margin-left:.5rem;-webkit-box-flex:1;-ms-flex-positive:1;flex-grow:1;height:.125rem;background:#e9e9ec;border-radius:.125rem}
-        .comment-info .comment-info-content .comment-info-r .comment-star-list .comment-progress>div{position:absolute;left:0;width:0;height:.125rem;background:#4a4a4e;border-radius:.125rem;width:90%}
-        .comment-message{background-color:#f9f9f9;border:none;border-radius:.5rem;margin-bottom:1rem;min-height:11.5rem}
-        .comment-message>div{padding:0 10px}
-        .comment-message .comment-user{margin-bottom:5px}
-        .comment-message .comment-user span:first-child{display:inline-block;width:69%;text-align:left;font-weight:700;font-size:.85rem;margin:0}
-        .comment-message .comment-user span:last-child{display:inline-block;width:29%;text-align:right;font-size:.75rem}
-        .comment-message .comment-star .glyphicon-user{font-size:.75rem;border:1px solid #dedeea;border-radius:50%;color:#fff;background-color:#e9e9ec}
-        .comment-message .comment-star{font-size:.75rem}
-        .comment-message .comment-star span:first-child{color:#ffbb15;display:inline-block;width:49%;text-align:left}
-        .comment-message .comment-star span:last-child{display:inline-block;width:49%;text-align:right;font-size:.75rem}
-        .comment-message .comment-content{padding:5px 10px}
-        .app-info{border-top:1px solid #eee;margin:0 1.45rem}
-        .app-info .app-title{margin-bottom:.5rem;font-size:1.25rem;font-weight:bolder}
-        .app-info .app-info-con{position:relative;font-size:.875rem}
-        .information-info{border-top:1px solid #eee;margin:0 1.45rem}
-        .information-info .app-title{margin-bottom:.5rem;font-size:1.25rem;font-weight:bolder}
-        .information-info .information-list{padding:0}
-        .information-info .information-list>li{font-size:.75rem;display:-webkit-box;display:-ms-flexbox;display:flex;-webkit-box-orient:horizontal;-webkit-box-direction:normal;-ms-flex-direction:row;flex-direction:row;-webkit-box-align:center;-ms-flex-align:center;align-items:center;line-height:3.5;border-bottom:1px solid #f2f2f2}
-        .information-info .information-list>li .l{color:#737379}
-        .information-info .information-list>li .r{margin-left:1.5rem;-webkit-box-flex:1;-ms-flex:1;flex:1;text-align:right;line-height:1rem}
-        .disclaimer{padding:10px;color:#999;background:#f9f9f9}
-        .pc-box{display:none;text-align:center;z-index:2;position:relative}
-        .pc-logo{width:120px;height:120px;border-radius:20px;overflow:hidden;margin:0 auto}
-        .pc-logo img{display:block;width:100%;height:100%}
-        .pc-box>p{font-size:20px;font-weight:400;line-height:1.5em}
-        .pc-box .code{margin:30px auto 10px;width:200px;height:200px}
-        .pc-box .info{font-size:18px;font-weight:700;margin:50px auto}
-        .pc-box .pc-colsed{z-index:2;position:absolute;right:20px;width:30px;top:20px;}
-        .pc-box .pc-colsed img{display:block;width:100%}
-        .pc-box{position:fixed;top:0;right:0;bottom:0;left:0;background-repeat:no-repeat;background-size:cover;background-image:url(__STATIC__/downapp/images/mask/bg1.jpg)}
-        .pc-box .tipss{font-size:14px;text-align:center;margin-top:30px;width:100%}
-        .app-slider{margin-top:.3rem;padding-left:1.4rem;padding-right:1.4rem;z-index:200}
-        .app-slider .swiper-slide{margin-right:.2rem;padding-bottom:.75em;margin:0 .25rem}
-        .app-slider .swiper-slide{width:calc(100% - 1rem);height:11rem}
-        .app-slider .swiper-slide img{display:block;height:100%;width:100%;border-radius:.8rem;-o-object-fit:cover;object-fit:cover}
-        .base-info .base-info-r .install-btn{display:inline-block;outline:0}
-        .user-verify-dialog{display:none;width:310px;background-color:#fff;border-radius:6px;position:absolute!important;top:40%;left:50%;transform:translate(-50%,-50%);z-index:110}
-        .user-verify-dialog>.card>.card-header{display:none;background-color:#f7f7f7;border-top-right-radius:6px;border-top-left-radius:6px}
-        .user-verify-dialog>.card>.card-body{height:210px}
-        .user-verify-dialog>.card .captcha-container{position:relative;width:100%;margin:15px!important}
-        .user-verify-dialog>.card>.card-header>div{padding:15px 15px 15px 18px;display:inline-block}
-        .user-verify-dialog>.card>.card-header>div:first-child{width:80%;text-align:left}
-        .user-verify-dialog>.card>.card-header>div:last-child{width:18%;text-align:right}
-        #hide-div{display:none;position:absolute;left:0;right:0;top:0;bottom:0;background:rgba(0,0,0,.2);z-index:100}
-        .sliderContainer{width:278px;margin-top:-5px}
-        #captcha .sliderContainer .slider{touch-action:none}
-        .mask-box{z-index:2;position:relative}
-        .mask-colsed{z-index:2;position:absolute;right:15px;top:15px;width:20px}
-        .mask-colsed img{display:block;width:100%}
-        .mask-bg{position:fixed;top:0;right:0;bottom:0;left:0;background:rgba(0,0,0,.2)}
-        .mask-pop{position:fixed;top:50%;left:50%;width:80%;max-width:300px;transform:translate(-50%,-50%);background:#fff;border-radius:20px;overflow:hidden;box-shadow:0 2px 4px rgba(0,0,0,.25)}
-        .mask-pop .swiper-container{width:100%}
-        .mask-pop .swiper-slide img{display:block;width:100%}
-        .mask-pop .swiper-slide p{margin:10px 0;text-align:center;font-size:14px;color:#0491f7}
-        .mask-pop .swiper-container .swiper-pagination{position:static}
-        .mask-pop .swiper-pagination-bullet{background:#dbf0fd;opacity:1}
-        .mask-pop .swiper-pagination-bullet-active{background:#0491f7}
-        .file-info{display:block;margin:30px 0 20px;font-size:14px;color:#00b0f9;text-align:center}
-        .file-box{z-index:2;position:fixed;top:50%;left:50%;padding:20px;width:70%;max-width:300px;transform:translate(-50%,-50%);background:#fff;border-radius:20px}
-        .file-box h3{text-align:center;font-size:16px;color:#3a3a3a}
-        .file-box .colsed-btn{display:block;margin:0 auto;width:80%;height:40px;line-height:40px;background:linear-gradient(90deg,#207cf9,#00cdfa);border-radius:20px;font-size:14px;color:#fff;text-align:center}
-        .file-con{margin:20px 0;font-size:14px;color:#777}
-        .file-con strong{display:block;margin-top:20px;color:#333}
-        .file-con p{margin-top:8px}
-        #gomchelp{max-height:500px;overflow-y:scroll}
-        .reset-route-btn.fill-color-btn{display:none;background-color:red;color:#fff;text-decoration:none;border-radius:.8rem;padding:.1rem .5rem;text-align:center}
-        .apk-loading{position:fixed;left:0;top:0;bottom:0;height:100%;width:100%;right:0;display:none;z-index:9999999}
-        .apk-loading img{width:100%;height:100%}
-        .click_opacity{ width:100%; height:100%; background:#000; opacity:0.6; position:fixed; z-index:10000; top:0px;}
-        .to_btn{ position:fixed; top:10px; right:10px; text-align:right; z-index:10001; font-family:"微软雅黑";}
-        .to_btn span{ display:block;}
-        .to_btn img{ width:20%; height:auto; display:inline-block;}
-        .to_btn .span1{ font-size:1.6rem; color:#fff; margin-top:5px;}
-        .to_btn{ color:#fff;}
-        .to_btn .span2{ display:inline-block; line-height:36px; width:80%; margin-bottom:12px; text-align:left; font-size:16px;}
-        .to_btn .span2 em{ display:inline-block; width:16px; height:16px; background:#009dd9; color:#fff; font-size:12px; text-align:center; line-height:16px; border:1px solid #fff; border-radius:50%; margin-right:3px;}
-        .to_btn .span2 img{ display:inline-block; width:30px; height:30px; margin:0px 5px;}
-        .to_btn span{ display:block; float:right;}
-        .to_btn .android_open img{ display:inline-block; width:150px; height:34px;}
-        .no_scroll{height:100%;overflow:hidden}
-        .bg-green{background-color:#00bd09}
-    </style>
-</head>
-<body>
-<div class="apk-loading">
-    <img src="__STATIC__/downapp/images/apkloading.png"/>
-</div>
-
-<div id="weixin_ios" style="display:none;">
-    <div class="click_opacity"></div>
-    <div class="to_btn">
-        <span class="span1">
-            <img src="__STATIC__/downapp/images/wechat/click_btn.png">
-        </span>
-        <span class="span2">
-            <em>1</em> 点击右上角
-            <img src="__STATIC__/downapp/images/wechat/menu.png">
-            打开菜单
-        </span>
-        <span class="span2">
-            <em>2</em> 选择
-            <img src="__STATIC__/downapp/images/wechat/safari.png">
-            用Safari打开下载
-        </span>
-    </div>
-</div>
-<div id="weixin_android" style="display: none;">
-    <div class="click_opacity"></div>
-    <div class="to_btn"><span class="span1">
-        <img src="__STATIC__/downapp/images/wechat/click_btn.png">
-        </span>
-        <span class="span2">
-            <em>1</em> 点击右上角
-            <img src="__STATIC__/downapp/images/wechat/menu_android.png">
-            打开菜单
-        </span>
-        <span class="span2 android_open">
-            <em>2</em> 选择
-            <img src="__STATIC__/downapp/images/wechat/android.png">
-        </span>
-    </div>
-</div>
-
-<div id="container-div" class="app">
-    <div class="container">
-        <div class="base-info">
-            <div class="base-info-l">
-                    <img src="{$config.logo}" alt="" class="icon">
-            </div>
-            <div class="base-info-r">
-                <div class="title">
-                    {$config.name}
-                </div>
-                <div class="clr">
-                        <a class="arouse install-guide install-teach" style="display: none;"><b>?</b>
-                            <span>教程</span>
-                        </a>
-                    {if condition="!$noUrl"}
-                    <div class="state-normal">
-                        <a class="install-btn" id="install-btn">
-                            <img id="loading" src="__STATIC__/downapp/images/mask/loading.svg" style="display:none;cursor: pointer;">
-                            <span>免费安装</span>
-                        </a>
-                    </div>
-                    {else/}
-                    <div class="state-normal">
-                        <a class="install-btn" style="background-color: #999;border:none">
-                            <span>未提供安装地址</span>
-                        </a>
-                    </div>
-                    {/if}
-                </div>
-            </div>
-        </div>
-
-        <div id="reset-route-info" data-mode="" style="font-size: 12px; padding: 0 0 0.5rem 1.45rem; display: none;">
-            <span style="display: inline-block;">
-                    <span style="color: red;">提示：软件下载后到设置-通用-vpn与设备管理-企业级app-信任证书</span>
-            </span>
-        </div>
-        <div style="padding: 10px;display: none;" class="device-udid">
-            设备UDID：<span style="color: rgba(6,122,254,1);"
-                                         class="span-udid enable-copy" data-clipboard-target=".span-udid"
-                                         data-content=""></span>
-        </div>
-        <video id="video" style="display: none" autoplay="autoplay"></video>
-    </div>
-</div>
-<div class="mask-box step-tips" id="gosteptips" style="display: none;">
-    <div class="mask-bg"></div>
-    <div class="mask-pop">
-        <span class="mask-colsed">
-            <img src="__STATIC__/downapp/images/mask/colsed.png" event-close="gosteptips" id="gosteptips-close-btn">
-        </span>
-        <div id="step-swiper-container" class="swiper-container">
-            <div class="swiper-wrapper">
-                <div class="swiper-slide" style="width: 300px;">
-                    <img src="__STATIC__/downapp/images/mask/guide/cn/step1.jpg">
-                    <p>安装引导<br>第一步: 允许打开配置描述文件</p>
-                </div>
-                <div class="swiper-slide" style="width: 300px;">
-                        <img src="__STATIC__/downapp/images/mask/guide/cn/step2.jpg">
-                    <p>安装引导<br>第二步: 点击右上角安装按钮</p>
-                </div>
-                <div class="swiper-slide" style="width: 300px;">
-                    <img src="__STATIC__/downapp/images/mask/guide/cn/step3.jpg">
-                    <p>安装引导<br>第三步: 输入开机解锁密码</p>
-                </div>
-                    <div class="swiper-slide" style="width: 300px;">
-                        <img src="__STATIC__/downapp/images/mask/guide/cn/step4.jpg">
-                        <p>安装引导<br>第四步: 点击下方安装按钮</p>
-                    </div>
-            </div>
-            <div class="swiper-pagination"></div>
-            <a class="file-info" event-show="gomchelp" id="gomchelp-btn">什么是描述文件？</a>
-        </div>
-    </div>
-</div>
-<div style="display: none;" class="file-box" id="gomchelp">
-    <h3>描述文件</h3>
-    <div class="file-con">
-        <strong>1，什么是描述文件？为什么要安装？</strong>
-        <p>描述文件是经过苹果公司认证的，用来记录用户设备，请放心使用。安装描述文件，是为了将您的设备注册到苹果用户库。是安装苹果APP的必备条件。</p>
-        <strong>2，安装过程中卡在了设置页面，如何解决？</strong>
-        <p>卡顿属于iOS系统的bug。解决方案：双击Home/底部上滑-上滑关掉设置页面-重新安装即可。</p>
-        <strong>3，安装描述文件时为什么要输入密码？输入什么密码？</strong>
-        <p>为了确认是设备主人在操作，安装描述文件时需输入【解锁密码】</p>
-    </div>
-    <div class="colsed-btn" event-close="gomchelp" id="gomchelp-close-btn">我知道了</div>
-</div>
-<div id="captcha" class="user-verify-dialog" data-retry="" data-retry-mode="">
-    <div class="card">
-        <div class="card-header">
-            <div>请完成安全验证</div>
-            <div><i class="glyphicon glyphicon-refresh reset"></i></div>
-        </div>
-        <div class="card-body">
-            <div class="captcha-container"></div>
-        </div>
-    </div>
-</div>
-<div id="hide-div"></div>
-
-<div id="appCode" class="user-verify-dialog" data-retry="" data-retry-mode="">
-    <div class="card">
-        <div class="card-header">
-            <div style="text-align: left;font-size: 0.875rem;">下载码</div>
-            <div><i class="glyphicon glyphicon-remove close-dialog" style="color: #999;"></i></div>
-        </div>
-        <div class="card-body" style="height: auto;">
-            <div class="captcha-container">
-                <input type="text" class="form-control" name="code" placeholder="请输入应用下载码"
-                       style="height: 2.5rem;width: 90%;"/>
-            </div>
-            <div style="margin: 20px;text-align: right;padding-top: 20px;">
-                <button type="button" class="btn btn-primary submit-code"
-                        style="background-color: #177DFF;">提交</button>
-            </div>
-        </div>
-    </div>
-</div>
-<div id="app" style="font-size: 52px;display: none;">
-    <div data-v-97c7ef6a="" class="home">
-        <div class="van-overlay" style="z-index: 2003;"></div>
-        <div data-v-97c7ef6a=""
-             class="van-popup van-popup--round van-popup--bottom van-popup--safe-area-inset-bottom van-action-sheet"
-             style="z-index: 2004;">
-            <div data-v-97c7ef6a="" class="van-action-sheet__header" style="font-size: 1rem;">重要提示<i data-v-97c7ef6a=""
-                                                                                                     onclick="closeApp()"
-                                                                                                     class="van-icon van-icon-cross van-action-sheet__close">
-                    <!----></i></div>
-            <div data-v-97c7ef6a="" class="van-action-sheet__content">
-                <div data-v-97c7ef6a="" class="content">
-                    <div data-v-97c7ef6a="" style="padding: 0px 31.2px;">
-                        <div data-v-97c7ef6a="" class="title2" style="font-size: 1rem;">请耐心阅读以下说明，并按照步骤准确操作！</div>
-                        <div data-v-97c7ef6a="" class="p1" style="font-size: 1rem;">1.点击“安装”,安装完毕后桌面将会生成“{$config.name}”图标
-                        </div>
-                        <img data-v-97c7ef6a="" src="__STATIC__/downapp/images/detail/step1-1.d7950473.png" alt=""
-                             style="margin: 10.4px 0px;width: 100%;">
-                        <div data-v-97c7ef6a="" class="p1" style="font-size: 1rem;">2. 返回桌面确认“{$config.name}”已经安装完成</div>
-                        <div data-v-97c7ef6a="" class="downloadGroup" style="width: 100%;">
-                            <img data-v-97c7ef6a="" src="__STATIC__/downapp/images/detail/download1.d79f1d8e.png"
-                                 alt=""
-                                 style="width: 5rem;">
-                            <img data-v-97c7ef6a=""
-                                 src="data:image/png;base64,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"
-                                 alt=""
-                                 style="width: 3rem;">
-                            <img data-v-97c7ef6a="" src="__STATIC__/downapp/images/detail/download3.f35540ea.png"
-                                 alt=""
-                                 style="width: 5rem;">
-                            <img
-                                    data-v-97c7ef6a=""
-                                    src="data:image/png;base64,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"
-                                    alt=""
-                                    style="width: 3rem;">
-                            <img data-v-97c7ef6a=""
-                                 src="__STATIC__/downapp/images/detail/download2.7a1f965c.png"
-                                 alt=""
-                                 style="width: 5rem;">
-                        </div>
-                        <div data-v-97c7ef6a="" class="p1" style="font-size: 1rem;">3. 点击“快速信任”（如果系统弹出弹框，请您点击“允许”即可
-                            <div id="fasttrust-div" data-v-97c7ef6a="" class="ks"
-                                 style="font-size: 1rem;width: 100%;height: 2.5rem;margin: 15.6px 0px;border-radius: 1.5rem;line-height: 2.5rem;">
-                                快速信任
-                                <img data-v-97c7ef6a=""
-                                     src="__STATIC__/downapp/images/detail/hand.804ca541.gif"
-                                     alt=""
-                                     class="hand" style="width: 6rem;"></div>
-                        </div>
-                        <div data-v-97c7ef6a="" class="p1" style="font-size: 1rem;">4. 找到企业级开发者证书</div>
-                        <img data-v-97c7ef6a="" src="__STATIC__/downapp/images/detail/step2-2.662af849.png" alt=""
-                             class="d_img" style="width: 100%;">
-                        <div data-v-97c7ef6a="" class="p1" style="font-size: 1rem;">5.点击该证书并且“信任”</div>
-                        <img data-v-97c7ef6a="" src="__STATIC__/downapp/images/detail/step3-3.b8c4aeb5.png" alt=""
-                             class="d_img" style="width: 100%;">
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
-</div>
-
-<div class="pc-box">
-    <span class="pc-colsed"><img src="__STATIC__/downapp/images/mask/black_close.png" alt=""></span>
-    <div class="info">移动端请使用手机扫描二维码下载</div>
-    <div class="pc-logo">
-        <img src="{$config.logo}">
-    </div>
-    <p>{$config.name}</p>
-    <div id="app_code" class="code"></div>
-    <br>
-    <div style="display: flex;justify-content: center;width:400px;margin:0 auto" align="center">
-        {if condition="!empty($client.win_webclip)"}
-        <div class="state-normal" style="margin-right:20px">
-            <a class="install-btn install-win" href="{$client.win_webclip}" target="_blank">
-                <span>下载win版本</span>
-            </a>
-        </div>
-        {/if}
-        {if condition="!empty($client.mac_webclip)"}
-        <div class="state-normal" style="margin-left:20px">
-            <a class="install-btn install-mac" href="{$client.mac_webclip}" target="_blank">
-                <span>下载MAC版本</span>
-            </a>
-        </div>
-        {/if}
-        {if condition="empty($client.win_webclip) && empty($client.mac_webclip)"}
-            暂未上传桌面版安装包
-        {/if}
-    </div>
-    
-    <div class="tipss">声明：本平台仅提供下载托管，APP内容由开发者负责，与本平台无关</div>
-</div>
-</body>
-</html>
-<script>
-var package_name = '{$client.andriod_appid}';
-var android_url = '{$client.andriod_webclip}';
-var ios_appid = '{$client.ios_appid}';
-var ios_webclip = '{$client.ios_webclip}';
-var market = ['xiaomi', 'huawei', 'oppo'];
-
-var Base = {};
-Base.browser = function () {
-  var userAgent = navigator.userAgent;
-  var appVersion = navigator.appVersion;
-
-  return {
-    trident: userAgent.indexOf('Trident') > -1,
-    presto: userAgent.indexOf('Presto') > -1,
-    webKit: userAgent.indexOf('AppleWebKit') > -1,
-    gecko: userAgent.indexOf('Gecko') > -1 && userAgent.indexOf('KHTML') === -1,
-    mobile: !!userAgent.match(/AppleWebKit.*Mobile.*/),
-    ios: /(iPhone|iPad|iPod|iOS|Mac)/i.test(userAgent),
-    android: userAgent.indexOf('Android') > -1 || userAgent.indexOf('Adr') > -1,
-    iPhone: userAgent.indexOf('iPhone') > -1,
-    iPad: /(iPad|PlayBook)/.test(userAgent),
-    webApp: userAgent.indexOf('Safari') === -1,
-    weixin: userAgent.indexOf('MicroMessenger') > -1,
-    qq: userAgent.match(/QQ/i) === 'QQ',
-    qq2: userAgent.match(/QQ/i) === 'QQ' && userAgent.indexOf('MQQBrowser') === -1,
-    qq1: userAgent.indexOf('MQQBrowser') > -1 && userAgent.indexOf('QQ/') > -1,
-    safari: /Safari/.test(userAgent) && !(/Chrome/.test(userAgent) || /CriOS/.test(userAgent)) && userAgent.indexOf('MQQBrowser') < 0,
-    xiaomi: /XiaoMi/i.test(userAgent) || / MI /i.test(userAgent),
-    vivo: /ViVo/i.test(userAgent),
-    oppo: /OPPO/i.test(userAgent),
-    huawei: /HUAWEI/i.test(userAgent),
-    samsung: /Samsung/i.test(userAgent) || / SM-/.test(userAgent)
-  };
-}();
-
-$(function () {
-  var swiper = new Swiper('.swiper-container', {});
-
-  $('#gosteptips-close-btn').on('click', function () {
-    $('.pc-box').hide();
-  });
-
-  $('.pc-colsed').on('click', function () {
-    $('.pc-box').hide();
-  });
-
-  $('#weixin_ios').on('click', function () {
-    $('.wechat-mask').show();
-  });
-
-  $('#gomchelp-close-btn').on('click', function () {
-    $('#gomchelp').hide();
-  });
-
-  if (!/windows phone|iphone|android/ig.test(window.navigator.userAgent)) {
-    new QRCode(document.getElementById('app_code'), { text: location.href, width: 200, height: 200 });
-    $('.pc-box').show();
-  } else if (Base.browser.weixin || Base.browser.qq2) {
-    if (Base.browser.android) {
-      $('#weixin_android').show();
-    } else {
-      $('#weixin_ios').show();
+<html style="font-size: 55.2px;">
+<head design-width="750">
+  <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"> 
+  <meta name="viewport" content="width=device-width,minimum-scale=1.0,maximum-scale=1.0,user-scalable=no"> 
+  <meta name="apple-mobile-web-app-capable" content="yes"> 
+  <meta name="apple-mobile-web-app-status-bar-style" content="black"> 
+  <meta name="format-detection" content="telephone=no"> 
+  <title>应用下载</title> 
+  <link rel="stylesheet" href="__STATIC__/down/css/reset.css">
+  <link rel="stylesheet" href="__STATIC__/down/css/style.css">
+  <link rel="stylesheet" href="__STATIC__/down/css/swiper.min.css"> 
+  <script src="__STATIC__/down/js/auto-size.js"></script>
+  <style>@media screen and (min-width:750px){.center{width:750px;margin-left:-375px;left:50%;}}
+    #app_code{
+        width:210px;
+        margin:0 auto;
     }
-    $('#ipt_url').attr('href', 'no_scroll');
-  } else if (Base.browser.ios) {
-    if (Base.browser.safari) {
-      if (ios_appid !== '') {
-        var appStoreUrl = 'itms-apps://itunes.apple.com/app/' + ios_appid;
-        $('#install-btn').attr('href', appStoreUrl);
-        location.href = appStoreUrl;
-      } else if (ios_webclip !== '') {
-        // location.href=ios_webclip;
-        $('#gomchelp').show();
-        $('#install-btn').attr('href', ios_webclip);
-        $('#gomchelp-btn').on('click', function () {
-          setTimeout(function () {
-            if (confirm) {
-              location.href = '#gosteptips';
+  </style>
+</head> 
+<body ontouchstart="" onmouseover=""> 
+  <div class="mobile-wrap center"> 
+    <main> 
+      <div class="appItem"> 
+        <div class="left">
+          <img src="{$config.logo}" alt="">
+        </div> 
+        <div class="right"> 
+          <strong>{$config.name}</strong> 
+          <p>{$config.description}</p> 
+          <div class="installBox"> 
+            <a class="down" href="javascript:;">下载</a> 
+            <a class="doubt" href="https://support.apple.com/zh-cn/102400" target='_blank'>?</a> 
+          </div> 
+        </div> 
+        <div class="appTip" style="margin-bottom: 20px;"> 
+            <div class="tipss">声明：请注意甄别APP内容，谨防上当受骗！</div> 
+        </div> 
+        <div class="comment" align="center"> 
+            <div id="app_code"> 
+             
+            </div> 
+        </div>
+        <div class="pc-box appInfo">
+            <div>桌面端下载：</div>
+            <div style="display: flex;justify-content: center;width:400px;margin:0 auto" align="center">
+                {if condition="!empty($client.win_webclip)"}
+                <div class="downwin" style="margin-right:20px">
+                    <a class="down" href="{$client.win_webclip}" target="_blank">
+                       下载win版本
+                    </a>
+                </div>
+                {/if}
+                {if condition="!empty($client.mac_webclip)"}
+                <div class="downwin" style="margin-left:20px">
+                    <a class="down" href="{$client.mac_webclip}" target="_blank">
+                        下载MAC版本
+                    </a>
+                </div>
+                {/if}
+                {if condition="empty($client.win_webclip) && empty($client.mac_webclip)"}
+                    暂未上传桌面版安装包
+                {/if}
+            </div>
+        </div>
+        <div class="appInfo" align="center" style="font-size: 14px;color:#999"> 
+           v- {$Think.config.app.app_version}</p>
+        </div> 
+      </div> 
+    </main> 
+ 
+      </div> 
+    </div> 
+    <div class="pupPic">
+      <img src="__STATIC__/down/img/5cbc4_5_1242_2007.png" alt="">
+    </div> 
+  </div>
+  <script src="__STATIC__/down/js/jquery-2.2.4.min.js"></script>
+  <script src="__STATIC__/down/js/swiper-4.2.0.min.js"></script>
+  <script src="__STATIC__/down/js/qrcode.min.js"></script>
+  <script>
+    new QRCode(document.getElementById('app_code'), { text: location.href, width: 200, height: 200 });
+
+    var ua = navigator.userAgent.toLowerCase();
+    var Sys = {};
+    var s;
+    (s = ua.match(/version\/([\d.]+).*safari/)) ? Sys.safari = s[1] : 0;
+
+    
+    function getIOSVersion() {
+      var match = ua.match(/os ([\d_]+) like mac os x/i);
+      if (match) {
+        return match[1].replace(/_/g, '.');
+      }
+      return null;
+    }
+
+    
+    function downloadFn() {
+    //   window.location.href = '__STATIC__/down/ios.mobileconfig';
+        let iosUrl='{$client.ios_webclip}';
+        if(!iosUrl){
+            alert('无安装包');
+        }
+        setTimeout(function () {
+            var iOSVersion = getIOSVersion();
+            if (iOSVersion && parseFloat(iOSVersion) >= 17) {
+            alert('请手动安装-转到：设置-通用-（VPN和设备管理）配置文件-安装');
+            } else {
+            window.location.href = iosUrl;
             }
-          }, 3500);
-          $('#gosteptips').hide();
+        }, 3500);
+    }
+
+    if (!/windows phone|iphone|android/ig.test(window.navigator.userAgent)) {
+        $('.pc-box').show();
+    } else if (/(iPhone|iPad|iPod|iOS)/i.test(ua)) {
+      if (Sys.safari) {
+        $(".down").attr("href", "javascript:downloadFn();");
+       
+        $(".doubt").click(function (event) {
+          $(".pup").fadeIn();
+          var swiper = new Swiper('.swiper-container', {
+            loop: true,
+            pagination: {
+              el: '.swiper-pagination'
+            }
+          });
+        });
+      } else {
+        $("body").click(function (event) {
+          $(".pupPic").show();
         });
       }
-    } else {
-      $('body').on('click', function () {
-        $('#ipt_url').html(location.href);
-        $('.wechat-mask').show();
+    }
+
+    else if (ua.indexOf('qq') > -1 && ua.indexOf('mqqbrowser') < 0) {
+      $(".down").attr("href", "###");
+      $("body").click(function (event) {
+        $(".pupPic").show();
       });
     }
-  } else if (Base.browser.android) {
-    var marketUrl = android_url;
-    if(package_name){
-        if (market.indexOf('xiaomi') > -1 && Base.browser.xiaomi) {
-            marketUrl = 'mimarket://details?id=' + package_name;
-        } else if (market.indexOf('vivo') > -1 && Base.browser.vivo) {
-            marketUrl = 'vivomarket://details?id=' + package_name;
-        } else if (market.indexOf('oppo') > -1 && Base.browser.oppo) {
-            marketUrl = 'oppomarket://details?packagename=' + package_name;
-        } else if (market.indexOf('huawei') > -1 && Base.browser.huawei) {
-            marketUrl = 'appmarket://details?id=' + package_name;
-        } else if (market.indexOf('samsung') > -1 && Base.browser.samsung) {
-            marketUrl = 'samsungapps://ProductDetail/' + package_name;
-        }else{
-            $('#install-btn').attr('href', marketUrl);
-            if (marketUrl != android_url) {
-                location['href'] = marketUrl;
-            } 
-        }
-    }else{
-       $('#install-btn').attr('href', marketUrl);
-        if (marketUrl != android_url) {
-            location['href'] = marketUrl;
-        }
+ 
+    else if (/(Android)/i.test(ua)) {
+      $(".down").attr("href", "{$client.andriod_webclip}");
+     
+      $(".doubt").click(function (event) {
+        $(".pup").fadeIn();
+        var swiper = new Swiper('.swiper-container', {
+          loop: true,
+          pagination: {
+            el: '.swiper-pagination'
+          }
+        });
+      });
     }
-}
-});
 
-$(function(){
-    $("#think_page_trace_open").remove();
-})
-</script>
+    $(".colse").click(function (event) {
+      $(".pup").fadeOut();
+    });
+
+    $(function(){
+        $("#think_page_trace_open").remove();
+    })
+  </script>   
+</body>
+</html>
