@@ -8,10 +8,10 @@
 return [
     'app_name'=>'Raingad-IM',
     'andriod' => [
-        'version' => '4.2.1',
-        'release' => '20240712',
+        'version' => '4.2.2',
+        'release' => '20240716',
         'url' =>env('app.andriod_webclip',''),
-        'update_info' => '1.修复群聊打开联系人时消息错乱\n2.修改在线状态的展示方式\n3.优化消息少时也展示在底部',
+        'update_info' => '1.修复群聊打开联系人时消息错乱\n2.修改在线状态的展示方式\n3.优化消息少时也展示在底部\n4.修复APP键盘闪烁的问题',
         'update_type' => 'solicit',
     ],
     'ios' => [
