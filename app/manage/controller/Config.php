@@ -31,7 +31,7 @@ class Config extends BaseController
      */
     public function getAllConfig()
     {
-        $name=['sysInfo','chatInfo','smtp','fileUpload'];
+        $name=['sysInfo','chatInfo','smtp','fileUpload','compass'];
         $list = Conf::where(['name'=>$name])->select();
         return success('', $list);
     }
@@ -71,7 +71,7 @@ class Config extends BaseController
             // 更新系统缓存
             Conf::getSystemInfo(true);
         }
-        return success('');
+        return success(lang('system.editOk'));
     }
 
     /**

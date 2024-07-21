@@ -78,7 +78,7 @@ class Task extends BaseController
         // 启动
         $out = Terminal::instance(2)->exec('php think task start');
         if (!count($this->analysisMsg($out))) {
-            return warning(lang('task.startFile'));
+            return warning(lang('task.startFail'));
         }
 
         return success(lang('task.startOk'));

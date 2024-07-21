@@ -25,7 +25,7 @@ class ManageAuth
                 'group/delgroupuser',
                 'task/starttask',
                 'task/stoptask',
-                'config/setconfig'
+                // 'config/setconfig'
             ];
             // 获取pathinfo信息
             $pathinfo = strtolower($request->pathinfo());
