@@ -172,18 +172,19 @@ class Group extends BaseController
       public function add(){
          $param = $this->request->param();
          $uid=$this->userInfo['user_id'];
-         $user_ids=$param['user_ids'];
+         $user_ids=$param['user_ids'] ?? [];
          if($this->chatSetting['groupChat']==0){
             return warning(lang('system.notAuth'));
          }
          if(count($user_ids)>$this->chatSetting['groupUserMax'] && $this->chatSetting['groupUserMax']!=0){
             return warning(lang('group.userLimit',['userMax'=>$this->chatSetting['groupUserMax']]));
          }
-         if(count($user_ids)<=1){
+         // 管理员可以单独创建一个人的群
+         if(count($user_ids)<=1 && $this->userInfo['role']>=2){
             return warning(lang('group.atLeast'));
          }
          // 将自己也加入群聊
-         $user_ids[]=$this->userInfo['user_id'];
+         $user_ids[]=$uid;
          Db::startTrans();
          $setting=$this->setting;
          try{
@@ -203,6 +204,7 @@ class Group extends BaseController
             $group->save($create);
             $group_id=$group->group_id;
             $data=[];
+            array_unique($user_ids);
             sort($user_ids);
             foreach($user_ids as $k=>$v){
                $info=[

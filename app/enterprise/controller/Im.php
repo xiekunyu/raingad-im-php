@@ -183,7 +183,7 @@ class Im extends BaseController
         if($is_group){
             $group_id = explode('-', $param['toContactId'])[1];
             $createTime=GroupUser::where(['group_id'=> $group_id,'user_id'=>$this->userInfo['user_id']])->value('create_time');
-            $where[] = ['create_time', '>', $createTime];
+            $where[] = ['create_time', '>', $createTime ? : 0];
         }
         $keywords = isset($param['keywords']) ? $param['keywords'] : '';
         if ($keywords && in_array($type, ['text', 'all'])) {
