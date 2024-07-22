@@ -300,6 +300,9 @@ function avatarUrl($path, $str = "雨",$uid=0,$s=80)
 
 // 获取文件的地址
 function getFileUrl($path){
+    if (strpos($path, 'http') !== false) {
+        return $path;
+    }
     return getDiskUrl() .'/'. ltrim($path,'/') ;
 }
 

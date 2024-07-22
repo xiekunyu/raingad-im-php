@@ -161,6 +161,30 @@ class Im extends BaseController
         return success('', $list);
     }
 
+    // 获取系统所有人员加搜索
+    public function userList(){
+        $keywords=$this->request->param('keywords','');
+        $listRows=$this->request->param('limit',20);
+        $page=$this->request->param('page',1);
+        $map=['status'=>1];
+        $field="user_id,realname,avatar";
+        if(!$keywords){
+            $list=User::where($map)->field($field)->order('user_id asc')->limit(20)->paginate(['list_rows'=>$listRows,'page'=>$page]);;
+            if($list){
+                $list=$list->toArray()['data'];
+            }
+        }else{
+            $list=User::where($map)->field($field)->where([['account','<>',$this->userInfo['account']]])->whereLike('account|realname|name_py','%'.$keywords.'%')->select()->toArray();
+        }
+        if($list){
+            foreach($list as $k=>$v){
+                $list[$k]['avatar']=avatarUrl($v['avatar'],$v['realname'],$v['user_id'],120);
+                $list[$k]['id']=$v['user_id'];
+            }
+        }
+        return success('', $list);
+    }
+
     // 获取聊天记录
     public function getMessageList()
     {
