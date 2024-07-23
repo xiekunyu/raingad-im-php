@@ -47,6 +47,7 @@ return [
         'userLimit'=>'人数不能超过{:userMax}人!',
         'invite'=>"{:username}邀请你加入群聊",
         'add'=>"{:username}创建了群聊",
+        'join'=>"{:username}加入了群聊",
         'atLeast'=>"请至少选择两人！",
         'alreadyJoin'=>'您已经加入该群！',
         'exist'=>"群聊不存在",
@@ -76,7 +77,8 @@ return [
         'loginError' => '登陆信息有误 请重新登录',
         'mustToken' => '请先登陆系统',
         'blacklist' => '登陆已失效 请重新登陆',
-        'expired' => '登陆已过期 请重新登陆'
+        'expired' => '登陆已过期 请重新登陆',
+        'notOwn' =>"客服不能为他本人"
     ],
     'im'=>[
         'forbidChat'=>"目前禁止用户私聊！",

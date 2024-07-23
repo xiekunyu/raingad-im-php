@@ -37,4 +37,20 @@ class GroupUser extends BaseModel
          return false;
       }
    }
+
+   // 加入群聊，发送加入消息
+   public static function joinGroup($uid,$inviteId,$groupInfo,$action='joinGroup'){
+      $group_id=$groupInfo['group_id'];
+      GroupUser::create([
+         'user_id'=>$uid,
+         'invite_id'=>$inviteId,
+         'status'=>1,
+         'role'=>$action=='autoCreateGroup' ? 1 : 3,
+         'group_id'=>$group_id,
+      ]);
+      $url=Group::setGroupAvatar($group_id);
+      event('GroupChange', ['action' => $action, 'group_id' => $group_id, 'param' => $groupInfo]);
+      wsSendMsg($group_id,"addGroupUser",['group_id'=>$group_id,'avatar'=>$url],1);
+      return true;
+   }
 }

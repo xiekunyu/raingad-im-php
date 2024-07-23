@@ -80,6 +80,11 @@ class User extends BaseController
             $user->email =$data['email'];
             $user->remark=$data['remark'];
             $user->sex =$data['sex'];
+            $csUid=$data['cs_uid'] ?? 0;
+            if($csUid && $csUid==$data['user_id']){
+                return warning(lang('user.notOwn'));
+            }
+            $user->cs_uid =$data['cs_uid'];
             // 只有超管才能设置管理员
             if($this->userInfo['user_id']==1){
                 $user->role =$data['role'];

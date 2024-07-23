@@ -262,6 +262,7 @@ function circleAvatar($str,$s,$uid=0,$is_save=0,$save_path=''){
         if(!is_dir($dir)){
             $file_create_res = mkdir($dir,0777,true);
             if(!$file_create_res){
+                imagedestroy($pic);
                 return false;//没有创建成功
             }
         }

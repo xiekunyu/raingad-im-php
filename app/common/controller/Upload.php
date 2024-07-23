@@ -34,7 +34,7 @@ class Upload extends BaseController
         if($message){
             $message=json_decode($message,true);
         }
-        $uid=request()->userInfo['user_id'];
+        $uid=request()->userInfo['user_id'] ?? 1;
         if($fileObj){
             $filePath = $path;
         }else{

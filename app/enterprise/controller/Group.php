@@ -390,28 +390,24 @@ class Group extends BaseController
       public function joinGroup(){
          $param = $this->request->param();
          $uid=$this->userInfo['user_id'];
-         $group_id = explode('-', $param['group_id'])[1];
-         $inviteUid=$param['inviteUid'] ?? '';
-         $groupUserCount=GroupUser::where(['group_id'=>$group_id,'status'=>1])->count();
-         $groupUser=GroupUser::where(['group_id'=>$group_id,'user_id'=>$uid])->find();
-         if($groupUser){
-            return warning(lang('group.alreadyJoin'));
-         }
-         if(($groupUserCount+1) > $this->chatSetting['groupUserMax'] && $this->chatSetting['groupUserMax']!=0){
-            return warning(lang('group.userLimit',['userMax'=>$this->chatSetting['groupUserMax']]));
-         }
          try{
-            $data=[
-               'group_id'=>$group_id,
-               'user_id'=>$uid,
-               'role'=>3,
-               'invite_id'=>$inviteUid
-            ];
-            GroupUser::create($data);
-            $url=GroupModel::setGroupAvatar($group_id);
-            $action='joinGroup';
-            event('GroupChange', ['action' => $action, 'group_id' => $group_id, 'param' => $param]);
-            wsSendMsg($group_id,"addGroupUser",['group_id'=>$param['group_id'],'avatar'=>$url],1);
+            $group_id = explode('-', $param['group_id'])[1];
+            $inviteUid=$param['inviteUid'] ?? '';
+            $groupUserCount=GroupUser::where(['group_id'=>$group_id,'status'=>1])->count();
+            $groupUser=GroupUser::where(['group_id'=>$group_id,'user_id'=>$uid])->find();
+            $groupInfo=GroupModel::where(['group_id'=>$group_id])->find();
+            if(!$groupInfo){
+               return warning(lang('group.exist'));
+            }
+            if($groupUser){
+               return warning(lang('group.alreadyJoin'));
+            }
+            if(($groupUserCount+1) > $this->chatSetting['groupUserMax'] && $this->chatSetting['groupUserMax']!=0){
+               return warning(lang('group.userLimit',['userMax'=>$this->chatSetting['groupUserMax']]));
+            }
+            // 加入者的名称
+            $groupInfo['joinerName']=$this->userInfo['realname'];
+            GroupUser::joinGroup($uid,$inviteUid,$groupInfo);
             return success(lang('group.joinOk'));
          }catch(Exception $e){
             return error($e->getMessage());

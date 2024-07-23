@@ -48,6 +48,7 @@ return [
         'userLimit' => "The number of members cannot exceed {:userMax} people!",  
         'invite' => "{:username} has invited you to join the group chat",  
         'add' => "{:username} has created a group chat",  
+        'join'=>"{:username} join the group chat",
         'atLeast' => "Please select at least two people!",  
         'alreadyJoin' => "You are already in this group!",  
         'exist' => "The group chat does not exist",
@@ -77,7 +78,8 @@ return [
         'loginError' => 'Login information is incorrect. Please log in again.',  
         'mustToken' => 'Please log in to the system first',  
         'blacklist' => 'Login has expired. Please log in again',  
-        'expired' => 'Login has expired. Please log in again'  
+        'expired' => 'Login has expired. Please log in again',
+        'notOwn' =>"Customer service can't be for him"
     ],  
     'im' => [  
         'forbidChat' => "Private chatting is currently prohibited!",  

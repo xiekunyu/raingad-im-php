@@ -207,7 +207,7 @@ class Im extends BaseController
         if($is_group){
             $group_id = explode('-', $param['toContactId'])[1];
             $createTime=GroupUser::where(['group_id'=> $group_id,'user_id'=>$this->userInfo['user_id']])->value('create_time');
-            $where[] = ['create_time', '>', $createTime ? : 0];
+            $where[] = ['create_time', '>=', $createTime ? : 0];
         }
         $keywords = isset($param['keywords']) ? $param['keywords'] : '';
         if ($keywords && in_array($type, ['text', 'all'])) {
@@ -284,7 +284,7 @@ class Im extends BaseController
                 
                 $fromUser = $userList[$v['from_user']];
                 // 处理撤回的消息
-                if ($v['type'] == "event") {
+                if ($v['type'] == "event" && $v['is_undo']==1) {
                     if ($v['from_user'] == $userInfo['user_id']) {
                         $content = lang('im.you'). $content;
                     } elseif ($v['is_group'] == 1) {
