@@ -23,6 +23,7 @@ return [
         'apiClose' => 'API is closed',  
         'appIdError' => 'appId error',  
         'signError' => 'Signature error',  
+        'tooFast'=>"You visited too fast！"
     ],
     'messageType' => [  
         'other' => "[Unsupported message type]",  
@@ -79,7 +80,8 @@ return [
         'mustToken' => 'Please log in to the system first',  
         'blacklist' => 'Login has expired. Please log in again',  
         'expired' => 'Login has expired. Please log in again',
-        'notOwn' =>"Customer service can't be for him"
+        'notOwn' =>"Customer service can't be for him",
+        'registerLimit'=>"Please register again in {:time} minutes"
     ],  
     'im' => [  
         'forbidChat' => "Private chatting is currently prohibited!",  
@@ -93,7 +95,7 @@ return [
         'other' => 'Recipient',  
         'redoLimitTime' => "Cannot recall messages after {:time} minutes!",  
         'redo' => "A message has been recalled",  
-        'manageRedo' => "A message has been recalled by (an admin)"  
+        'manageRedo' => "A message has been recalled by (an admin)",
     ],
     'webRtc' => [  
         'cancel' => 'Call has been canceled',  

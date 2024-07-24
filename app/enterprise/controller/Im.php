@@ -23,30 +23,76 @@ class Im extends BaseController
         return success('', $data,$count,$time*1000);
     }
 
+    // 获取单个人员的信息
+    public function getContactInfo(){
+        $user_id = $this->request->param('user_id');
+        $user=User::where('user_id',$user_id)->find();
+        if(!$user){
+            return error(lang('user.exist'));
+        }
+        $user->avatar=avatarUrl($user->avatar,$user->realname,$user->user_id,120);
+        // 查询好友关系
+        $friend=Friend::where(['friend_user_id'=>$user_id,'create_user'=>$this->userInfo['user_id']])->find();
+        $data['id'] = $user['user_id'];
+        $data['displayName'] = ($friend['nickname'] ?? '') ? : $user['realname'];
+        $data['name_py'] = $user['name_py'];
+        $data['avatar'] = avatarUrl($user['avatar'], $user['realname'], $user['user_id'], 120);
+        $data['lastContent'] = '';
+        $data['unread'] = 0;
+        $data['lastSendTime'] = time() * 1000;
+        $data['is_group'] = 0;
+        $data['is_top'] = $friend['is_top'] ?? 0;
+        $data['is_notice'] = $friend['is_notice'] ?? 1;
+        $data['setting'] = [];
+        $data['is_at'] = 0;
+        $data['type'] = 'text';
+        $data['is_new'] = 1;
+        $data['index'] =getFirstChart($data['displayName']);
+        $data['last_login_ip'] = $user['last_login_ip'];
+        $data['location'] =$user['last_login_ip'] ? implode(" ", \Ip::find($user['last_login_ip'])) : "未知";
+        return success('',$data);
+    }
+
 
     //发送消息
     public function sendMessage()
     {
         $param = $this->request->param();
+        $sendInterval=$this->globalConfig['chatInfo']['sendInterval'] ?? 0;
+        // 如果设置了消息频率则验证
+        if($sendInterval){
+            if(Cache::has('send_'.$this->userInfo['user_id'])){
+                return warning(lang('system.toofast'));
+            }
+        }
         $param['user_id'] = $this->userInfo['user_id'];
         $is_group=$param['is_group']??0;
         $chatSetting=$this->chatSetting;
         if($is_group==0 && $chatSetting['simpleChat']==0){
             return warning(lang('im.forbidChat'));
         }
-        // 如果是单聊，并且是社区模式，需要判断是否是好友
-        if($is_group==0 && $this->globalConfig['sysInfo']['runMode']==2){
-            $friend=Friend::where(['friend_user_id'=>$this->uid,'create_user'=>$param['toContactId']])->find();
-            if(!$friend){
-                return warning(lang('im.notFirend'));
-            }
-            $otherFriend=Friend::where(['friend_user_id'=>$param['toContactId'],'create_user'=>$this->uid])->find();
-            if(!$otherFriend){
-                return warning(lang('im.friendNot'));
+        $csUid=$this->userInfo['cs_uid'] ?? 0;
+        // 如果是单聊，并且是社区模式和不是自己的客服、需要判断是否是好友
+        if($is_group==0 && $this->globalConfig['sysInfo']['runMode']==2 && $csUid!=$param['toContactId']){
+            // 判断我是不是对方的客服
+            $cus=User::where(['user_id'=>$param['toContactId']])->value('cs_uid');
+            if($cus!=$this->userInfo['user_id']){
+                $friend=Friend::where(['friend_user_id'=>$this->uid,'create_user'=>$param['toContactId']])->find();
+                if(!$friend){
+                    return warning(lang('im.notFirend'));
+                }
+                $otherFriend=Friend::where(['friend_user_id'=>$param['toContactId'],'create_user'=>$this->uid])->find();
+                if(!$otherFriend){
+                    return warning(lang('im.friendNot'));
+                }
             }
         }
         $data = Message::sendMessage($param);
         if ($data) {
+            // 如果开启频率限制，发送成功后记录发送的时间
+            if($sendInterval){
+                Cache::set('send_'.$this->userInfo['user_id'],time(),$sendInterval);
+            }
             return success('', $data);
         } else {
             return error(lang('system.sendFail'));
@@ -131,7 +177,7 @@ class Im extends BaseController
         }
         $user->avatar=avatarUrl($user->avatar,$user->realname,$user->user_id,120);
         // 查询好友关系
-        $friend=Friend::where(['friend_user_id'=>$user_id,'create_user'=>$this->userInfo['user_id']])->find();
+        $friend=Friend::where(['friend_user_id'=>$user_id,'create_user'=>$this->userInfo['user_id'],'status'=>1])->find();
         $user->friend=$friend ? : '';
         $location='';
         if($user->last_login_ip){

@@ -22,6 +22,7 @@ return [
         'apiClose'=>"接口已关闭",
         'appIdError'=>'appId错误',
         'signError'=>'签名错误',
+        'toofast'=>"您访问的太快了！"
     ],
     'messageType'=>[
         'other'=>"[暂不支持的消息类型]",
@@ -78,7 +79,8 @@ return [
         'mustToken' => '请先登陆系统',
         'blacklist' => '登陆已失效 请重新登陆',
         'expired' => '登陆已过期 请重新登陆',
-        'notOwn' =>"客服不能为他本人"
+        'notOwn' =>"客服不能为他本人",
+        'registerLimit'=>"请{:time}分钟后再注册！",
     ],
     'im'=>[
         'forbidChat'=>"目前禁止用户私聊！",
@@ -92,7 +94,7 @@ return [
         'other'=>'对方',
         'redoLimitTime'=>"超过{:time}分钟不能撤回！",
         'redo'=>"撤回了一条消息",
-        'manageRedo'=>'被(管理员)撤回了一条消息'
+        'manageRedo'=>'被(管理员)撤回了一条消息',
     ],
     'webRtc'=>[
         'cancel'=>'已取消通话',

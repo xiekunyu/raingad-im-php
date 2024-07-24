@@ -12,6 +12,7 @@ use GatewayClient\Gateway;
 use app\manage\model\Config;
 use thans\jwt\facade\JWTAuth;
 
+use function Hyperf\Coroutine\wait;
 
 /**
  * 控制器基础类
@@ -147,6 +148,10 @@ class Pub
     public function register(){
         try{
             $data = $this->request->param();
+            $ip = $this->request->ip();
+            if(Cache::has('register_'.md5($ip))){
+                return warning(lang('user.registerLimit',['time'=>10]));
+            }
             $systemInfo=Config::getSystemInfo();
             // 判断系统是否开启注册
             if($systemInfo['sysInfo']['regtype']==2){
@@ -181,6 +186,8 @@ class Pub
             $data['user_id']=$user->user_id;
             // 监听用户注册后的操作
             event('UserRegister',$data);
+            // 10分钟后才能再注册
+            Cache::set('register_'.md5($ip),$ip,600);
             return success(lang('user.registerOk'), $data);
         }catch (\Exception $e){
             return error($e->getMessage());

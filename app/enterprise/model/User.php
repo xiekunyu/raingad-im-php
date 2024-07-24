@@ -109,6 +109,11 @@ class User extends BaseModel
       }else{
          $friendList = Friend::getFriend(['create_user' => $user_id,'status'=>1]);
          $userList = array_keys($friendList);
+         // 将专属客服设置为好友
+         $csUid=request()->userInfo['cs_uid'] ?? 0;
+         if($csUid){
+            $userList[]=$csUid;
+         }
          $list = self::where($map)->where('user_id', 'in', $userList)->field($field)->select();
       }
       $list_chart = chartSort($list, 'realname', false, 'index');
