@@ -42,6 +42,7 @@ return [
         'apply' => "Has added you as a friend",  
         'notApply' => "The request does not exist",  
         'not' => "Friend does not exist",  
+        'newChat' => "You have been successfully added as friends, let's start chatting now! ",  
     ],  
     'group' => [  
         'name' => "Group chat",  

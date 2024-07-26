@@ -25,31 +25,13 @@ class Im extends BaseController
 
     // 获取单个人员的信息
     public function getContactInfo(){
-        $user_id = $this->request->param('user_id');
-        $user=User::where('user_id',$user_id)->find();
-        if(!$user){
-            return error(lang('user.exist'));
+        $id = $this->request->param('id');
+        $is_group = is_string($id) ? 1 : 0;
+        $user=new User;
+        $data=$user->setContact($id,$is_group);
+        if(!$data){
+            return warning($user->getError());
         }
-        $user->avatar=avatarUrl($user->avatar,$user->realname,$user->user_id,120);
-        // 查询好友关系
-        $friend=Friend::where(['friend_user_id'=>$user_id,'create_user'=>$this->userInfo['user_id']])->find();
-        $data['id'] = $user['user_id'];
-        $data['displayName'] = ($friend['nickname'] ?? '') ? : $user['realname'];
-        $data['name_py'] = $user['name_py'];
-        $data['avatar'] = avatarUrl($user['avatar'], $user['realname'], $user['user_id'], 120);
-        $data['lastContent'] = '';
-        $data['unread'] = 0;
-        $data['lastSendTime'] = time() * 1000;
-        $data['is_group'] = 0;
-        $data['is_top'] = $friend['is_top'] ?? 0;
-        $data['is_notice'] = $friend['is_notice'] ?? 1;
-        $data['setting'] = [];
-        $data['is_at'] = 0;
-        $data['type'] = 'text';
-        $data['is_new'] = 1;
-        $data['index'] =getFirstChart($data['displayName']);
-        $data['last_login_ip'] = $user['last_login_ip'];
-        $data['location'] =$user['last_login_ip'] ? implode(" ", \Ip::find($user['last_login_ip'])) : "未知";
         return success('',$data);
     }
 
@@ -642,6 +624,7 @@ class Im extends BaseController
         }
         $userInfo=$this->userInfo;
         $userInfo['id']=$userInfo['user_id'];
+        $user = new User();
         $data=[
             'id'=>$id,
             'msg_id'=>$msg_id,
@@ -708,6 +691,7 @@ class Im extends BaseController
                 $data['extends']['event']='otherOpt'; //其他端操作
             }
             $data['toContactId']=$toContactId;
+            $data['contactInfo']=$user->setContact($toContactId,0,'webrtc',$content);
             wsSendMsg($userInfo['id'],'webrtc',$data);
         }
         return success('',$wsData);

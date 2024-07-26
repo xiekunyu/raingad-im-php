@@ -316,26 +316,50 @@ class User extends BaseModel
       return $data;
    }
 
-   // 将用户信息转换成联系人信息
-   public static function setContact($user_id){
-      $user=self::where('user_id',$user_id)->field(self::$defaultField)->find();
-      if($user){
-         $user['avatar']=avatarUrl($user['avatar'],$user['realname'],$user['user_id']);
-         $user['id']=$user['user_id'];
-         $user['displayName']=$user['realname'];
-         $user['lastContent']="你们已经成功添加为好友，现在开始聊天吧！";
-         $user['unread']=0;
-         $user['lastSendTime']=time() * 1000;
-         $user['is_group']=0;
-         $user['is_top']=0;
-         $user['is_notice']=1;
-         $user['is_online']=1;
-         $user['type']='event';
-         $user['index']=getFirstChart($user['realname']);
-         return $user;
+
+   // 将id转换成联系人信息
+   public function setContact($id,$is_group=0,$type='text',$content=''){
+      $data=[
+         'id'=>$id,
+         'lastContent'=>$content,
+         'unread'=>0,
+         'lastSendTime'=> time() * 1000,
+         'is_group'=>$is_group,
+         'is_top'=>0,
+         'is_notice'=>1,
+         'is_top'=>0,
+         'is_at'=>0,
+         'setting'=>[],
+         'type'=>$type,
+         'location'=>'',
+      ];
+      if($is_group==0){
+         $user=User::where('user_id',$id)->find();
+         if(!$user){
+            $this->error=lang('user.exist');
+            return false;
+         }
+         $user->avatar=avatarUrl($user->avatar,$user->realname,$user->user_id,120);
+         // 查询好友关系
+         $friend=Friend::where(['friend_user_id'=>$id,'create_user'=>self::$userInfo['user_id']])->find();
+         $data['displayName'] = ($friend['nickname'] ?? '') ? : $user['realname'];
+         $data['avatar'] = avatarUrl($user['avatar'], $user['realname'], $user['user_id'], 120);
+         $data['location'] =$user['last_login_ip'] ? implode(" ", \Ip::find($user['last_login_ip'])) : "未知";
+         $data['name_py'] = $user['name_py'];
       }else{
-         return false;
+         $group_id=is_string($id) ? (explode('-',$id)[1] ?? 0) : $id;
+         $group=Group::where(['group_id'=>$group_id])->find();
+         if(!$group){
+            $this->error=lang('group.exist');
+            return false;
+         }
+         $data['displayName'] = $group['name'];
+         $data['avatar'] = avatarUrl($group['avatar'], $group['name'], $group['group_id'], 120);
+         $data['name_py'] = $group['name_py'];
+         $data['setting'] = $group['setting'];
       }
+      $data['index'] =getFirstChart($data['displayName']);
+      return $data;
    }
 
    // 验证账号的合法性

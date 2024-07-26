@@ -129,6 +129,9 @@ class Message extends BaseModel
             $toContactId=[$toContactId,$param['user_id']];
         }
         $sendData['toUser']=$param['toContactId'];
+        $user=new User();
+        // 将聊天窗口的联系人信息带上，方便临时会话
+        $sendData['contactInfo']=$user->setContact($sendData['toContactId'],$is_group,$sendData['type'],$sendData['content']);
         // 向发送方发送消息
         wsSendMsg($toContactId,$type,$sendData,$is_group);
         

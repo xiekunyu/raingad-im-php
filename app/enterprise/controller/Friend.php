@@ -116,12 +116,14 @@ class Friend extends BaseController
                 $data['status']=1;
                 FriendModel::create($data);
             }
+            $content=lang('friend.newChat');
+            $userM=new User;
             // 将对方的信息发送给我，把我的信息发送对方
-            $user=User::setContact($friend->create_user);
+            $user=$userM->setContact($friend->create_user,0,'event',$content);
             if($user){
                 wsSendMsg($this->uid,'appendContact',$user);
             }
-            $myInfo=User::setContact($this->uid);
+            $myInfo=$userM->setContact($this->uid,0,'event',$content);
             if($myInfo){
                 wsSendMsg($friend->create_user,'appendContact',$myInfo);
             }
