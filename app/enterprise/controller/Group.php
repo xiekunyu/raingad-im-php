@@ -103,41 +103,43 @@ class Group extends BaseController
    public function addGroupUser(){
       $param = $this->request->param();
       $uid=$this->userInfo['user_id'];
-      $group_id = explode('-', $param['id'])[1];
+      $group_id = explode('-', $param['id'])[1] ?? 0;
+      if(!$group_id){
+         return warning(lang('system.exits'));
+      }
+      $groupInfo=GroupModel::where(['group_id'=>$group_id])->find();
+      if(!$groupInfo){
+         return warning(lang('system.exits'));
+      }
       $user_ids=$param['user_ids'];
       $groupUserCount=GroupUser::where(['group_id'=>$group_id,'status'=>1])->count();
       if((count($user_ids) + $groupUserCount) > $this->chatSetting['groupUserMax'] && $this->chatSetting['groupUserMax']!=0){
          return warning(lang('group.userLimit',['userMax'=>$this->chatSetting['groupUserMax']]));
       }
-      $data=[];
+      if(count($user_ids)>20){
+         return warning(lang('group.inviteLimit',['limit'=>20]));
+      }
       try{
          foreach($user_ids as $k=>$v){
-            $data[]=[
+            $item=[
                'group_id'=>$group_id,
                'user_id'=>$v,
                'role'=>3,
                'invite_id'=>$uid
             ];
+            $hasUser=GroupUser::where(['group_id'=>$group_id,'user_id'=>$v])->find();
+            // 查询是否有人
+            if(!$hasUser){
+               GroupUser::create($item);
+            }
          }
-         $groupUser=new GroupUser;
-         $groupUser->saveAll($data);
          $url=GroupModel::setGroupAvatar($group_id);
          // 更新原来群聊的头像和成员列表
          wsSendMsg($group_id,"addGroupUser",['group_id'=>$param['id'],'avatar'=>$url],1);
          // 给新成员添加新群聊信息
-         $groupInfo=GroupModel::find($group_id);
-         $groupInfo['displayName']=$groupInfo['name'];
-         $groupInfo['role']=3;
-         $groupInfo['id']='group-'.$group_id;
-         $groupInfo['avatar']=avatarUrl($url,$groupInfo['name'],$group_id,120);
-         $groupInfo['is_group']=1;
-         $groupInfo['lastContent']=lang('group.invite',['username'=>$this->userInfo['realname']]);
-         $groupInfo['lastSendTime']=time()*1000;
-         $groupInfo['index']="[2]".lang('group.name');
-         $groupInfo['is_notice']=1;
-         $groupInfo['is_top']=0;
-         $groupInfo['type']="text";
-         wsSendMsg($user_ids, 'addGroup', $groupInfo);
+         $user=new User();
+         $data=$user->setContact($group_id,1,'text',lang('group.invite',['username'=>$this->userInfo['realname']]),$groupInfo);
+         wsSendMsg($user_ids, 'addGroup', $data);
          return success(lang('system.addOk'));
       }catch(Exception $e){
          return error($e->getMessage());

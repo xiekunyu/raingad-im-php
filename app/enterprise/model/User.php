@@ -318,7 +318,7 @@ class User extends BaseModel
 
 
    // 将id转换成联系人信息
-   public function setContact($id,$is_group=0,$type='text',$content=''){
+   public function setContact($id,$is_group=0,$type='text',$content='',$contactInfo=null){
       $data=[
          'id'=>$id,
          'lastContent'=>$content,
@@ -334,7 +334,7 @@ class User extends BaseModel
          'location'=>'',
       ];
       if($is_group==0){
-         $user=User::where('user_id',$id)->find();
+         $user=$contactInfo ?: User::where('user_id',$id)->find();
          if(!$user){
             $this->error=lang('user.exist');
             return false;
@@ -348,7 +348,7 @@ class User extends BaseModel
          $data['name_py'] = $user['name_py'];
       }else{
          $group_id=is_string($id) ? (explode('-',$id)[1] ?? 0) : $id;
-         $group=Group::where(['group_id'=>$group_id])->find();
+         $group=$contactInfo ?: Group::where(['group_id'=>$group_id])->find();
          if(!$group){
             $this->error=lang('group.exist');
             return false;
@@ -357,6 +357,7 @@ class User extends BaseModel
          $data['avatar'] = avatarUrl($group['avatar'], $group['name'], $group['group_id'], 120);
          $data['name_py'] = $group['name_py'];
          $data['setting'] = $group['setting'];
+         $data['role'] = 3;
       }
       $data['index'] =getFirstChart($data['displayName']);
       return $data;

@@ -691,7 +691,7 @@ class Im extends BaseController
                 $data['extends']['event']='otherOpt'; //其他端操作
             }
             $data['toContactId']=$toContactId;
-            $data['contactInfo']=$user->setContact($toContactId,0,'webrtc',$content);
+            $data['contactInfo']=$user->setContact($toContactId,0,'webrtc',$content) ? : [];
             wsSendMsg($userInfo['id'],'webrtc',$data);
         }
         return success('',$wsData);

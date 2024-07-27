@@ -47,6 +47,7 @@ return [
         'name'=>"群聊",
         'notAuth'=>'你没有操作权限，只有群主和群管理员才可以修改！',
         'userLimit'=>'人数不能超过{:userMax}人!',
+        'inviteLimit'=>'单次邀请人数不能超过{:limit}人!',
         'invite'=>"{:username}邀请你加入群聊",
         'add'=>"{:username}创建了群聊",
         'join'=>"{:username}加入了群聊",

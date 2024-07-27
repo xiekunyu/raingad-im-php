@@ -8,10 +8,10 @@
 return [
     'app_name'=>'Raingad-IM',
     'andriod' => [
-        'version' => '4.2.2',
-        'release' => '20240716',
+        'version' => '5.0.0',
+        'release' => '20240727',
         'url' =>env('app.andriod_webclip',''),
-        'update_info' => '1.修复群聊打开联系人时消息错乱\n2.修改在线状态的展示方式\n3.优化消息少时也展示在底部\n4.修复APP键盘闪烁的问题',
+        'update_info' => '1.增加自动客服和自动群聊\n2.增加注册间隔和消息频率\n3.增加探索页配置\n4.修复若干BUG',
         'update_type' => 'solicit',
     ],
     'ios' => [
@@ -22,10 +22,10 @@ return [
         'update_type' => 'solicit',
     ],
     'windows' => [
-        'version' => '4.2.0',
-        'release' => '20240628',
+        'version' => '5.0.0',
+        'release' => '20240727',
         'url' => env('app.win_webclip',''),
-        'update_info' => '1.增加自动更新机制',
+        'update_info' => '1.增加自动客服和自动群聊\n2.增加注册间隔和消息频率\n3.增加探索页配置\n4.修复若干BUG',
         'update_type' => 'solicit',
     ],
     'mac' => [
@@ -36,10 +36,10 @@ return [
         'update_type' => 'solicit',
     ],
     'serve' => [
-        'version' => '4.2.1',
-        'release' => '20240712',
+        'version' => '5.0.0',
+        'release' => '20240727',
         'url' => '',
-        'update_info' => '1.增加群公告消息通知\n2.优化了一些功能',
+        'update_info' => '1.增加自动客服和自动群聊\n2.增加注册间隔和消息频率\n3.增加探索页配置\n4.修复若干BUG',
         'update_type' => 'solicit',
     ],
 ];

@@ -48,6 +48,7 @@ return [
         'name' => "Group chat",  
         'notAuth' => "You do not have permission to perform this action. Only the group owner and administrators can make changes!",  
         'userLimit' => "The number of members cannot exceed {:userMax} people!",  
+        'inviteLimit'=>'The number of people invited at a single time cannot exceed {:limit}! ',
         'invite' => "{:username} has invited you to join the group chat",  
         'add' => "{:username} has created a group chat",  
         'join'=>"{:username} join the group chat",
