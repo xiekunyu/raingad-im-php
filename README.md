@@ -160,7 +160,7 @@ PS：如需开启聊天文件存入oss，需要在后台中进行配置，配置
 4. 更多关于workerman的使用，请进入[workerman官网](https://www.workerman.net/)官网进行查阅。
 
 
-#### 视频教程（无声）
+### 视频教程（无声）
 
 [哟，原来有视频教程！！！](https://im.file.raingad.com/static/video/jiaocheng.mp4)
 
