@@ -113,17 +113,27 @@ location /wss
 > if you want to save chat files to oss, you need to configure them in the background. Do not modify the environment configuration files after configuration.
 
 ### Start the message push service
-Because the chat software needs to use websockt, so we need to start workerman, the system has built-in corresponding services, you can manage the home page in the background to run services, but the first use needs to be debugged.
+As the chat software requires the use of WebSocket, we need to start Workerman. The system has already built-in the corresponding service, and you can run the service from the backend management homepage ( **accessible from the bottom-left corner after logging in with an administrator account** ). If the backend service fails to start successfully, you need to perform the following debugging steps:
 
-1. Enter the project root directory to run `php think worker:gateway start`, or run `php start.php start` to run the message service. Do not use `- d` during testing. Under windows, run the `start_for_ win.bat` file in the root directory directly. Since there are many restrictions on the use of Workerman under Windows, it is recommended to use Linux system in formal environment, while windows system is only recommended for development environment.
+**Reasons for system service startup failure**:
 
-2. The message service needs to release port 8282. If you need to modify it, please modify the corresponding parameters in the `WORKER` section of the environment configuration file. For windows users, please modify port 8282 in [`app\worker\start_gateway.php`]. The port number needs to be changed according to the situation.
+1. If you have started the `php think worker:gateway start` or `php start.php start` commands in the terminal, please run `killall -9 php` in the terminal or restart the server before running again.
+
+2. It could be that PHP is not the default version. Execute `php -v` in the terminal to check if the version number is inconsistent with the selected PHP version when creating the website. If inconsistent, you need to modify the website's version to the default PHP version and install the corresponding dependencies and remove disabled functions for PHP.
+
+3. It could be due to insufficient directory permissions for execution. Reset all directory permissions to `755` for user `www` and try again.
+
+**If the startup fails, you can perform debugging**
+
+4. Enter the project root directory to run `php think worker:gateway start`, or run `php start.php start` to run the message service. Do not use `- d` during testing. Under windows, run the `start_for_ win.bat` file in the root directory directly. Since there are many restrictions on the use of Workerman under Windows, it is recommended to use Linux system in formal environment, while windows system is only recommended for development environment.
+
+5. The message service needs to release port 8282. If you need to modify it, please modify the corresponding parameters in the `WORKER` section of the environment configuration file. For windows users, please modify port 8282 in [`app\worker\start_gateway.php`]. The port number needs to be changed according to the situation.
    
-3. The system uses the domain name as the address of the websocket service directly, so it needs to configure the proxy in the nginx of the website and listen to port 8282. The parameters of the proxy configuration have been written in the pseudo-static.
+6. The system uses the domain name as the address of the websocket service directly, so it needs to configure the proxy in the nginx of the website and listen to port 8282. The parameters of the proxy configuration have been written in the pseudo-static.
 
-4. For more information about the use of workerman, please visit [workerman official website](https://www.workerman.net/) official website.
+7. For more information about the use of workerman, please visit [workerman official website](https://www.workerman.net/) official website.
 
-5. After the deployment, the password for the administrator account is: `administrator``123456`, and the management entry is located in the lower left corner of the chat interface.
+8. After the deployment, the password for the administrator account is: `administrator``123456`, and the management entry is located in the lower left corner of the chat interface.
 
 ### Install deployment Services
 
