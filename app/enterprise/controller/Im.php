@@ -61,7 +61,7 @@ class Im extends BaseController
             if($cus!=$this->userInfo['user_id']){
                 $friend=Friend::where(['friend_user_id'=>$this->uid,'create_user'=>$param['toContactId']])->find();
                 if(!$friend){
-                    return warning(lang('im.notFirend'));
+                    return warning(lang('im.notFriend'));
                 }
                 $otherFriend=Friend::where(['friend_user_id'=>$param['toContactId'],'create_user'=>$this->uid])->find();
                 if(!$otherFriend){
