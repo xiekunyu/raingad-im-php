@@ -341,7 +341,7 @@ class User extends BaseModel
          }
          $user->avatar=avatarUrl($user->avatar,$user->realname,$user->user_id,120);
          // 查询好友关系
-         $friend=Friend::where(['friend_user_id'=>$id,'create_user'=>self::$userInfo['user_id']])->find();
+         $friend= self::$userInfo ? Friend::where(['friend_user_id'=>$id,'create_user'=>self::$userInfo['user_id']])->find() : [];
          $data['displayName'] = ($friend['nickname'] ?? '') ? : $user['realname'];
          $data['avatar'] = avatarUrl($user['avatar'], $user['realname'], $user['user_id'], 120);
          $data['location'] =$user['last_login_ip'] ? implode(" ", \Ip::find($user['last_login_ip'])) : "未知";
