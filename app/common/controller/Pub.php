@@ -326,9 +326,12 @@ class Pub
         $oldRelease=$this->request->param('release',0);
         $setupPage=$this->request->param('setupPage',false);
         $platform=$this->request->param('platform',1101);
-        $config=Config::where('name','sysInfo')->value('value');
+        $config=config('version.'.$platform);
+        $name=config('version.app_name');
+        $packageName='';
         if($platform==1101){
             $teminal='andriod';
+            $packageName=$name."_Setup_".$config['version'].".apk";
         }else{
             $teminal='ios';
         }
@@ -349,9 +352,12 @@ class Pub
             return success('',$data);
         }
         $downUrl='';
-        $andriod=getAppDowmUrl('andriod');
+        $andriod='';
         // 如果是ios则返回ios地址
         if($platform==1101){
+            if(is_file(PACKAGE_PATH . $packageName)){
+                $andriod = rtrim(request()->domain(),'/').'/unpackage/'.$packageName;
+            }
             $downUrl=env('app.andriod_webclip','') ? : $andriod;
         }else{
             $downUrl=env('app.ios_webclip','');

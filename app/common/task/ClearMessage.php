@@ -56,7 +56,6 @@ class ClearMessage extends Task
            if($status && $days){
                 $time=time() - ($days * $this->daytime);
                 $where[]=['create_time','<',$time];
-                $where[]=['is_last','=',0];
                 Message::where($where)->delete();
            }
            print "****************消息清理成功******************\n";
