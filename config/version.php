@@ -8,10 +8,10 @@
 return [
     'app_name'=>'Raingad-IM',
     'andriod' => [
-        'version' => '5.0.0',
-        'release' => '20240727',
+        'version' => '5.1.0',
+        'release' => '20240820',
         'url' =>env('app.andriod_webclip',''),
-        'update_info' => '1.增加自动客服和自动群聊\n2.增加注册间隔和消息频率\n3.增加探索页配置\n4.修复若干BUG',
+        'update_info' => '1.提示音本地化\n2.增加头像预览\n3.后台增加了链接自动识别\n4.修复若干BUG',
         'update_type' => 'solicit',
     ],
     'ios' => [
@@ -36,8 +36,8 @@ return [
         'update_type' => 'solicit',
     ],
     'serve' => [
-        'version' => '5.0.0',
-        'release' => '20240727',
+        'version' => '5.1.0',
+        'release' => '20240820',
         'url' => '',
         'update_info' => '1.增加自动客服和自动群聊\n2.增加注册间隔和消息频率\n3.增加探索页配置\n4.修复若干BUG',
         'update_type' => 'solicit',
