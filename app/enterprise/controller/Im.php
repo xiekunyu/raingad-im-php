@@ -47,6 +47,13 @@ class Im extends BaseController
                 return warning(lang('system.toofast'));
             }
         }
+        // 限制文字内容长度
+        $text=strip_tags($param['content']);
+        $textLen=mb_strlen($text);
+        if($textLen>1024){
+            return warning(lang('im.msgContentLimit').$textLen);
+        }
+        $param['content']=preg_link($param['content']);
         $param['user_id'] = $this->userInfo['user_id'];
         $is_group=$param['is_group']??0;
         $chatSetting=$this->chatSetting;
@@ -218,6 +225,8 @@ class Im extends BaseController
     {
         $param = $this->request->param();
         $is_group = isset($param['is_group']) ? $param['is_group'] : 0;
+        // 如果toContactId是数字，绝对是单聊
+        $is_group = is_numeric($param['toContactId']) ? 0 : $is_group;
         // 设置当前聊天消息为已读
         $chat_identify = $this->setIsRead($is_group, $param['toContactId']);
         $type = isset($param['type']) ? $param['type'] : '';

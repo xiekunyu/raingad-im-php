@@ -98,6 +98,7 @@ return [
         'redoLimitTime' => "Cannot recall messages after {:time} minutes!",  
         'redo' => "A message has been recalled",  
         'manageRedo' => "A message has been recalled by (an admin)",
+        'msgContentLimit' => "Message content too long",
     ],
     'webRtc' => [  
         'cancel' => 'Call has been canceled',  

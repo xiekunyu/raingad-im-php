@@ -134,6 +134,10 @@ class Index
 
     // app下载页
     public function downApp(){
+        $downAppUrl=env('app.downApp_url','');
+        if($downAppUrl){
+            return redirect($downAppUrl);
+        }
         $config=Config::where('name','sysInfo')->value('value');
         $andriod=getAppDowmUrl('andriod');
         $winUrl=getAppDowmUrl('windows');
@@ -158,6 +162,7 @@ class Index
 
     // 下载APP
     public function downloadApp(){
+        
         $platform=request()->param('platform','windows');
         $config=config('version.'.$platform);
         $name=config('version.app_name');
@@ -172,7 +177,7 @@ class Index
         if(is_file($file)){
             return \utils\File::download($file, $packageName);
         }else{
-            return warning(lang('file.exist'));
+            return shutdown(lang('file.exist'));
         }
     }
 }

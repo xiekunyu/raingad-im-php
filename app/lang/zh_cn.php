@@ -97,6 +97,7 @@ return [
         'redoLimitTime'=>"超过{:time}分钟不能撤回！",
         'redo'=>"撤回了一条消息",
         'manageRedo'=>'被(管理员)撤回了一条消息',
+        'msgContentLimit'=>'你发送的消息长度太长了！',
     ],
     'webRtc'=>[
         'cancel'=>'已取消通话',

@@ -990,3 +990,49 @@ function getAppDowmUrl($platform='andriod'){
         return '';
     }
 }
+
+// php匹配文本中的所有url
+function getAllUrl($text){
+    // 使用正则表达式匹配带有或不带有协议头的URL
+    $pattern = '/\b(?:https?:\/\/)?[a-z0-9-+&@#\/%?=~_|!:,.;]*[a-z0-9-+&@#\/%=~_|]/i';
+    // 使用preg_replace()函数将URL转换为<a>标签
+    $replaced_text = preg_replace_callback($pattern, function($matches) {
+        $url = $matches[0];
+        if(utils\Regular::is_url($url)){
+            $newUrl=$url;
+            if (!preg_match("~^(?:f|ht)tps?://~i", $url)) {
+                $newUrl = "http://" . $url;
+            }
+            return '<a href="' . $newUrl . '">' . $url . '</a>';
+        }else{
+            return $url;
+        }
+        
+    }, $text);
+    return $replaced_text;
+}
+
+
+// 将链接转成可点击的标签
+function preg_link($text){
+    // 匹配更广泛的 URL 的正则表达式
+    $pattern ='/\b(?:https?:\/\/|ftp:\/\/)?([a-z0-9-+&@#\/%?=~_|!:,.;]*\.[a-z]{2,}(?:\/[a-z0-9-+&@#\/%?=~_|!:,.;]*)*)\b/i';
+    // 使用preg_replace()函数将URL转换为<a>标签
+    $replaced_text = preg_replace_callback($pattern, function($matches) {
+        $url = $matches[0];
+		$isUrl=preg_match('/\b(?:https?|ftp):\/\/[a-z0-9-+&@#\/%?=~_|!:,.;]*[a-z0-9-+&@#\/%=~_|]|[a-z0-9-+&@#\/%?=~_|!:,.;]*\.[a-z]{2,}\b/i',$url) ? true : false;
+        if($isUrl){
+            $newUrl=$url;
+            if (!preg_match("~^(?:f|ht)tps?://~i", $url)) {
+                $newUrl = "https://" . $url;
+            }
+            return '<a href="' . $newUrl . '" target="_blank">' . $url . '</a>';
+        }else{
+            return $url;
+        }
+        
+    }, $text);
+    
+    return $replaced_text;
+
+}
