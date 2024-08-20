@@ -326,12 +326,10 @@ class Pub
         $oldRelease=$this->request->param('release',0);
         $setupPage=$this->request->param('setupPage',false);
         $platform=$this->request->param('platform',1101);
-        $config=config('version.'.$platform);
         $name=config('version.app_name');
         $packageName='';
         if($platform==1101){
             $teminal='andriod';
-            $packageName=$name."_Setup_".$config['version'].".apk";
         }else{
             $teminal='ios';
         }
@@ -355,6 +353,7 @@ class Pub
         $andriod='';
         // 如果是ios则返回ios地址
         if($platform==1101){
+            $packageName=$name."_Setup_".$versionInfo['version'].".apk";
             if(is_file(PACKAGE_PATH . $packageName)){
                 $andriod = rtrim(request()->domain(),'/').'/unpackage/'.$packageName;
             }
