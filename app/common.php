@@ -1015,6 +1015,10 @@ function getAllUrl($text){
 
 // 将链接转成可点击的标签
 function preg_link($text){
+    // 判断文本中是否有img标签
+    if(preg_match('/<img[^>]+>/i', $text)){
+        return $text;
+    }
     // 匹配更广泛的 URL 的正则表达式
     $pattern ='/\b(?:https?:\/\/|ftp:\/\/)?([a-z0-9-+&@#\/%?=~_|!:,.;]*\.[a-z]{2,}(?:\/[a-z0-9-+&@#\/%?=~_|!:,.;]*)*)\b/i';
     // 使用preg_replace()函数将URL转换为<a>标签
