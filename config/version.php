@@ -22,10 +22,10 @@ return [
         'update_type' => 'solicit',
     ],
     'windows' => [
-        'version' => '5.0.1',
+        'version' => '5.1.0',
         'release' => '20240727',
         'url' => env('app.win_webclip',''),
-        'update_info' => '1.增加自动客服和自动群聊\n2.增加注册间隔和消息频率\n3.增加探索页配置\n4.修复若干BUG',
+        'update_info' => '1.lemon-imui本地化',
         'update_type' => 'solicit',
     ],
     'mac' => [
