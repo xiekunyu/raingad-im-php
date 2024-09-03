@@ -347,12 +347,13 @@ class User extends BaseModel
          $data['location'] =$user['last_login_ip'] ? implode(" ", \Ip::find($user['last_login_ip'])) : "未知";
          $data['name_py'] = $user['name_py'];
       }else{
-         $group_id=is_string($id) ? (explode('-',$id)[1] ?? 0) : $id;
+         $group_id=is_numeric($id) ? $id : (explode('-',$id)[1] ?? 0);
          $group=$contactInfo ?: Group::where(['group_id'=>$group_id])->find();
          if(!$group){
             $this->error=lang('group.exist');
             return false;
          }
+         $data['id'] = 'group-'.$group_id;
          $data['displayName'] = $group['name'];
          $data['avatar'] = avatarUrl($group['avatar'], $group['name'], $group['group_id'], 120);
          $data['name_py'] = $group['name_py'];
