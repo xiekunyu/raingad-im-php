@@ -40,47 +40,67 @@ class Im extends BaseController
     public function sendMessage()
     {
         $param = $this->request->param();
-        $sendInterval=$this->globalConfig['chatInfo']['sendInterval'] ?? 0;
+        $sendInterval = $this->globalConfig['chatInfo']['sendInterval'] ?? 0;
         // 如果设置了消息频率则验证
-        if($sendInterval){
-            if(Cache::has('send_'.$this->userInfo['user_id'])){
+        if ($sendInterval) {
+            if (Cache::has('send_' . $this->userInfo['user_id'])) {
                 return warning(lang('system.toofast'));
             }
         }
         // 限制文字内容长度
-        $text=strip_tags($param['content']);
-        $textLen=mb_strlen($text);
-        if($textLen>1024){
-            return warning(lang('im.msgContentLimit').$textLen);
+        $text = strip_tags($param['content']);
+        $textLen = mb_strlen($text);
+        if ($textLen > 1024) {
+            return warning(lang('im.msgContentLimit') . $textLen);
         }
-        $param['content']=preg_link($param['content']);
+        $param['content'] = preg_link($param['content']);
         $param['user_id'] = $this->userInfo['user_id'];
-        $is_group=$param['is_group']??0;
-        $chatSetting=$this->chatSetting;
-        if($is_group==0 && $chatSetting['simpleChat']==0){
-            return warning(lang('im.forbidChat'));
-        }
-        $csUid=$this->userInfo['cs_uid'] ?? 0;
-        // 如果是单聊，并且是社区模式和不是自己的客服、需要判断是否是好友
-        if($is_group==0 && $this->globalConfig['sysInfo']['runMode']==2 && $csUid!=$param['toContactId']){
-            // 判断我是不是对方的客服
-            $cus=User::where(['user_id'=>$param['toContactId']])->value('cs_uid');
-            if($cus!=$this->userInfo['user_id']){
-                $friend=Friend::where(['friend_user_id'=>$this->uid,'create_user'=>$param['toContactId']])->find();
-                if(!$friend){
-                    return warning(lang('im.notFriend'));
+        $is_group = $param['is_group'] ?? 0;
+        $chatSetting = $this->chatSetting;
+        if ($is_group == 0) {
+            $kefuUser=$chatSetting['autoAddUser']['user_ids'] ?? [];
+            $manageUser=User::where([['status','=',1],['role','>',0]])->column('user_id');
+            $kefu=array_unique(array_merge($kefuUser,$manageUser));
+            $csUid = $this->userInfo['cs_uid'] ?? 0;
+            $manage=false;
+            // 发送者和接受者是客服或者管理员也可以发送消息
+            if(in_array($this->userInfo['user_id'],$kefu) || in_array($param['toContactId'],$kefu)){
+                $manage=true;
+            }
+            if($chatSetting['simpleChat'] == 0 && !$manage){
+                return warning(lang('im.forbidChat'));
+            }
+            // 如果是单聊，并且是社区模式和不是自己的客服、需要判断是否是好友
+            if ($this->globalConfig['sysInfo']['runMode'] == 2 && $csUid != $param['toContactId'] && !$manage) {
+                // 判断我是不是对方的客服
+                $cus = User::where(['user_id' => $param['toContactId']])->value('cs_uid');
+                if ($cus != $this->userInfo['user_id']) {
+                    $friend = Friend::where(['friend_user_id' => $this->uid, 'create_user' => $param['toContactId']])->find();
+                    if (!$friend) {
+                        return warning(lang('im.notFriend'));
+                    }
+                    $otherFriend = Friend::where(['friend_user_id' => $param['toContactId'], 'create_user' => $this->uid])->find();
+                    if (!$otherFriend) {
+                        return warning(lang('im.friendNot'));
+                    }
                 }
-                $otherFriend=Friend::where(['friend_user_id'=>$param['toContactId'],'create_user'=>$this->uid])->find();
-                if(!$otherFriend){
-                    return warning(lang('im.friendNot'));
-                }
+            }
+        }else{
+            // 群聊必须群成员才能发送消息
+            $group_id = explode('-', $param['toContactId'])[1] ?? '';
+            if(!$group_id){
+                return warning(lang('system.parameterError'));
+            }
+            $groupUser=GroupUser::where(['user_id'=>$param['user_id'],'status'=>1,'group_id'=>$group_id,'delete_time'=>0])->find();
+            if(!$groupUser){
+                return warning(lang('system.sendFail'));
             }
         }
         $data = Message::sendMessage($param);
         if ($data) {
             // 如果开启频率限制，发送成功后记录发送的时间
-            if($sendInterval){
-                Cache::set('send_'.$this->userInfo['user_id'],time(),$sendInterval);
+            if ($sendInterval) {
+                Cache::set('send_' . $this->userInfo['user_id'], time(), $sendInterval);
             }
             return success('', $data);
         } else {

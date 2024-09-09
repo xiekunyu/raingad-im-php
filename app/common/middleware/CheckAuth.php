@@ -36,6 +36,10 @@ class CheckAuth
         }
         //解析json
         $userInfo = (array)json_decode($userInfo, true);
+        
+        if(cache('forbidUser_'.$userInfo['id'])){
+            return shutdown(lang('user.forbid'), -1);
+        }
         //已经登陆，将用户信息存入请求头
         $request->userInfo  = $userInfo;
         $request->uid       = $userInfo['id'];

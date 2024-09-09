@@ -7,8 +7,8 @@
 namespace app\manage\controller;
 use app\BaseController;
 use app\enterprise\model\{User as UserModel,GroupUser,Friend};
-use app\manage\model\Config;
 use think\facade\Db;
+use think\facade\Cache;
 
 class User extends BaseController
 {
@@ -131,6 +131,10 @@ class User extends BaseController
         }
         try{
             $status = $this->request->param('status',0);
+            // 将禁用状态写入缓存
+            if(!$status){
+                Cache::set('forbidUser_'.$user_id,true,env('jwt.ttl',86400));
+            }
             UserModel::where('user_id', $user_id)->update(['status'=>$status]);
             return success('');
         }catch (\Exception $e){
