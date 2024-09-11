@@ -50,6 +50,8 @@ return [
         'userLimit' => "The number of members cannot exceed {:userMax} people!",  
         'inviteLimit'=>'The number of people invited at a single time cannot exceed {:limit}! ',
         'invite' => "{:username} has invited you to join the group chat",  
+        'removeUser'=>"You have been removed from Group chats! ",
+        'notCustom'=>"You are not a member of this group and have no right to send messages!",
         'add' => "{:username} has created a group chat",  
         'join'=>"{:username} join the group chat",
         'atLeast' => "Please select at least two people!",  
@@ -99,6 +101,7 @@ return [
         'redo' => "A message has been recalled",  
         'manageRedo' => "A message has been recalled by (an admin)",
         'msgContentLimit' => "Message content too long",
+        'sendTimeLimit'=>'The message sending interval is {:time} seconds!',
     ],
     'webRtc' => [  
         'cancel' => 'Call has been canceled',  

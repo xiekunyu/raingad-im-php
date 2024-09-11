@@ -44,7 +44,7 @@ class Im extends BaseController
         // 如果设置了消息频率则验证
         if ($sendInterval) {
             if (Cache::has('send_' . $this->userInfo['user_id'])) {
-                return warning(lang('system.toofast'));
+                return warning(lang('im.sendTimeLimit',['time'=>$sendInterval]));
             }
         }
         // 限制文字内容长度
@@ -93,7 +93,7 @@ class Im extends BaseController
             }
             $groupUser=GroupUser::where(['user_id'=>$param['user_id'],'status'=>1,'group_id'=>$group_id,'delete_time'=>0])->find();
             if(!$groupUser){
-                return warning(lang('system.sendFail'));
+                return warning(lang('group.notCustom'));
             }
         }
         $data = Message::sendMessage($param);

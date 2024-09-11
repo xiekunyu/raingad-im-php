@@ -25,29 +25,31 @@ class UserRegister
                 if($autoTask['user_id']!=0){
                     $autoTask['user_id']=$this->findNextOrFirstId($autoAdduser['user_ids'], $autoTask['user_id'] ? : $autoAdduser['user_ids'][0]);
                 }else{
-                    $autoTask['user_id']=$autoAdduser['user_ids'][0];
+                    $autoTask['user_id']=$autoAdduser['user_ids'][0] ?? '';
                 }
-                $user->update(['cs_uid'=>$autoTask['user_id']],['user_id'=>$data['user_id']]);
-                // 如果设置了欢迎语则发送欢迎语
-                if($autoAdduser['welcome']){
-                    $userInfo=$user->field('user_id,realname,avatar')->where(['user_id'=>$autoTask['user_id']])->find();
-                    if($userInfo){
-                        $userInfo['dispalayName']=$userInfo['realname'];
-                        $userInfo['id']=$userInfo['user_id'];
-                        $userInfo['avatar']=avatarUrl($userInfo['avatar'],$userInfo['realname'],$userInfo['user_id']);
-                        $msg=[
-                            'id'=>\utils\Str::getUuid(),
-                            'user_id'=>$autoTask['user_id'],
-                            'content'=>$autoAdduser['welcome'],
-                            'toContactId'=>$data['user_id'],
-                            'sendTime'=>time()*1000,
-                            'type'=>'text',
-                            'is_group'=>0,
-                            'status'=>'succeed',
-                            'fromUser'=>$userInfo,
-                            'at'=>[]
-                        ];
-                        Message::sendMessage($msg);
+                if($autoTask['user_id']){
+                    $user->update(['cs_uid'=>$autoTask['user_id']],['user_id'=>$data['user_id']]);
+                    // 如果设置了欢迎语则发送欢迎语
+                    if($autoAdduser['welcome'] ?? ''){
+                        $userInfo=$user->field('user_id,realname,avatar')->where(['user_id'=>$autoTask['user_id']])->find();
+                        if($userInfo){
+                            $userInfo['dispalayName']=$userInfo['realname'];
+                            $userInfo['id']=$userInfo['user_id'];
+                            $userInfo['avatar']=avatarUrl($userInfo['avatar'],$userInfo['realname'],$userInfo['user_id']);
+                            $msg=[
+                                'id'=>\utils\Str::getUuid(),
+                                'user_id'=>$autoTask['user_id'],
+                                'content'=>$autoAdduser['welcome'],
+                                'toContactId'=>$data['user_id'],
+                                'sendTime'=>time()*1000,
+                                'type'=>'text',
+                                'is_group'=>0,
+                                'status'=>'succeed',
+                                'fromUser'=>$userInfo,
+                                'at'=>[]
+                            ];
+                            Message::sendMessage($msg);
+                        }
                     }
                 }
             }
@@ -101,7 +103,10 @@ class UserRegister
     }
 
     // 查找ID的下一个值，如果未找到则使用第一个ID  
-    public function findNextOrFirstId($ids, $searchId) {  
+    public function findNextOrFirstId($ids, $searchId) { 
+        if(!$ids){
+            return 0;
+        }
         // 遍历数组查找$searchId  
         foreach ($ids as $k => $v) {  
             // 如果找到了$searchId，则返回它的下一个值（如果存在）  
@@ -118,7 +123,7 @@ class UserRegister
         $data=[
             'create_user'=>$userInfo['user_id'],
             'owner_id'=>$userInfo['user_id'],
-            'name'=>$autoAddGroup['name'].$group_num,
+            'name'=>($autoAddGroup['name'] ?? lang('group.name')).$group_num,
             'name_py'=>pinyin_sentence($autoAddGroup['name'].$group_num),
             'setting'=>json_encode(['manage' => 0, 'invite' => 1, 'nospeak' => 0]),
          ];

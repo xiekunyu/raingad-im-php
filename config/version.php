@@ -9,7 +9,7 @@ return [
     'app_name'=>'Raingad-IM',
     'andriod' => [
         'version' => '5.1.2',
-        'release' => '20240909',
+        'release' => '20240911',
         'url' =>env('app.andriod_webclip',''),
         'update_info' => '1.提示音本地化\n2.增加消息滚动到底部\n3.修复若干BUG',
         'update_type' => 'solicit',

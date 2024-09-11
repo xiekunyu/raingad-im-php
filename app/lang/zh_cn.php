@@ -49,6 +49,8 @@ return [
         'userLimit'=>'人数不能超过{:userMax}人!',
         'inviteLimit'=>'单次邀请人数不能超过{:limit}人!',
         'invite'=>"{:username}邀请你加入群聊",
+        'removeUser'=>"您已被移出群聊！",
+        'notCustom'=>"您不是本群成员，无权发送消息！",
         'add'=>"{:username}创建了群聊",
         'join'=>"{:username}加入了群聊",
         'atLeast'=>"请至少选择两人！",
@@ -98,6 +100,7 @@ return [
         'redo'=>"撤回了一条消息",
         'manageRedo'=>'被(管理员)撤回了一条消息',
         'msgContentLimit'=>'你发送的消息长度太长了！',
+        'sendTimeLimit'=>'消息发送时间间隔为 {:time} 秒！',
     ],
     'webRtc'=>[
         'cancel'=>'已取消通话',
