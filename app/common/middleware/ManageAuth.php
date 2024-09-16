@@ -18,7 +18,7 @@ class ManageAuth
                 'user/edit',
                 'user/del',
                 'user/setrole',
-                // 'user/setstatus',
+                'user/setstatus',
                 'user/editpassword',
                 'group/del',
                 'group/changeowner',
