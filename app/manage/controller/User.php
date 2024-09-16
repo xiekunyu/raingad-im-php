@@ -136,9 +136,9 @@ class User extends BaseController
                 Cache::set('forbidUser_'.$user_id,true,env('jwt.ttl',86400));
             }
             UserModel::where('user_id', $user_id)->update(['status'=>$status]);
-            return success('');
+            return success(lang('system.editOk'));
         }catch (\Exception $e){
-            return error('');
+            return error(lang('system.editFail'));
         }
     }
 

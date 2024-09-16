@@ -146,6 +146,9 @@ class Pub
 
     // 注册用户
     public function register(){
+        if(env('app.demon_mode',false)){
+            return warning(lang('system.demoMode'));
+        }
         try{
             $data = $this->request->param();
             $ip = $this->request->ip();
