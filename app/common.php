@@ -281,7 +281,9 @@ function circleAvatar($str,$s,$uid=0,$is_save=0,$save_path=''){
 //头像拼接
 function avatarUrl($path, $str = "雨",$uid=0,$s=80)
 {
-    $str = Str::strFilter($str);
+    // $str = Str::strFilter($str);
+    preg_match_all('/[\x{4e00}-\x{9fff}]+/u', $str, $matches);
+    $str=implode('', $matches[0]);
     if ($path) {
         // 判断头像路径中是否有http
         if (strpos($path, 'http') !== false) {
