@@ -204,7 +204,7 @@ DATABASE = {$data['database']}
 USERNAME = {$data['username']}
 PASSWORD = {$data['password']}
 HOSTPORT = {$data['hostport']}
-CHARSET = utf8
+CHARSET = utf8mb4
 DEBUG = true
 prefix = {$data['prefix']}
 [LANG]

@@ -97,24 +97,37 @@
 
     
     function downloadFn() {
-    //   window.location.href = '__STATIC__/down/ios.mobileconfig';
         let iosUrl='{$client.ios_webclip}';
         if(!iosUrl){
             alert('无安装包');
         }
+        window.location.href = iosUrl;
         setTimeout(function () {
             var iOSVersion = getIOSVersion();
             if (iOSVersion && parseFloat(iOSVersion) >= 17) {
             alert('请手动安装-转到：设置-通用-（VPN和设备管理）配置文件-安装');
             } else {
-            window.location.href = iosUrl;
+            window.location.href = "./unpackage/app.mobileprovision";
             }
         }, 3500);
     }
 
-    if (!/windows phone|iphone|android/ig.test(window.navigator.userAgent)) {
+    if (/^win/.test(navigator.platform.toLowerCase())) {
         $('.pc-box').show();
-    } else if (/(iPhone|iPad|iPod|iOS)/i.test(ua)) {
+    } else if (/(iPhone|iPad|iPod|iOS|mac)/i.test(ua)) {
+      if (Sys.safari) {
+        $(".down").attr("href", "javascript:downloadFn();");
+       
+        $(".doubt").click(function (event) {
+          $(".pup").fadeIn();
+          var swiper = new Swiper('.swiper-container', {
+            loop: true,
+            pagination: {
+              el: '.swiper-pagination'
+            }
+          });
+        });
+      }else if (/(iPhone|iPad|iPod|iOS)/i.test(ua)) {
       if (Sys.safari) {
         $(".down").attr("href", "javascript:downloadFn();");
        
