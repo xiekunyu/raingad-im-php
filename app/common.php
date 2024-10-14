@@ -444,7 +444,7 @@ function arrayToString($array,$field,$isStr=true){
 // 根据文件后缀进行分类
 function getFileType($ext,$rst=false){
     $ext=strtolower($ext);
-    $image=['jpg','jpeg','png','bmp','gif'];
+    $image=['jpg','jpeg','png','bmp','gif','webp'];
     $radio=['mp3','wav','wmv','amr'];
     $video=['mp4','3gp','avi','m2v','mkv','mov'];
     $doc=['ppt','pptx','doc','docx','xls','xlsx','pdf','txt','md'];
