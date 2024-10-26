@@ -127,27 +127,12 @@
             }
           });
         });
-      }else if (/(iPhone|iPad|iPod|iOS)/i.test(ua)) {
-      if (Sys.safari) {
-        $(".down").attr("href", "javascript:downloadFn();");
-       
-        $(".doubt").click(function (event) {
-          $(".pup").fadeIn();
-          var swiper = new Swiper('.swiper-container', {
-            loop: true,
-            pagination: {
-              el: '.swiper-pagination'
-            }
-          });
-        });
-      } else {
+      }else{
         $("body").click(function (event) {
           $(".pupPic").show();
         });
       }
-    }
-
-    else if (ua.indexOf('qq') > -1 && ua.indexOf('mqqbrowser') < 0) {
+    } else if (ua.indexOf('qq') > -1 && ua.indexOf('mqqbrowser') < 0) {
       $(".down").attr("href", "###");
       $("body").click(function (event) {
         $(".pupPic").show();
