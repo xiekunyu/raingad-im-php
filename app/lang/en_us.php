@@ -59,6 +59,7 @@ return [
         'exist' => "The group chat does not exist",
         'notice'=>"Announcement",
         'all'=>"All",
+        'noSpeak'=>"You have been banned from speaking, recovery time is {:time}",
     ],
     'user' => [  
         'exist' => "User does not exist",  

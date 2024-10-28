@@ -58,6 +58,7 @@ return [
         'exist'=>"群聊不存在",
         'notice'=>"群公告",
         'all'=>"所有人",
+        'noSpeak'=>"您已被禁言，恢复时间为：{:time}",
     ],
     'user'=>[
         'exist'=>"用户不存在",

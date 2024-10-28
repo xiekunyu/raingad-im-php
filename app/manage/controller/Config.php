@@ -69,7 +69,9 @@ class Config extends BaseController
             }
         }else{
             // 更新系统缓存
-            Conf::getSystemInfo(true);
+            $systemInfo=Conf::getSystemInfo(true);
+            // 向所有人推送新的设置
+            wsSendMsg(0,'updateConfig',$systemInfo);
         }
         return success(lang('system.editOk'));
     }

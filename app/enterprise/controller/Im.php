@@ -95,6 +95,9 @@ class Im extends BaseController
             if(!$groupUser){
                 return warning(lang('group.notCustom'));
             }
+            if($groupUser['no_speak_time']>time()){
+                return warning(lang('group.notSpeak',['time'=>date('Y-m-d H:i:s',$groupUser['no_speak_time'])]));
+            }
         }
         $data = Message::sendMessage($param);
         if ($data) {

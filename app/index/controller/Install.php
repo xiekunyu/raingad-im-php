@@ -219,7 +219,7 @@ PASSWORD ={$data['redispass']}
 [AES]
 TOKEN_KEY = tHTi8USApxsdfnhTM
 LOGIN_KEY = t2fe6HMnmssswDVi2
-#聊天内容加密，如果不加密则留空，一旦加密就不能修改，如果修改了需要清空所有聊天记录
+#最好是自定义自己能记的，不要太长，不要太短，不要太简单，不要太复杂，不要太难记，一旦确定之后就不需要再修改。否者无法解析聊天记录，开启后聊天记录不可被搜索
 CHAT_KEY  =
 
 [JWT]

@@ -282,6 +282,31 @@ class Group extends BaseController
          return success(lang('system.delOk'));
       }
 
+      // 移除成员
+      public function setNoSpeak(){
+         $param = $this->request->param();
+         $uid=$this->userInfo['user_id'];
+         $group_id = explode('-', $param['id'])[1];
+         $user_id=$param['user_id'];
+         $role=GroupUser::where(['group_id'=>$group_id,'user_id'=>$uid])->value('role');
+         if($role>2 && $user_id!=$uid){
+            return warning(lang('system.notAuth'));
+         }
+         $groupUser=GroupUser::where(['group_id'=>$group_id,'user_id'=>$user_id])->find();
+         if(!$groupUser){
+            return warning(lang('system.notAuth'));
+         }
+         $noSpeakTimer=$param['noSpeakTimer'] ?? 0;
+         $noSpeakList=[600,3600,10800,86400];
+         $noSpeakDay=$param['noSpeakDay'] ?? 1;
+         $noSpeakTime=$noSpeakDay*86400;
+         if($noSpeakTimer>0){
+            $noSpeakTime=$noSpeakList[$noSpeakTimer-1];
+         }
+         GroupUser::where(['group_id'=>$group_id,'user_id'=>$user_id])->update(['no_speak_time'=>time()+$noSpeakTime]);
+         return success(lang('system.success'));
+      }
+
       // 解散团队
       public function removeGroup(){
          $param = $this->request->param();
