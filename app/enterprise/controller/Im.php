@@ -5,7 +5,7 @@ namespace app\enterprise\controller;
 use app\BaseController;
 use think\facade\Request;
 use think\facade\Db;
-use app\enterprise\model\{User, Message, GroupUser, Friend};
+use app\enterprise\model\{User, Message, GroupUser, Friend,Group};
 use GatewayClient\Gateway;
 use Exception;
 use League\Flysystem\Util;
@@ -40,6 +40,11 @@ class Im extends BaseController
     public function sendMessage()
     {
         $param = $this->request->param();
+        $is_group = $param['is_group'] ?? 0;
+        // 如果是系统账号，直接禁言
+        if($is_group>1){
+            return warning(lang('im.forbidChat'));
+        }
         $sendInterval = $this->globalConfig['chatInfo']['sendInterval'] ?? 0;
         // 如果设置了消息频率则验证
         if ($sendInterval) {
@@ -55,7 +60,7 @@ class Im extends BaseController
         }
         $param['content'] = preg_link($param['content']);
         $param['user_id'] = $this->userInfo['user_id'];
-        $is_group = $param['is_group'] ?? 0;
+        
         $chatSetting = $this->chatSetting;
         if ($is_group == 0) {
             $kefuUser=$chatSetting['autoAddUser']['user_ids'] ?? [];
@@ -264,10 +269,18 @@ class Im extends BaseController
             }
         }
         // 群聊查询入群时间以后的消息
-        if($is_group){
+        if($is_group==1){
             $group_id = explode('-', $param['toContactId'])[1];
-            $createTime=GroupUser::where(['group_id'=> $group_id,'user_id'=>$this->userInfo['user_id']])->value('create_time');
-            $where[] = ['create_time', '>=', $createTime ? : 0];
+            $group=Group::where(['group_id'=> $group_id])->find();
+            if($group && $group['setting']){
+                $groupSetting=json_decode($group['setting'],true);
+                $history=$groupSetting['history'] ?? false;
+                // 如果开启了历史记录才可以查看所有记录，否者根据进群时间查询记录
+                if(!$history){
+                    $createTime=GroupUser::where(['group_id'=> $group_id,'user_id'=>$this->userInfo['user_id']])->value('create_time');
+                    $where[] = ['create_time', '>=', $createTime ? : 0];
+                }
+            }
         }
         $keywords = isset($param['keywords']) ? $param['keywords'] : '';
         if ($keywords && in_array($type, ['text', 'all'])) {
@@ -403,7 +416,7 @@ class Im extends BaseController
     // 设置消息已读
     protected function setIsRead($is_group, $to_user,$messages=[])
     {
-        if ($is_group) {
+        if ($is_group==1) {
             $chat_identify = $to_user;
             $toContactId = explode('-', $to_user)[1];
             // 将@消息放到定时任务中逐步清理
@@ -412,12 +425,14 @@ class Im extends BaseController
             }
             // 更新群里面我的所有未读消息为0
             GroupUser::editGroupUser(['user_id' => $this->userInfo['user_id'], 'group_id' => $toContactId], ['unread' => 0]);
-        } else {
+        } else if($is_group==0) {
             $chat_identify = chat_identify($this->userInfo['user_id'], $to_user);
             // 更新我的未读消息为0
             Message::update(['is_read' => 1], [['chat_identify', '=', $chat_identify], ['to_user', '=', $this->userInfo['user_id']]]);
             // 告诉对方我阅读了消息
             wsSendMsg($to_user, 'readAll', ['toContactId' => $this->userInfo['user_id']]);
+        } else if($is_group==2){
+            $chat_identify = $to_user; 
         }
         return $chat_identify;
     }
@@ -839,5 +854,16 @@ class Im extends BaseController
         // $newAtList = array_diff($atList, [$this->userInfo['user_id']]);
         // Message::where('msg_id',$param['msg_id'])->update(['at'=>implode(',',$newAtList)]);
         return success('');
+    }
+
+    // 获取系统公告
+    public function getAdminNotice(){
+        $data=Message::where(['chat_identify'=>'admin_notice'])->order('msg_id desc')->find();
+        $extends=$data['extends'] ?? [];
+        if(!$extends){
+            $extends['title']='';
+        }
+        $extends['create_time']=is_string($data['create_time']) ? strtotime($data['create_time']) : $data['create_time'];
+        return success('',$extends);
     }
 }

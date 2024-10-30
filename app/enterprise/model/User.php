@@ -26,6 +26,18 @@ class User extends BaseModel
    protected $json = ['setting'];
    protected $jsonAssoc = true;
 
+   // 系统人员或者其他静态人员
+   public static function staticUser(){
+      return [
+         'adminNotice'=>[
+            'id'=>'admin_notice',
+            'displayName'=>'系统通知',
+            'avatar'=>request()->domain().'/static/img/notice.png',
+            'name_en'=>'xitongtongzhi',
+        ]
+      ];
+   }
+
    public function getUid()
    {
       return self::$uid;
@@ -246,7 +258,45 @@ class User extends BaseModel
       }
       // 合并群聊和联系人
       $data = array_merge($list_chart, $group);
+      // 合并助手消息和聊天消息
+      $helper=self::otherChat($user_id);
+      $data=array_merge($data,$helper);
       return $data;
+   }
+
+   // 获取机器人聊天消息
+   public static function otherChat($uid){
+      $staticList=self::staticUser();
+      $adminNotice=$staticList['adminNotice'];
+      $count=Message::where(['chat_identify'=>$uid])->count();
+      $createTime=Message::where(['chat_identify'=>$uid])->order('id desc')->value('create_time');
+      $sendTime=0;
+      if($createTime){
+         $sendTime=is_string($createTime) ? strtotime($createTime) : $createTime;
+      }
+      $notice=[
+            [
+            'id'=>$adminNotice['id'],
+            'user_id'=>$adminNotice['id'],
+            'displayName'=>$adminNotice['displayName'],
+            'realname'=>$adminNotice['displayName'],
+            'name_en'=>$adminNotice['name_en'],
+            'avatar'=>$adminNotice['avatar'],
+            'lastContent'=>$sendTime ? $count.'条公告' :'',
+            'unread'=>0,
+            'lastSendTime'=>$sendTime * 1000,
+            'is_group'=>2,
+            'setting'=>[],
+            'type'=>'',
+            'is_top'=>0,
+            'is_notice'=>1,
+            'is_online'=>0,
+            'index'=>"[1]系统通知",
+         ],
+      ];
+
+      return $notice;
+
    }
 
    public static function getList($map)
