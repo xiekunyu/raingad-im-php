@@ -268,8 +268,8 @@ class User extends BaseModel
    public static function otherChat($uid){
       $staticList=self::staticUser();
       $adminNotice=$staticList['adminNotice'];
-      $count=Message::where(['chat_identify'=>$uid])->count();
-      $createTime=Message::where(['chat_identify'=>$uid])->order('id desc')->value('create_time');
+      $count=Message::where(['chat_identify'=>$adminNotice['id']])->count();
+      $createTime=Message::where(['chat_identify'=>$adminNotice['id']])->order('id desc')->value('create_time');
       $sendTime=0;
       if($createTime){
          $sendTime=is_string($createTime) ? strtotime($createTime) : $createTime;
@@ -291,7 +291,7 @@ class User extends BaseModel
             'is_top'=>0,
             'is_notice'=>1,
             'is_online'=>0,
-            'index'=>"[1]系统通知",
+            'index'=>"[1]系统消息",
          ],
       ];
 

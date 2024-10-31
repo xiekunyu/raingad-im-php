@@ -52,15 +52,16 @@ class Im extends BaseController
                 return warning(lang('im.sendTimeLimit',['time'=>$sendInterval]));
             }
         }
-        // 限制文字内容长度
-        $text = strip_tags($param['content']);
-        $textLen = mb_strlen($text);
-        if ($textLen > 1024) {
-            return warning(lang('im.msgContentLimit') . $textLen);
+        if($param['type']=='text'){
+            // 限制文字内容长度
+            $text = strip_tags($param['content']);
+            $textLen = mb_strlen($text);
+            if ($textLen > 1024) {
+                return warning(lang('im.msgContentLimit') . $textLen);
+            }
+            $param['content'] = preg_link($param['content']);
         }
-        $param['content'] = preg_link($param['content']);
         $param['user_id'] = $this->userInfo['user_id'];
-        
         $chatSetting = $this->chatSetting;
         if ($is_group == 0) {
             $kefuUser=$chatSetting['autoAddUser']['user_ids'] ?? [];
@@ -865,5 +866,33 @@ class Im extends BaseController
         }
         $extends['create_time']=is_string($data['create_time']) ? strtotime($data['create_time']) : $data['create_time'];
         return success('',$extends);
+    }
+
+    // 双向删除消息
+    public function delMessage(){
+        $param = $this->request->param();
+        $id = $param['id'];
+        if(!$this->globalConfig['chatInfo']['dbDelMsg']){
+            return warning(lang('system.noAuth'));
+        }
+        $message = Message::where(['id' => $id])->find();
+        if ($message) {
+            if($message['from_user']!=$this->userInfo['user_id']){
+                return warning(lang('system.noAuth'));
+            }
+            Message::where(['id' => $id])->delete();
+            // 如果是最后一条消息，需要将上一条设置为最后一条
+            if($message['is_last']){
+                Message::where(['chat_identify'=>$message['chat_identify']])->order('msg_id desc')->limit(1)->update(['is_last'=>1]);
+            }
+            $toContactId = $message['to_user'];
+            if ($message['is_group'] == 1) {
+                $toContactId = explode('-', $message['chat_identify'])[1];
+            }
+            wsSendMsg($toContactId, 'delMessage', $message, $message['is_group']); 
+            return success('');
+        } else {
+            return warning();
+        }
     }
 }

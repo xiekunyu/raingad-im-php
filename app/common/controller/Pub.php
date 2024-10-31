@@ -152,10 +152,11 @@ class Pub
         try{
             $data = $this->request->param();
             $ip = $this->request->ip();
-            if(Cache::has('register_'.md5($ip))){
-                return warning(lang('user.registerLimit',['time'=>10]));
-            }
             $systemInfo=Config::getSystemInfo();
+            $registerInterval=$systemInfo['sysInfo']['registerInterval'] ? : 0;
+            if(Cache::has('register_'.md5($ip))){
+                return warning(lang('user.registerLimit',['time'=>floor($registerInterval/60)]));
+            }
             // 判断系统是否开启注册
             if($systemInfo['sysInfo']['regtype']==2){
                 $inviteCode=$data['inviteCode'] ?? '';
@@ -190,7 +191,7 @@ class Pub
             // 监听用户注册后的操作
             event('UserRegister',$data);
             // 10分钟后才能再注册
-            Cache::set('register_'.md5($ip),$ip,600);
+            Cache::set('register_'.md5($ip),$ip,);
             return success(lang('user.registerOk'), $data);
         }catch (\Exception $e){
             return error($e->getMessage());
