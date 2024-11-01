@@ -282,7 +282,7 @@ class Group extends BaseController
          return success(lang('system.delOk'));
       }
 
-      // 移除成员
+      // 设置群成员禁言
       public function setNoSpeak(){
          $param = $this->request->param();
          $uid=$this->userInfo['user_id'];
@@ -303,6 +303,7 @@ class Group extends BaseController
          if($noSpeakTimer>0){
             $noSpeakTime=$noSpeakList[$noSpeakTimer-1];
          }
+         wsSendMsg($group_id,"setNoSpeak",['group_id'=>$param['id'],'user_id'=>$user_id],1);
          GroupUser::where(['group_id'=>$group_id,'user_id'=>$user_id])->update(['no_speak_time'=>time()+$noSpeakTime]);
          return success(lang('system.success'));
       }
