@@ -79,7 +79,9 @@ class User extends BaseController
             $user->realname =$data['realname'];
             $user->email =$data['email'];
             $user->remark=$data['remark'];
-            $user->sex =$data['sex'];
+            $user->sex =$data['sex'] ?? 0;
+            $user->friend_limit =$data['friend_limit'];
+            $user->group_limit =$data['group_limit'];
             $csUid=$data['cs_uid'] ?? 0;
             if($csUid && $csUid==$data['user_id']){
                 return warning(lang('user.notOwn'));

@@ -45,6 +45,14 @@ class Friend extends BaseController
         if($user_id==$this->uid){
             return warning(lang('friend.notAddOwn'));
         }
+        // 查看是否限制了好友上限
+        if($this->userInfo['friend_limit']!=0 && $this->userInfo['role']==0){
+            $myFriend=FriendModel::where(['create_user'=>$this->userInfo['user_id']])->count();
+            // 好友已达上限
+            if($myFriend>$this->userInfo['friend_limit'] || $this->userInfo['friend_limit']<0){
+               return warning(lang('friend.limit'));
+            }
+         }
         $friend=FriendModel::where(['friend_user_id'=>$user_id,'create_user'=>$this->uid])->find();
         if($friend){
             if($friend->status==1){

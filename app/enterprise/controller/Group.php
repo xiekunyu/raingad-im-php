@@ -178,6 +178,14 @@ class Group extends BaseController
          if($this->chatSetting['groupChat']==0){
             return warning(lang('system.notAuth'));
          }
+         // 查看是否限制了群聊创建的个数
+         if($this->userInfo['group_limit']!=0 && $this->userInfo['role']==0){
+            $myGroup=GroupModel::where(['owner_id'=>$uid])->count();
+            // 群聊已达上限
+            if($myGroup>$this->userInfo['group_limit'] || $this->userInfo['group_limit']<0){
+               return warning(lang('group.limit'));
+            }
+         }
          if(count($user_ids)>$this->chatSetting['groupUserMax'] && $this->chatSetting['groupUserMax']!=0){
             return warning(lang('group.userLimit',['userMax'=>$this->chatSetting['groupUserMax']]));
          }

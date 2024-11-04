@@ -43,6 +43,7 @@ return [
         'notApply' => "The request does not exist",  
         'not' => "Friend does not exist",  
         'newChat' => "You have been successfully added as friends, let's start chatting now! ",  
+        'limit' => "Your friends have reached the limit! ",  
     ],  
     'group' => [  
         'name' => "Group chat",  
@@ -60,6 +61,7 @@ return [
         'notice'=>"Announcement",
         'all'=>"All",
         'noSpeak'=>"You have been banned from speaking, recovery time is {:time}",
+        'limit'=>"You have been restricted from creating Group chats! ",
     ],
     'user' => [  
         'exist' => "User does not exist",  
