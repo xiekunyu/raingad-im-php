@@ -864,7 +864,13 @@ class Im extends BaseController
         if(!$extends){
             $extends['title']='';
         }
-        $extends['create_time']=is_string($data['create_time']) ? strtotime($data['create_time']) : $data['create_time'];
+        $createTime=$data['create_time'] ?? 0;
+        if(!$createTime){
+            $extends['create_time']=$createTime;
+        }else{
+            $extends['create_time']=is_string($data['create_time']) ? strtotime($data['create_time']) : $data['create_time'];
+        }
+       
         return success('',$extends);
     }
 
