@@ -8,22 +8,22 @@
 return [
     'app_name'=>'Raingad-IM',
     'andriod' => [
-        'version' => '5.1.2',
-        'release' => '20240911',
+        'version' => '5.2.0',
+        'release' => '20241105',
         'url' =>env('app.andriod_webclip',''),
-        'update_info' => '1.提示音本地化\n2.增加消息滚动到底部\n3.修复若干BUG',
+        'update_info' => '1.增加聊天记录查看\n2.增加系统公告，移动端首页滚动提醒\n3.增加群聊支持单个人禁言，支持新成员查看历史聊天记录\n4.优化移动端输入框，解决ios低版本H5问题\n5.修复若干BUG',
         'update_type' => 'solicit',
     ],
     'ios' => [
-        'version' => '4.2.0',
-        'release' => '20240628',
+        'version' => '5.2.0',
+        'release' => '20241105',
         'url' => env('app.ios_webclip',''),
         'update_info' => '暂无',
         'update_type' => 'solicit',
     ],
     'windows' => [
-        'version' => '5.1.2',
-        'release' => '202400909',
+        'version' => '5.2.0',
+        'release' => '20241105',
         'url' => env('app.win_webclip',''),
         'update_info' => '1.lemon-imui本地化，消息底部检测',
         'update_type' => 'solicit',
@@ -36,10 +36,10 @@ return [
         'update_type' => 'solicit',
     ],
     'serve' => [
-        'version' => '5.1.2',
-        'release' => '20240909',
+        'version' => '5.2.0',
+        'release' => '20241105',
         'url' => '',
-        'update_info' => '1.增加自动客服和自动群聊\n2.增加注册间隔和消息频率\n3.增加探索页配置\n4.修复若干BUG',
+        'update_info' => '1.增加聊天记录查看\n2.增加系统公告，移动端首页滚动提醒\n3.增加群聊支持单个人禁言，支持新成员查看历史聊天记录\n4.优化移动端输入框，解决ios低版本H5问题\n5.修复若干BUG',
         'update_type' => 'solicit',
     ],
 ];
