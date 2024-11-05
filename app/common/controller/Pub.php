@@ -154,7 +154,7 @@ class Pub
             $ip = $this->request->ip();
             $systemInfo=Config::getSystemInfo();
             $registerInterval=$systemInfo['sysInfo']['registerInterval'] ? : 0;
-            if(Cache::has('register_'.md5($ip))){
+            if(Cache::has('register_'.md5($ip)) && $registerInterval>0){
                 return warning(lang('user.registerLimit',['time'=>floor($registerInterval/60)]));
             }
             // 判断系统是否开启注册
@@ -190,8 +190,10 @@ class Pub
             $data['user_id']=$user->user_id;
             // 监听用户注册后的操作
             event('UserRegister',$data);
-            // 10分钟后才能再注册
-            Cache::set('register_'.md5($ip),$ip,);
+            // x分钟后才能再注册
+            if($registerInterval){
+                Cache::set('register_'.md5($ip),$ip,$registerInterval);
+            }
             return success(lang('user.registerOk'), $data);
         }catch (\Exception $e){
             return error($e->getMessage());
