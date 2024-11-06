@@ -33,7 +33,7 @@ class User extends BaseModel
             'id'=>'admin_notice',
             'displayName'=>'系统通知',
             'avatar'=>request()->domain().'/static/img/notice.png',
-            'name_en'=>'xitongtongzhi',
+            'name_py'=>'xitongtongzhi',
         ]
       ];
    }
@@ -280,7 +280,7 @@ class User extends BaseModel
             'user_id'=>$adminNotice['id'],
             'displayName'=>$adminNotice['displayName'],
             'realname'=>$adminNotice['displayName'],
-            'name_en'=>$adminNotice['name_en'],
+            'name_py'=>$adminNotice['name_py'],
             'avatar'=>$adminNotice['avatar'],
             'lastContent'=>$sendTime ? $count.'条公告' :'',
             'unread'=>0,
