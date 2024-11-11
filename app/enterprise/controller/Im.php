@@ -194,6 +194,8 @@ class Im extends BaseController
             return error(lang('user.exist'));
         }
         $user->avatar=avatarUrl($user->avatar,$user->realname,$user->user_id,120);
+        // 账号前面截取3位，后面截取两位，中间星号展示
+        $user->account=substr($user->account, 0, 3).'******'.substr($user->account, -2, 2);
         // 查询好友关系
         $friend=Friend::where(['friend_user_id'=>$user_id,'create_user'=>$this->userInfo['user_id'],'status'=>1])->find();
         $user->friend=$friend ? : '';
