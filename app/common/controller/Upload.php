@@ -132,7 +132,11 @@ class Upload extends BaseController
             $message['file_size']=$info['size'];
             $message['file_name']= $name.'.'.$info['ext'];
             $message['user_id']= $uid;
-            $data=Message::sendMessage($message);
+            $messageModel=new Message();
+            $data=$messageModel->sendMessage($message,$this->globalConfig);
+            if(!$data){
+                return shutdown($messageModel->getError());
+            }
             return $data;
         }else{
             return $ret;
