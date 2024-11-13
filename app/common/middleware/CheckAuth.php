@@ -4,6 +4,7 @@ namespace app\common\middleware;
 use Exception;
 use thans\jwt\exception\TokenInvalidException;
 use thans\jwt\facade\JWTAuth;
+use think\facade\Cache;
 //验证权限
 class CheckAuth
 {
@@ -38,6 +39,7 @@ class CheckAuth
         $userInfo = (array)json_decode($userInfo, true);
         
         if(cache('forbidUser_'.$userInfo['id'])){
+            Cache::delete('forbidUser_'.$userInfo['id']);
             return shutdown(lang('user.forbid'), -1);
         }
         //已经登陆，将用户信息存入请求头
