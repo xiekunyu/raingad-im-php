@@ -2,6 +2,7 @@
 namespace app\enterprise\listener;
 
 use app\enterprise\model\{Group,User,Message};
+use app\manage\model\Config;
 use GatewayClient\Gateway;
 
 // 监听群聊变更事件
@@ -39,8 +40,12 @@ class GroupChange
                 'at'=>[],
                 'action'=>$data['action'],
             ];
-            Message::sendMessage($msg);
-            
+            $config=Config::getSystemInfo();
+            $message=new Message();
+            $sendMsg = $message->sendMessage($msg,$config);
+            if (!$sendMsg) {
+                return shutdown($message->getError());
+            }
         }
         return true;
     }

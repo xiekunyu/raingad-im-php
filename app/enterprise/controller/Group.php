@@ -366,9 +366,12 @@ class Group extends BaseController
             'status'=>'succeed',
             'fromUser'=>$this->userInfo,
             'at'=>[0]
-        ];
-         Message::sendMessage($msg);
-         // wsSendMsg($group_id,"setNotice",['group_id'=>$param['id'],'notice'=>$param['notice']],1);
+         ];
+         $message=new Message();
+         $data = $message->sendMessage($msg,$this->globalConfig);
+         if (!$data) {
+             return warning($message->getError());
+         }
          return success('');
       }
 

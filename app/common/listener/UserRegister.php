@@ -48,7 +48,14 @@ class UserRegister
                                 'fromUser'=>$userInfo,
                                 'at'=>[]
                             ];
-                            Message::sendMessage($msg);
+                            $message=new Message();
+                            $sendMsg = $message->sendMessage($msg,[
+                                'chatInfo'=>$chatInfo,
+                                'sysInfo'=>$sysInfo
+                            ]);
+                            if (!$sendMsg) {
+                                return shutdown($message->getError());
+                            }
                         }
                     }
                 }
