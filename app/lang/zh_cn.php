@@ -60,6 +60,7 @@ return [
         'notice'=>"群公告",
         'all'=>"所有人",
         'noSpeak'=>"您已被禁言，恢复时间为：{:time}",
+        'notSpeak'=>"群聊已禁言！",
         'limit'=>"您已被限制创建群聊！",
     ],
     'user'=>[

@@ -109,6 +109,9 @@ class Message extends BaseModel
                 $this->error=lang('system.parameterError');
                 return false;
             }
+            if(!self::nospeak($group_id,$uid)){
+                return shutdown(lang('group.notSpeak'));
+            }
             // 群聊必须群成员才能发送消息
             $groupUser=GroupUser::where(['user_id'=>$uid,'status'=>1,'group_id'=>$group_id,'delete_time'=>0])->find();
             if(!$groupUser){

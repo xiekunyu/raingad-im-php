@@ -61,6 +61,7 @@ return [
         'notice'=>"Announcement",
         'all'=>"All",
         'noSpeak'=>"You have been banned from speaking, recovery time is {:time}",
+        'notSpeak'=>"Group chat has been banned!",
         'limit'=>"You have been restricted from creating Group chats! ",
     ],
     'user' => [  
