@@ -28,7 +28,8 @@ class ManageAuth
                     'task/stoptask',
                     'config/setconfig',
                     'index/publishnotice',
-                    'index/delnotice'
+                    'index/delnotice',
+                    'message/dealmsg',
                 ];
                 // 获取pathinfo信息
                 $pathinfo = strtolower($request->pathinfo());

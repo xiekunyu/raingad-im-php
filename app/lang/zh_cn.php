@@ -88,6 +88,7 @@ return [
         'blacklist' => '登陆已失效 请重新登陆',
         'expired' => '登陆已过期 请重新登陆',
         'notOwn' =>"客服不能为他本人",
+        'loginLimit' =>"您的密码错误次数过多，请稍后再试！",
         'registerLimit'=>"请{:time}分钟后再注册！",
     ],
     'im'=>[
@@ -105,6 +106,7 @@ return [
         'manageRedo'=>'被(管理员)撤回了一条消息',
         'msgContentLimit'=>'你发送的消息长度太长了！',
         'sendTimeLimit'=>'消息发送时间间隔为 {:time} 秒！',
+        'forbidMsg'=>'[该消息涉嫌违规，已被屏蔽]',
     ],
     'webRtc'=>[
         'cancel'=>'已取消通话',

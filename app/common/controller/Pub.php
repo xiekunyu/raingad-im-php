@@ -60,6 +60,11 @@ class Pub
                 return warning(lang('user.tokenFailure'));
             }
         }else{
+            $verifyTime=md5(request()->ip());
+            $hasError=Cache::get($verifyTime);
+            if($hasError && $hasError>5){
+                return warning(lang('user.loginLimit'));
+            }
             $userInfo=User::where(['account'=> $param['account']])->withoutField('register_ip,login_count,update_time,create_time')->find();
             if($userInfo==null){
                 return warning(lang('user.exist'));
@@ -76,6 +81,8 @@ class Pub
                 Cache::delete($param['account']);
             }else{
                 if($password!=$userInfo['password']){
+                    $hasError++;
+                    Cache::set($verifyTime,$hasError,300);
                     return warning(lang('user.passError'));
                 }
             }

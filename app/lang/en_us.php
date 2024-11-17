@@ -89,6 +89,7 @@ return [
         'blacklist' => 'Login has expired. Please log in again',  
         'expired' => 'Login has expired. Please log in again',
         'notOwn' =>"Customer service can't be for him",
+        'loginLimit' =>"Your password has been wrong too many times. Please try again later! ",
         'registerLimit'=>"Please register again in {:time} minutes"
     ],  
     'im' => [  
@@ -106,6 +107,7 @@ return [
         'manageRedo' => "A message has been recalled by (an admin)",
         'msgContentLimit' => "Message content too long",
         'sendTimeLimit'=>'The message sending interval is {:time} seconds!',
+        'forbidMsg'=>'[The message is suspected of violation and has been blocked]',
     ],
     'webRtc' => [  
         'cancel' => 'Call has been canceled',  

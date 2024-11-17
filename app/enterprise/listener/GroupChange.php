@@ -40,12 +40,7 @@ class GroupChange
                 'at'=>[],
                 'action'=>$data['action'],
             ];
-            $config=Config::getSystemInfo();
-            $message=new Message();
-            $sendMsg = $message->sendMessage($msg,$config);
-            if (!$sendMsg) {
-                return shutdown($message->getError());
-            }
+            Message::sendMsg($msg,1);
         }
         return true;
     }

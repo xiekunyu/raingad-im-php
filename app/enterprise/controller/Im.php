@@ -837,7 +837,7 @@ class Im extends BaseController
             wsSendMsg($toContactId, 'delMessage', $message, $message['is_group']); 
             return success('');
         } else {
-            return warning();
+            return warning(lang('im.exist'));
         }
     }
 }

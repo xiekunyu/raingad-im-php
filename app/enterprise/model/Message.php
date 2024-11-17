@@ -65,10 +65,7 @@ class Message extends BaseModel
             event('GreenText',['content'=>$param['content'],'service'=>"chat_detection"]);
         }
         $chatSetting = $globalConfig['chatInfo'];
-        $toContactId=$param['toContactId'];
         if ($is_group == 0) {
-            $chat_identify=chat_identify($param['user_id'],$toContactId);
-            $is_read=0;
             $kefuUser=$chatSetting['autoAddUser']['user_ids'] ?? [];
             $manageUser=User::where([['status','=',1],['role','>',0]])->column('user_id');
             $kefu=array_unique(array_merge($kefuUser,$manageUser));
@@ -102,9 +99,7 @@ class Message extends BaseModel
         }else{
             // 群聊必须群成员才能发送消息
             $group_id = explode('-', $param['toContactId'])[1] ?? '';
-            $chat_identify=$toContactId;
             $toContactId=$group_id;
-            $is_read=1;
             if(!$group_id){
                 $this->error=lang('system.parameterError');
                 return false;
@@ -122,6 +117,23 @@ class Message extends BaseModel
                 $this->error = lang('group.notSpeak',['time'=>date('Y-m-d H:i:s',$groupUser['no_speak_time'])]);
                 return false;
             }
+        }
+        if ($sendInterval) {
+            Cache::set('send_' . $uid, time(), $sendInterval);
+        }
+        return self::sendMsg($param,$is_group);
+    }
+
+    //实际发送消息
+    public static function sendMsg($param,$is_group=0){
+        $uid=self::$uid;
+        $toContactId=$param['toContactId'];
+        if($is_group==1){
+            $group_id = explode('-', $param['toContactId'])[1] ?? '';
+            $chat_identify=$toContactId;
+            $toContactId=$group_id;
+        }else{
+            $chat_identify=chat_identify($param['user_id'],$toContactId);
         }
         $fileSzie=isset($param['file_size'])?$param['file_size']:'';
         $fileName=isset($param['file_name'])?$param['file_name']:'';
@@ -144,12 +156,12 @@ class Message extends BaseModel
             'from_user'=>$param['user_id'],
             'to_user'=>$toContactId,
             'id'=>$param['id'],
-            'content'=>str_encipher($content,true),
+            'content'=>str_encipher($param['content'],true),
             'chat_identify'=>$chat_identify,
             'create_time'=>time(),
             'type'=>$param['type'],
             'is_group'=>$is_group,
-            'is_read'=>$is_read,
+            'is_read'=>$is_group ? 1 : 0,
             'file_id'=>$param['file_id'] ?? 0,
             "file_cate"=>$param['file_cate'] ?? 0,
             'file_size'=>$fileSzie,
@@ -161,9 +173,7 @@ class Message extends BaseModel
         $message=new self();
         $message->update(['is_last'=>0],['chat_identify'=>$chat_identify]);
         $message->save($data);
-        if ($sendInterval) {
-            Cache::set('send_' . $uid, time(), $sendInterval);
-        }
+        
         // 拼接消息推送
         $type=$is_group?'group':'simple';
         $sendData=$param;
@@ -184,7 +194,6 @@ class Message extends BaseModel
         $sendData['fromUser']['id']=(int)$sendData['fromUser']['id'];
         $sendData['fileSize']=$fileSzie;
         $sendData['fileName']=$fileName;
-        
         if(in_array($sendData['type'],self::$fileType)){
             $sendData['content']=getFileUrl($sendData['content']);
             if($sendData['type']=='image'){
@@ -205,10 +214,9 @@ class Message extends BaseModel
         $sendData['contactInfo']=$user->setContact($sendData['toContactId'],$is_group,$sendData['type'],$sendData['content']);
         // 向发送方发送消息
         wsSendMsg($toContactId,$type,$sendData,$is_group);
-        
         $sendData['toContactId']=$param['toContactId'];
         return $sendData;
-    }
+}
 
     // 群禁言
     public static function nospeak($group_id,$user_id){
