@@ -10,7 +10,7 @@ namespace app\manage\controller;
 
 use app\BaseController;
 use app\enterprise\model\{Message as MessageModel,User,Friend,Group};
-
+use think\facade\Db;
 class Message extends BaseController
 {
     protected $fileType = ['file', 'image','video','voice'];
@@ -133,14 +133,33 @@ class Message extends BaseController
         if($keywords){
             $where[] = ['realname', 'like', '%' . $keywords . '%'];
         }
-         // 如果是社区模式，就只查询的好友，如果是企业模式，就查询所有用户
-        if($config['sysInfo']['runMode']==1){
-            $where[]=['user_id','<>',$user_id];
-        }else{
-            $friendList = Friend::getFriend(['create_user' => $user_id,'status'=>1]);
-            $userList = array_keys($friendList);
+        $hasConvo=$param['hasConvo'] ?? 0;
+        if($hasConvo){
+            // 查询最近的联系人
+            $map1 = [['to_user', '=', $user_id], ['is_last', '=', 1], ['is_group', '=', 0]];
+            $map2 = [['from_user', '=', $user_id], ['is_last', '=', 1], ['is_group', '=', 0]];
+            $msgField = 'from_user,to_user,content as lastContent,create_time as lastSendTime,chat_identify,type,del_user';
+            $lasMsgList = Db::name('message')
+                ->field($msgField)
+                ->whereOr([$map1, $map2])
+                ->order('create_time desc')
+                ->select();
+            $ids1=\utils\Arr::arrayToString($lasMsgList,'from_user',false);
+            $ids2=\utils\Arr::arrayToString($lasMsgList,'to_user',false);
+            $ids=array_merge($ids1,$ids2);
+            $userList = array_diff($ids, [$user_id]);
             $where[]=['user_id','in',$userList];
+        }else{
+             // 如果是社区模式，就只查询的好友，如果是企业模式，就查询所有用户
+            if($config['sysInfo']['runMode']==1){
+                $where[]=['user_id','<>',$user_id];
+            }else{
+                $friendList = Friend::getFriend(['create_user' => $user_id,'status'=>1]);
+                $userList = array_keys($friendList);
+                $where[]=['user_id','in',$userList];
+            }
         }
+        
         $list = User::where($where)->field(User::$defaultField)->paginate(['list_rows'=>$listRows,'page'=>$pageSize]);
         $data=[];
         if($list){

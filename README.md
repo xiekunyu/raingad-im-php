@@ -84,7 +84,7 @@ Raingad-IM是一个开源的即时通信demo，需要前后端配合使用，主
 
 1、PHP需要安装扩展：`redis` `fileinfo`
 
-2、PHP需要取消禁用函数：`shell_exec` `proc_open` `pcntl_exec` `pcntl_alarm` `pcntl_fork` `pcntl_waitpid` `pcntl_wait` `pcntl_signal` `pcntl_signal_dispatch` `putenv`
+2、PHP需要取消禁用函数：`shell_exec` `chown` `exec` `putenv` `proc_open` `pcntl_exec` `pcntl_alarm` `pcntl_fork` `pcntl_waitpid` `pcntl_wait` `pcntl_signal` `pcntl_signal_dispatch`
 
 <b style="color:red">以上内容，非常重要！！！！！如果出现错误，重新检查是否以满足条件。</b>
 

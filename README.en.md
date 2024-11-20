@@ -65,7 +65,7 @@ You need to install the running environment first. The BAOTA server is recommend
 
 1. PHP needs to install an extension : `redis` `fileinfo`
 
-2. PHP needs to undisable the function : `shell_exec` `proc_open` `pcntl_exec` `pcntl_alarm` `pcntl_fork` `pcntl_waitpid` `pcntl_wait` `pcntl_signal` `pcntl_signal_dispatch` `putenv`
+2. PHP needs to undisable the function : `shell_exec` `chown` `exec` `putenv` `proc_open` `pcntl_exec` `pcntl_alarm` `pcntl_fork` `pcntl_waitpid` `pcntl_wait` `pcntl_signal` `pcntl_signal_dispatch`
 
 #### Source code download
 Download the full source code and put it on your own server. Take a look at the  [（releases）](https://gitee.com/raingad/im-instant-chat/releases) at the top of the gitee project home page and download the latest release in the distribution.
