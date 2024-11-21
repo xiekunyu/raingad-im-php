@@ -71,8 +71,9 @@ let jPreview={
         let ext=this.config.ext;
         let static=this.config.staticPath;
         let videoExt=['mp4','avi','3gp','rmvb','rm','flv','wmv','mkv','mov','mpeg','mpg','m4v','f4v','m4v'];
-        let imgExt=['jpeg','jpg','gif','png','bmp'];
+        let imgExt=['jpeg','jpg','gif','png','bmp','ico','webp'];
         let pdfExt=['pdf'];
+        let txtExt=['txt'];
         let audioExt=['mp3','wav','ogg','aac','flac','ape','m4a','mid','ram','amr','ac3','aiff','au','m4p','mmf','mpc','tta','vqf','wv','wma'];
         let docExt=['docx'];
         let pptExt=['pptx'];
@@ -125,9 +126,30 @@ let jPreview={
             })
         }else if($.inArray(ext,olExt)>=0){
             self.olView(url);
+        }else if($.inArray(ext,txtExt)>=0){
+            self.txtView(url);
         }else{
             self.error('不支持的文件类型!');
         }
+    },
+    txtView(url){
+        $("body").html("<div class='text-preview'><pre id='file-content'></pre><div>");
+        // 使用fetch API获取文件内容
+        fetch(url)
+        .then(response => {
+            if (!response.ok) {
+            throw new Error('网络响应错误');
+            }
+            return response.text();
+        })
+        .then(text => {
+            // 将获取到的文本内容放入<pre>元素中
+            document.getElementById('file-content').textContent = text;
+        })
+        .catch(error => {
+            console.error('获取文件内容时出错:', error);
+            document.getElementById('file-content').textContent = '无法加载文件内容，请检查URL或网络连接。';
+        });
     },
     olView(url){
         $("body").css({overflow:'hidden'});
@@ -323,7 +345,7 @@ let jPreview={
             inline: true,
             button: false,
             viewed: function() {
-                image.viewer('zoomTo', 1);
+                viewer.zoomTo(1);
             }
         });
     },
