@@ -5,6 +5,7 @@ return [
         'fail' => 'Operation failed',  
         'error' => 'System error',  
         'forbidden' => 'Access forbidden',  
+        'exist' => 'The record does not exist',  
         'sendOK' => 'Sent successfully',  
         'sendFail' => 'Sending failed',  
         'delOk' => 'Deletion successful',  
@@ -143,7 +144,7 @@ return [
     'file' => [  
         'preview' => "Preview file",  
         'browserDown' => "Please use the browser to download",  
-        'exist' => "File preview", // Note: This might be a duplicate of 'preview' and could be replaced with a more specific message  
+        'exist' => "The file does not exist", // Note: This might be a duplicate of 'preview' and could be replaced with a more specific message  
         'uploadLimit' => "File size cannot exceed {:size}MB",  
         'typeNotSupport' => "File format is not supported",  
         'uploadOk' => "Upload successful",  

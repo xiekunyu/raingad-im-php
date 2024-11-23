@@ -5,6 +5,7 @@ return [
         'fail'=>'操作失败',
         'error'=>'系统错误',
         'forbidden'=>"禁止访问",
+        'exist'=>"记录不存在",
         'sendOK'=>"发送成功",
         'sendFail'=>"发送失败",
         'delOk'=>"删除成功",
@@ -142,7 +143,7 @@ return [
     'file'=>[
         'preview'=>"预览文件",
         'browserDown'=>"请使用浏览器下载",
-        'exist'=>"预览文件",
+        'exist'=>"文件不存在",
         'uploadLimit'=>"文件大小不能超过{:size}MB",
         'typeNotSupport'=>"文件格式不支持",
         'uploadOk'=>"上传成功"

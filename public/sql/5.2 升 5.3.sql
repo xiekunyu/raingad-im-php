@@ -9,6 +9,7 @@ CREATE TABLE `yu_emoji` (
   `type` tinyint(1) NOT NULL DEFAULT '1' COMMENT '类型',
   `name` varchar(255) DEFAULT NULL COMMENT '名称',
   `src` varchar(255) DEFAULT NULL COMMENT '链接',
+  `file_id` INT(11) NOT NULL DEFAULT '0' COMMENT '文件id',
   `create_time` int(11) NOT NULL DEFAULT '0',
   `update_time` int(11) NOT NULL DEFAULT '0',
   `delete_time` int(11) NOT NULL DEFAULT '0',

@@ -6,7 +6,7 @@
 namespace app\common\controller;
 
 use app\BaseController;
-use app\enterprise\model\{File as FileModel,Message,User}; 
+use app\enterprise\model\{File as FileModel,Message,User,Emoji}; 
 use app\manage\model\{Config}; 
 use think\facade\Filesystem;
 use think\facade\Request;
@@ -75,7 +75,7 @@ class Upload extends BaseController
             $filecate="file";
         }
         if(!$prefix){
-            $prefix=$filecate.'/'.$uid.'/'.date('Y-m-d')."/";
+            $prefix=$filecate.'/'.date('Y-m-d').'/'.$uid."/";
         }
         $name=str_replace('.'.$info['ext'],'',$info['name']);
         $file=FileModel::where(['md5'=>$info['md5']])->find();
@@ -210,6 +210,74 @@ class Upload extends BaseController
         try{
             $info=$this->upload($param,$file,'avatar/'.$uid.'/',false);
             return $info['src'];
+        } catch(\Exception $e) {
+            return $e->getMessage().$e->getLine();
+        }
+    }
+
+    // 上传表情
+    public function uploadEmoji(){
+        $param=request::param();
+        try{
+            $file=request()->file('file');
+            $filePath = $file;
+            $uid=request()->userInfo['user_id'] ?? 1;
+            $info=$this->getFileInfo($filePath,$file,true);
+            if($info['ext']==''){
+                $pathInfo        = pathinfo($message['fileName'] ?? '');
+                $info['ext']     = $pathInfo['extension'];
+                $info['name']    =$message['fileName'] ?? '';
+            }
+            // 表情不能大于1m
+            if(1*1024*1024 < $info['size']){
+                return shutdown(lang('file.uploadLimit',['size'=>1]));
+            }
+            // 兼容uniapp文件上传
+            if($info['ext']=='' && isset($param['ext'])){
+                $info['ext']=$param['ext'];
+            }
+            $info['ext']=strtolower($info['ext']);
+            if(!in_array($info['ext'],['jpg','jpeg','gif','png'])){
+                return shutdown(lang('file.typeNotSupport'));
+            }
+            $prefix='avatar/'.$uid.'/';
+            $name=str_replace('.'.$info['ext'],'',$info['name']);
+            $fileInfo=FileModel::where(['md5'=>$info['md5']])->find();
+            // 判断文件是否存在，如果有则不再上传
+            if(!$fileInfo){
+                $newName   = uniqid() . '.' . $info['ext'];
+                $object = $prefix . $newName;
+                if($this->disk=='local'){
+                    $object='storage/'.$object;
+                }
+                Filesystem::disk($this->disk)->putFileAs($prefix, $filePath, $newName);
+                $ret = [
+                    "src"      => $object,
+                    "name"     => $name,
+                    "cate" => 1,
+                    "size"     => $info['size'],
+                    "md5"     => $info['md5'],
+                    "file_type"     => $info['mime'],
+                    "ext"     => $info['ext'],
+                    "type"     =>2,
+                    'user_id'=>$uid,
+                ];
+                $fileInfo=new FileModel;
+                $fileInfo->save($ret);
+            }else{
+                $object = $fileInfo->src;
+            }
+            // 把左边的/去掉再加上，避免有些有/有些没有
+            $object='/'.ltrim($object,'/');
+            $emojiInfo=[
+                'user_id'  => $uid,
+                "src"      => $object,
+                "name"     => $name,
+                "type"     => 2,
+                "file_id"  => $fileInfo->id,
+            ];
+            Emoji::create($emojiInfo);
+            return success('',$this->url.$object);
         } catch(\Exception $e) {
             return $e->getMessage().$e->getLine();
         }
