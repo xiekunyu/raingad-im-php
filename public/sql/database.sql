@@ -151,6 +151,23 @@ CREATE TABLE `yu_message` (
 
 -- --------------------------------------------------------
 
+
+--
+-- 表的结构 `yu_emoji`
+--
+
+CREATE TABLE `yu_emoji` (
+  `id` int(11) NOT NULL,
+  `user_id` int(11) NOT NULL DEFAULT '0' COMMENT '用户id，0为系统',
+  `type` tinyint(1) NOT NULL DEFAULT '1' COMMENT '类型',
+  `name` varchar(255) DEFAULT NULL COMMENT '名称',
+  `src` varchar(255) DEFAULT NULL COMMENT '链接',
+  `create_time` int(11) NOT NULL DEFAULT '0',
+  `update_time` int(11) NOT NULL DEFAULT '0',
+  `delete_time` int(11) NOT NULL DEFAULT '0',
+  `status` tinyint(1) NOT NULL DEFAULT '1'
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='表情表';
+
 --
 -- 表的结构 `yu_user`
 --
@@ -182,6 +199,7 @@ CREATE TABLE `yu_user` (
   `delete_time` int(11) UNSIGNED NOT NULL DEFAULT '0',
   `status` tinyint(1) UNSIGNED DEFAULT '1'
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci ROW_FORMAT=COMPACT;
+
 
 --
 -- 转存表中的数据 `yu_user`
@@ -248,6 +266,12 @@ ALTER TABLE `yu_group_user`
 --
 ALTER TABLE `yu_message`
   ADD PRIMARY KEY (`msg_id`);
+
+--
+-- 表的索引 `yu_emoji`
+--
+ALTER TABLE `yu_emoji`
+  ADD PRIMARY KEY (`id`);
 
 --
 -- 表的索引 `yu_user`
