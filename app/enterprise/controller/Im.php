@@ -418,6 +418,8 @@ class Im extends BaseController
             $message->content = str_encipher($text);
             $message->type = 'event';
             $message->is_undo = 1;
+            //@的数据清空
+            $message->at = ''; 
             $message->save();
             $info = $message->toArray();
             // $data = $info;
