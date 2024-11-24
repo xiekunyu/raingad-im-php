@@ -13,7 +13,7 @@ class Message extends BaseModel
     protected $pk="msg_id";
     protected $json      = ["extends"];
     protected $jsonAssoc = true;
-    protected static $fileType=['file','image','video','voice'];
+    protected static $fileType=['file','image','video','voice','emoji'];
 
     // 添加聊天记录
     public static function addData($data){

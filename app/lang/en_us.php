@@ -29,6 +29,7 @@ return [
     'messageType' => [  
         'other' => "[Unsupported message type]",  
         'image' => "[Image]",  
+        'emoji' => "[DIYemoji]",  
         'voice' => "[Voice]",  
         'video' => "[Video]",  
         'file' => "[File]",  

@@ -958,6 +958,9 @@ function getMsgType($type,$callVideo=false){
         case 'voice':
             $msgName=lang('messageType.voice');
             break;
+        case 'emoji':
+            $msgName=lang('messageType.emoji');
+            break;
         case 'video':
             $msgName=lang('messageType.video');
             break;

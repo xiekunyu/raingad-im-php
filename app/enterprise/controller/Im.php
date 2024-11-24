@@ -13,7 +13,7 @@ use think\facade\Cache;
 
 class Im extends BaseController
 {
-    protected $fileType = ['file', 'image','video','voice'];
+    protected $fileType = ['file', 'image','video','voice','emoji'];
     // 获取联系人列表
     public function getContacts()
     {

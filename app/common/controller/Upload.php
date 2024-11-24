@@ -229,8 +229,8 @@ class Upload extends BaseController
                 $info['name']    =$message['fileName'] ?? '';
             }
             // 表情不能大于1m
-            if(1*1024*1024 < $info['size']){
-                return shutdown(lang('file.uploadLimit',['size'=>1]));
+            if(512*1024 < $info['size']){
+                return shutdown(lang('file.uploadLimit',['size'=>0.5]));
             }
             // 兼容uniapp文件上传
             if($info['ext']=='' && isset($param['ext'])){
@@ -240,7 +240,7 @@ class Upload extends BaseController
             if(!in_array($info['ext'],['jpg','jpeg','gif','png'])){
                 return shutdown(lang('file.typeNotSupport'));
             }
-            $prefix='avatar/'.$uid.'/';
+            $prefix='emoji/'.$uid.'/';
             $name=str_replace('.'.$info['ext'],'',$info['name']);
             $fileInfo=FileModel::where(['md5'=>$info['md5']])->find();
             // 判断文件是否存在，如果有则不再上传
@@ -274,7 +274,7 @@ class Upload extends BaseController
                 "src"      => $object,
                 "name"     => $name,
                 "type"     => 2,
-                "file_id"  => $fileInfo->id,
+                "file_id"  => $fileInfo->file_id,
             ];
             Emoji::create($emojiInfo);
             return success('',$this->url.$object);
