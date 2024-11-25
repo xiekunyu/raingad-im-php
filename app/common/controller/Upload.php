@@ -229,8 +229,8 @@ class Upload extends BaseController
                 $info['name']    =$message['fileName'] ?? '';
             }
             // 表情不能大于1m
-            if(512*1024 < $info['size']){
-                return shutdown(lang('file.uploadLimit',['size'=>0.5]));
+            if(2*1024*1024 < $info['size']){
+                return shutdown(lang('file.uploadLimit',['size'=>2]));
             }
             // 兼容uniapp文件上传
             if($info['ext']=='' && isset($param['ext'])){

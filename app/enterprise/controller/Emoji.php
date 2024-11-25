@@ -4,7 +4,7 @@ namespace app\enterprise\controller;
 
 use app\BaseController;
 
-use app\enterprise\model\{Emoji as EmojiModel,File};
+use app\enterprise\model\{Emoji as EmojiModel,File,Message};
 use think\facade\Filesystem;
 use think\facade\View;
 class Emoji extends BaseController
@@ -65,8 +65,9 @@ class Emoji extends BaseController
             $res=EmojiModel::where(['id'=>$id])->delete();
             if($res){
                 $exist=EmojiModel::where(['file_id'=>$emoji['file_id']])->find();
+                $exist2=Message::where(['file_id'=>$emoji['file_id']])->find();
                 // 如果文件没有引用了，就删除掉源文件
-                if(!$exist){
+                if(!$exist || !$exist2){
                     $disk=env('filesystem.driver','local');
                     $file=File::find($emoji['file_id']);
                     Filesystem::disk($disk)->delete($file->src);

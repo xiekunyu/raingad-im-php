@@ -8,10 +8,10 @@
 return [
     'app_name'=>'Raingad-IM',
     'andriod' => [
-        'version' => '5.2.3',
-        'release' => '20241122',
+        'version' => '5.3.0',
+        'release' => '20241125',
         'url' =>env('app.andriod_webclip',''),
-        'update_info' => '1.emoji消息本地化，不再接入三方\n2.移动端文件预览可选择在线预览或本地预览，h5本地预览会自动下载文件\n3.修复移动端发送表情，在web或PC端无法显示会话的问题\n4.修复若干BUG',
+        'update_info' => '1.移动端和桌面端增加自定义表情，仅移动端可管理\n2.修复消息串台的情况，修复后暂未发现其他还有串台的情况\n3.修复若干BUG',
         'update_type' => 'solicit',
     ],
     'ios' => [
@@ -22,8 +22,8 @@ return [
         'update_type' => 'solicit',
     ],
     'windows' => [
-        'version' => '5.2.2',
-        'release' => '20241118',
+        'version' => '5.3.0',
+        'release' => '20241125',
         'url' => env('app.win_webclip',''),
         'update_info' => '1.lemon-imui本地化，消息底部检测',
         'update_type' => 'solicit',
