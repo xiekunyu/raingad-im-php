@@ -6,10 +6,10 @@
 # UPDATE_TYPE ：forcibly 强制更新, solicit弹窗确认更新, silent 静默更新 
 # UPDATE_INFO ：更新说明，换行用\n 
 return [
-    'app_name'=>'Raingad-IM',
+    'app_name'=>env('app.name', 'Raingad-IM'),
     'andriod' => [
-        'version' => '5.3.0',
-        'release' => '20241125',
+        'version' => env('app.version', '5.3.1'),
+        'release' => env('app.release', '20241127'),
         'url' =>env('app.andriod_webclip',''),
         'update_info' => '1.移动端和桌面端增加自定义表情，仅移动端可管理\n2.修复消息串台的情况，修复后暂未发现其他还有串台的情况\n3.修复若干BUG',
         'update_type' => 'solicit',

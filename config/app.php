@@ -4,10 +4,10 @@
 // +----------------------------------------------------------------------
 
 return [
-    'app_name' =>"Raingad-IM",
+    'app_name' =>env('app.name', 'Raingad-IM'),
     'app_logo' =>"https://im.file.raingad.com/logo/logo.png",
-    'app_version' => '5.3.0',
-    'app_release' =>"20241125",
+    'app_version' => env('app.version', '5.3.1'),
+    'app_release' =>env('app.release', '20241127'),
     // 应用地址
     'app_host'         => env('app.host', ''),
     // 应用的命名空间

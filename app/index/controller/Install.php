@@ -174,6 +174,9 @@ class Install
 APP_DEBUG = true
 
 [APP]
+NAME = IM
+VERSION = 5.3.1
+RELEASE = 20241127
 DEFAULT_TIMEZONE = Asia/Shanghai
 ID = a1b2c3d4e5f
 SECRET = GHJKUG123456sdfghjkl
