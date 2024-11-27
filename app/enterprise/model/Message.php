@@ -126,7 +126,7 @@ class Message extends BaseModel
 
     //实际发送消息
     public static function sendMsg($param,$is_group=0){
-        $uid=self::$uid;
+        $uid=self::$uid ?: ($param['user_id'] ?? 1);
         $toContactId=$param['toContactId'];
         if($is_group==1){
             $group_id = explode('-', $param['toContactId'])[1] ?? '';

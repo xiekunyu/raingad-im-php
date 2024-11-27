@@ -61,6 +61,10 @@ class UserRegister
                 // 未设置群主就不能生成群
                 if($uid){
                     $userInfo=$user->field('user_id,realname,avatar')->where(['user_id'=>$uid])->find();
+                    // 成员不存在也不进行操作了
+                    if(!$userInfo){
+                        return false;
+                    }
                     $groupInfo=Group::where(['group_id'=>$group_id])->find();
                     // 如果没有群ID就需要创建
                     if(!$groupInfo){
