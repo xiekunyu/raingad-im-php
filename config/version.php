@@ -11,7 +11,7 @@ return [
         'version' => env('app.version', '5.3.1'),
         'release' => env('app.release', '20241127'),
         'url' =>env('app.andriod_webclip',''),
-        'update_info' => '1.移动端和桌面端增加自定义表情，仅移动端可管理\n2.修复消息串台的情况，修复后暂未发现其他还有串台的情况\n3.修复若干BUG',
+        'update_info' => '1.移动端键盘遮挡问题\n2.修复消息类型的列表展示\n3.修复若干BUG',
         'update_type' => 'solicit',
     ],
     'ios' => [
