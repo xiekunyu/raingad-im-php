@@ -323,6 +323,12 @@ ALTER TABLE `yu_message`
   MODIFY `msg_id` int(11) NOT NULL AUTO_INCREMENT;
 
 --
+-- 使用表AUTO_INCREMENT `yu_emoji`
+--
+ALTER TABLE `yu_emoji`
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
+
+--
 -- 使用表AUTO_INCREMENT `yu_user`
 --
 ALTER TABLE `yu_user`

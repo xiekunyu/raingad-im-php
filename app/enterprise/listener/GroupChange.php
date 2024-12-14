@@ -19,6 +19,8 @@ class GroupChange
             if(Gateway::isUidOnline($groupInfo['owner_uid'])){
                 wsSendMsg([$groupInfo['owner_uid']], 'addGroup', $groupInfo);
             }
+        }elseif($data['action'] == 'editGroupName'){
+            return;
         }
         $uid=$groupInfo['owner_uid'] ?? 1;
         $userInfo=$user->field('user_id,realname,avatar')->where(['user_id'=>$uid])->find();

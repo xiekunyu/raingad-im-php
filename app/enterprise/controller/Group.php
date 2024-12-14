@@ -447,7 +447,7 @@ class Group extends BaseController
             // 加入者的名称
             $groupInfo['joinerName']=$this->userInfo['realname'];
             GroupUser::joinGroup($uid,$inviteUid,$groupInfo);
-            return success(lang('group.joinOk'));
+            return success(lang('system.joinOk'));
          }catch(Exception $e){
             return error($e->getMessage());
          }

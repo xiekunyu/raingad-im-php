@@ -166,7 +166,7 @@ class Friend extends BaseController
             return warning(lang('system.notNull'));
         }
         FriendModel::update(['nickname'=>$param['nickname']],['friend_id'=>$param['friend_id']]);
-        return success(lang('system.delOk'));
+        return success(lang('system.editOk'));
     }
 
     // 获取最新的一条和申请的总数
