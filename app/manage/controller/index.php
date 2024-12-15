@@ -73,7 +73,7 @@ class Index extends BaseController
             'is_read'=>1,
             'is_top'=>0,
             'is_notice'=>1,
-            'at'=>null,
+            'at'=>[],
             'pid'=>0,
             'extends'=>['title'=>$param['title'],'notice'=>$param['content']],
         ];
