@@ -110,7 +110,7 @@ class Pub
             'login_count'=>Db::raw('login_count+1')
         ];
         User::where('user_id',$userInfo['user_id'])->update($update);
-        $userInfo['qrUrl']=request()->domain().'/scan/u/'.encryptIds($userInfo['user_id']);
+        $userInfo['qrUrl']=getMainHost().'/scan/u/'.encryptIds($userInfo['user_id']);
         unset($userInfo['password'],$userInfo['salt']);
         $userInfo['displayName']=$userInfo['realname'];
         $userInfo['id']=$userInfo['user_id'];
@@ -368,7 +368,7 @@ class Pub
         if($platform==1101){
             $packageName=$name."_Setup_".$versionInfo['version'].".apk";
             if(is_file(PACKAGE_PATH . $packageName)){
-                $andriod = rtrim(request()->domain(),'/').'/unpackage/'.$packageName;
+                $andriod = getMainHost().'/unpackage/'.$packageName;
             }
             $downUrl=env('app.andriod_webclip','') ? : $andriod;
         }else{

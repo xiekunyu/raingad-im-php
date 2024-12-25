@@ -118,7 +118,7 @@ class Install
         self::mkDatabase($db_config);
         // 检测数据库连接
         try{
-            $conn=mysqli_connect($db_config['hostname'], $db_config['username'], $db_config['password']);
+            $conn=mysqli_connect($db_config['hostname'], $db_config['username'], $db_config['password'],'',$db_config['hostport']);
             // 检测连接
             if ($conn->connect_error) {
                 return warning("连接失败: " . $conn->connect_error);
@@ -175,8 +175,11 @@ APP_DEBUG = true
 
 [APP]
 NAME = IM
-VERSION = 5.3.1
-RELEASE = 20241127
+LOGO = 
+VERSION = 5.4.0
+RELEASE = 20241226
+# 主域名必填
+HOST = 
 DEFAULT_TIMEZONE = Asia/Shanghai
 ID = a1b2c3d4e5f
 SECRET = GHJKUG123456sdfghjkl

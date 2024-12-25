@@ -215,6 +215,22 @@ function password_hash_tp($password,$salt)
     return md5($salt.$password.$salt);
 }
 
+// 获取主域名
+function getMainHost(){
+    $host=config('app.app_host','');
+    if($host){
+        return $host;
+    }
+    $port=request()->port();
+    $domain=request()->domain();
+    if(\utils\Regular::is_url($domain)){
+        if($port!=80  || $port !=443){
+            return request()->domain().":".$port;
+        }
+    }
+    return $domain;
+}
+
 // 获取url中的主机名
 function getHost($url){ 
     if(!preg_match('/http[s]:\/\/[\w.]+[\w\/]*[\w.]*\??[\w=&\+\%]*/is',$url)){
@@ -296,7 +312,7 @@ function avatarUrl($path, $str = "雨",$uid=0,$s=80)
         }
     }else {
         if($str){
-            $url=request()->domain()."/avatar/".$str.'/'.$s.'/'.$uid;
+            $url=getMainHost()."/avatar/".$str.'/'.$s.'/'.$uid;
         }else{
             $url='';
         }
@@ -600,7 +616,7 @@ function previewUrl($url){
     if($previewUrl){
         $preview=$previewUrl.$url;
     }else{
-        $preview=rtrim(request()->domain(),'/')."/view.html?src=".$url;
+        $preview=getMainHost()."/view.html?src=".$url;
     }
     return $preview;
 }
@@ -715,7 +731,7 @@ function updateEnv($key, $value)
 // 获取文件的域名
 function getDiskUrl(){
     $disk=env('filesystem.driver','local');
-    $url=request()->domain();
+    $url=getMainHost();
     if($disk=='aliyun'){
         $url=env('filesystem.aliyun_url','');
     }elseif($disk=='qiniu'){
@@ -929,7 +945,7 @@ function getExtUrl($path){
     if(!file_exists(public_path().$extUrl)){
         $extUrl='/static/img/ext/folder.png';
     }
-    return rtrim(request()->domain(),'/').$extUrl;
+    return getMainHost().$extUrl;
 }
 
 // 字符串内容加解密函数
@@ -937,7 +953,7 @@ function str_encipher($str,$encode=true,$key=''){
     if($key==''){
          $key=config('app.aes_chat_key');
     }
-    if($key==''){
+    if($key=='' || $str==''){
         return $str;
     }
     if($encode){
@@ -993,7 +1009,7 @@ function getAppDowmUrl($platform='andriod'){
         $path="/downloadApp/andriod";
     }
     if(is_file(PACKAGE_PATH . $packageName)){
-        return rtrim(request()->domain(),'/').$path;
+        return getMainHost().$path;
     }else{
         return '';
     }
@@ -1048,3 +1064,4 @@ function preg_link($text){
     return $replaced_text;
 
 }
+

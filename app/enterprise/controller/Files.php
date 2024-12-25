@@ -37,7 +37,7 @@ class Files extends BaseController
                     $data[$k]['name'] = $v['name'].'.'.$v['ext'];
                     $data[$k]['msg_type'] = getFileType($v['ext'],true);
                     $data[$k]['user_id_info'] = $userList[$v['user_id']] ?? [];
-                    $data[$k]['download'] = request()->domain().'/filedown/'.encryptIds($v['file_id']);
+                    $data[$k]['download'] = getMainHost().'/filedown/'.encryptIds($v['file_id']);
                 }
                 
             }
@@ -83,7 +83,7 @@ class Files extends BaseController
                     $ext=explode('.',$content);
                     $data[$k]['ext'] = end($ext);
                     $data[$k]['user_id_info'] = $userList[$v['from_user']] ?? [];
-                    $data[$k]['download'] = request()->domain().'/filedown/'.encryptIds($v['file_id']);
+                    $data[$k]['download'] = getMainHost().'/filedown/'.encryptIds($v['file_id']);
                 }
             }
         }

@@ -316,7 +316,7 @@ class Im extends BaseController
                     'sendTime' => $v['create_time'] * 1000,
                     'content' => $content,
                     'preview' => $preview,
-                    'download' => $v['file_id'] ? request()->domain().'/filedown/'.encryptIds($v['file_id']) : '',
+                    'download' => $v['file_id'] ? getMainHost().'/filedown/'.encryptIds($v['file_id']) : '',
                     'is_read' => $v['is_read'],
                     'is_group' => $v['is_group'],
                     'at' => $atList,

@@ -110,7 +110,7 @@ class Upload extends BaseController
                 if($this->disk=='aliyun'){
                     $message['extends']['poster']=$this->url.$ret['src'].'?x-oss-process=video/snapshot,t_1000,m_fast,w_800,f_png';
                 }else{
-                    $message['extends']['poster']='https://im.file.raingad.com/static/image/video.png';
+                    $message['extends']['poster']=getMainHost().'/static/common/img/video.png';
                 }
             }
             // 如果发送的文件是图片、视频、音频则将消息类型改为对应的类型

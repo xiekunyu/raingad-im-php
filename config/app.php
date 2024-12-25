@@ -5,7 +5,7 @@
 
 return [
     'app_name' =>env('app.name', 'Raingad-IM'),
-    'app_logo' =>"https://im.file.raingad.com/logo/logo.png",
+    'app_logo' =>env('app.logo', env('app.host', '')."/static/common/img/uniapp.png"),
     'app_version' => env('app.version', '5.3.1'),
     'app_release' =>env('app.release', '20241127'),
     // 应用地址
@@ -18,7 +18,7 @@ return [
     // 默认应用
     'default_app'      => 'index',
     // 默认时区
-    'default_timezone' => 'Asia/Shanghai',
+    'default_timezone' => env('app.default_timezone', 'Asia/Shanghai'),
 
     // 应用映射（自动多应用模式有效）
     'app_map'          => [],

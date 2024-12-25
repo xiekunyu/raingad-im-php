@@ -93,9 +93,9 @@ class Api
         Cache::set($md5,$userInfo,300);
         // 生成Url
         if($isMobile){
-            $url=rtrim(request()->domain(),'/').'/h5/#/pages/login/index?token='.$md5;
+            $url=getMainHost().'/h5/#/pages/login/index?token='.$md5;
         }else{
-            $url=rtrim(request()->domain(),'/').'/#/login?token='.$md5;
+            $url=getMainHost().'/#/login?token='.$md5;
         }
         return success(lang('user.loginOk'),$url);
         

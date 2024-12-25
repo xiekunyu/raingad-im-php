@@ -98,7 +98,7 @@ class Message extends BaseController
                     'create_time' => is_string($v['create_time']) ? $v['create_time'] : date('Y-m-d H:i:s',$v['create_time']),
                     'content' => $content,
                     'preview' => $preview,
-                    'download' => $v['file_id'] ? request()->domain().'/filedown/'.encryptIds($v['file_id']) : '',
+                    'download' => $v['file_id'] ? getMainHost().'/filedown/'.encryptIds($v['file_id']) : '',
                     'is_read' => $v['is_read'],
                     'is_group' => $v['is_group'],
                     'at' => $atList,

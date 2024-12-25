@@ -32,8 +32,14 @@ class User extends BaseModel
          'adminNotice'=>[
             'id'=>'admin_notice',
             'displayName'=>'系统通知',
-            'avatar'=>request()->domain().'/static/img/notice.png',
+            'avatar'=>getMainHost().'/static/common/img/notice.png',
             'name_py'=>'xitongtongzhi',
+         ],
+         'fileTransfer'=>[
+            'id'=>-1,
+            'displayName'=>'我的收藏',
+            'avatar'=>getMainHost().'/static/common/img/file_transfer.png',
+            'name_py'=>'wodeshoucang',
         ]
       ];
    }
@@ -268,31 +274,54 @@ class User extends BaseModel
    public static function otherChat($uid){
       $staticList=self::staticUser();
       $adminNotice=$staticList['adminNotice'];
+      $fileTransfer=$staticList['fileTransfer'];
       $count=Message::where(['chat_identify'=>$adminNotice['id']])->count();
       $createTime=Message::where(['chat_identify'=>$adminNotice['id']])->order('id desc')->value('create_time');
       $sendTime=0;
       if($createTime){
          $sendTime=is_string($createTime) ? strtotime($createTime) : $createTime;
       }
+      $chat_identify=chat_identify($uid,$fileTransfer['id']);
+      $fileLast=Message::where(['is_last'=>1,'chat_identify'=>$chat_identify])->find();
+      $fileSendTime=$fileLast['create_time'] ?? '';
+      $content =$fileLast['content'] ?? '';
       $notice=[
             [
-            'id'=>$adminNotice['id'],
-            'user_id'=>$adminNotice['id'],
-            'displayName'=>$adminNotice['displayName'],
-            'realname'=>$adminNotice['displayName'],
-            'name_py'=>$adminNotice['name_py'],
-            'avatar'=>$adminNotice['avatar'],
-            'lastContent'=>$sendTime ? $count.'条公告' :'',
-            'unread'=>0,
-            'lastSendTime'=>$sendTime * 1000,
-            'is_group'=>2,
-            'setting'=>[],
-            'type'=>'',
-            'is_top'=>0,
-            'is_notice'=>1,
-            'is_online'=>0,
-            'index'=>"[1]系统消息",
-         ],
+               'id'=>$adminNotice['id'],
+               'user_id'=>$adminNotice['id'],
+               'displayName'=>$adminNotice['displayName'],
+               'realname'=>$adminNotice['displayName'],
+               'name_py'=>$adminNotice['name_py'],
+               'avatar'=>$adminNotice['avatar'],
+               'lastContent'=>$sendTime ? $count.'条公告' :'',
+               'unread'=>0,
+               'lastSendTime'=>$sendTime * 1000,
+               'is_group'=>2,
+               'setting'=>[],
+               'type'=>'',
+               'is_top'=>0,
+               'is_notice'=>1,
+               'is_online'=>0,
+               'index'=>"[1]系统消息",
+            ],
+            [
+               'id'=>$fileTransfer['id'],
+               'user_id'=>$fileTransfer['id'],
+               'displayName'=>$fileTransfer['displayName'],
+               'realname'=>$fileTransfer['displayName'],
+               'name_py'=>$fileTransfer['name_py'],
+               'avatar'=>$fileTransfer['avatar'],
+               'lastContent'=> str_encipher($content,false) ?: '传输你的文件',
+               'unread'=>0,
+               'lastSendTime'=>(is_string($fileSendTime) ? strtotime($fileSendTime) : $fileSendTime) * 1000,
+               'is_group'=>3,
+               'setting'=>[],
+               'type'=>$fileLast['type'] ?? 'text',
+               'is_top'=>0,
+               'is_notice'=>1,
+               'is_online'=>0,
+               'index'=>"[1]系统消息",
+            ],
       ];
 
       return $notice;

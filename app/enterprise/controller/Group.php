@@ -65,7 +65,7 @@ class Group extends BaseController
          $userInfo=$userList[$group['owner_id']];
          $expire=time()+7*86400;
          $token=urlencode(authcode($this->uid.'-'.$group_id,'ENCODE', $jm,7*86400));
-         $qrUrl=request()->domain().'/scan/g/'.$token;
+         $qrUrl=getMainHost().'/scan/g/'.$token;
          $group['id']=$groupId;
          $group['qrUrl']=$qrUrl;
          $group['qrExpire']=date('m月d日',$expire);

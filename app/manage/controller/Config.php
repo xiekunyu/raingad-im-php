@@ -85,7 +85,7 @@ class Config extends BaseController
         // 邀请码仅两天有效
         $code=\utils\Str::random(8);
         Cache::set($code,$uid,172800);
-        $url=request()->domain().'/index.html/#/register?inviteCode='.$code;
+        $url=getMainHost().'/index.html/#/register?inviteCode='.$code;
         return success('',$url);
     }
 

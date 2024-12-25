@@ -39,6 +39,9 @@ class Message extends BaseModel
     public function sendMessage($param,$globalConfig=false){
         $is_group = $param['is_group'] ?? 0;
         $uid=self::$uid;
+        if($param['toContactId']==-1){
+            $is_group=0;
+        }
         // 如果是系统账号，直接禁言
         if($is_group>1){
             $this->error=lang('im.forbidChat');
@@ -203,7 +206,7 @@ class Message extends BaseModel
             }
             $sendData['preview']=previewUrl($sendData['content'],$pre);
             $sendData['extUrl']=getExtUrl($sendData['content']);
-            $sendData['download']= $sendData['file_id'] ? request()->domain().'/filedown/'.encryptIds($sendData['file_id']) : '';
+            $sendData['download']= $sendData['file_id'] ? getMainHost().'/filedown/'.encryptIds($sendData['file_id']) : '';
         }
         if($is_group==0){
             $toContactId=[$toContactId,$param['user_id']];

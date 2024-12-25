@@ -63,7 +63,7 @@ class Index
         $file = $file->toArray();
         // 兼容本地文件下载
         $fileUrl=getDiskUrl();
-        if($fileUrl==request()->domain()){
+        if($fileUrl==getMainHost()){
             $url=rtrim(public_path(),'/').$file['src'];
         }else{
             $url= getFileUrl($file['src']);
@@ -134,6 +134,7 @@ class Index
 
     // app下载页
     public function downApp(){
+        // echo request()->domain(true);
         $downAppUrl=env('app.downApp_url','');
         if($downAppUrl){
             return redirect($downAppUrl);
