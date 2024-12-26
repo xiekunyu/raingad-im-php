@@ -11,7 +11,7 @@ Raingad-IM是一个开源的即时通信demo，需要前后端配合使用，主
 | 后端源码 | https://gitee.com/raingad/im-instant-chat |
 | web端演示 | http://im.raingad.com/index.html |
 | 移动端H5演示 | http://im.raingad.com/h5 |
-| 安卓APP演示 | https://emoji.raingad.com/file/raingad.apk |
+| 桌面端/安卓端 | 请进前端演示页下载 |
 
 
 体验账号：13800000002  密码：123456
@@ -163,7 +163,7 @@ PS：如需开启聊天文件存入oss，需要在后台中进行配置，配置
 
 ### 视频教程（无声）
 
-[哟，原来有视频教程！！！](https://im.file.raingad.com/static/video/jiaocheng.mp4)
+[哟，原来有视频教程！！！](https://files.raingad.com/static/video/jiaocheng.mp4)
 
 ### 安装部署服务
 

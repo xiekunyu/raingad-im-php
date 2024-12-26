@@ -285,6 +285,7 @@ class User extends BaseModel
       $fileLast=Message::where(['is_last'=>1,'chat_identify'=>$chat_identify])->find();
       $fileSendTime=$fileLast['create_time'] ?? '';
       $content =$fileLast['content'] ?? '';
+      $friend=Friend::where(['create_user'=>$uid,'friend_user_id'=>$fileTransfer['id']])->find();
       $notice=[
             [
                'id'=>$adminNotice['id'],
@@ -298,7 +299,7 @@ class User extends BaseModel
                'lastSendTime'=>$sendTime * 1000,
                'is_group'=>2,
                'setting'=>[],
-               'type'=>'',
+               'type'=>'text',
                'is_top'=>0,
                'is_notice'=>1,
                'is_online'=>0,
@@ -313,12 +314,12 @@ class User extends BaseModel
                'avatar'=>$fileTransfer['avatar'],
                'lastContent'=> str_encipher($content,false) ?: '传输你的文件',
                'unread'=>0,
-               'lastSendTime'=>(is_string($fileSendTime) ? strtotime($fileSendTime) : $fileSendTime) * 1000,
+               'lastSendTime'=>((is_string($fileSendTime) ? strtotime($fileSendTime) : $fileSendTime) * 1000) ?: time() * 1000,
                'is_group'=>3,
                'setting'=>[],
                'type'=>$fileLast['type'] ?? 'text',
-               'is_top'=>0,
-               'is_notice'=>1,
+               'is_top'=>$friend['is_top'] ?? 0,
+               'is_notice'=>$friend['is_notice'] ?? 1,
                'is_online'=>0,
                'index'=>"[1]系统消息",
             ],

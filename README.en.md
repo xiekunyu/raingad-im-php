@@ -11,7 +11,6 @@ Raingad-IM is an open source instant communication demo, which needs to be used 
 | Back-end source code | https://gitee.com/raingad/im-instant-chat |
 | Web Demo | http://im.raingad.com/index.html |
 | H5 Demo | http://im.raingad.com/h5 |
-| Android Demo | https://emoji.raingad.com/file/raingad.apk |
 
 
 Dmeo account：13800000002  password：123456

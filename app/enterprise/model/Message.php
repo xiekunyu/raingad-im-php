@@ -163,7 +163,7 @@ class Message extends BaseModel
             'chat_identify'=>$chat_identify,
             'create_time'=>time(),
             'type'=>$param['type'],
-            'is_group'=>$is_group,
+            'is_group'=>$toContactId==-1 ? 3 : $is_group,
             'is_read'=>$is_group ? 1 : 0,
             'file_id'=>$param['file_id'] ?? 0,
             "file_cate"=>$param['file_cate'] ?? 0,

@@ -199,7 +199,7 @@ class Im extends BaseController
         $chat_identify = $this->setIsRead($is_group, $param['toContactId']);
         $type = isset($param['type']) ? $param['type'] : '';
         $is_at = isset($param['is_at']) ? $param['is_at'] : '';
-        $map = ['chat_identify' => $chat_identify, 'status' => 1, 'is_group' => $is_group];
+        $map = ['chat_identify' => $chat_identify, 'status' => 1];
         $where = [];
         if ($type && $type != "all") {
             $map['type'] = $type;
