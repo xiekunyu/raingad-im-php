@@ -59,7 +59,7 @@ class Message extends BaseModel
             // 限制文字内容长度
             $text = strip_tags($param['content']);
             $textLen = mb_strlen($text);
-            if ($textLen > 1024) {
+            if ($textLen > 2048) {
                 $this->error=lang('im.msgContentLimit') . $textLen;
                 return false;
             }
@@ -68,59 +68,62 @@ class Message extends BaseModel
             event('GreenText',['content'=>$param['content'],'service'=>"chat_detection"]);
         }
         $chatSetting = $globalConfig['chatInfo'];
-        if ($is_group == 0) {
-            $kefuUser=$chatSetting['autoAddUser']['user_ids'] ?? [];
-            $manageUser=User::where([['status','=',1],['role','>',0]])->column('user_id');
-            $kefu=array_unique(array_merge($kefuUser,$manageUser));
-            $csUid = self::$userInfo['cs_uid'] ?? 0;
-            $manage=false;
-            // 发送者和接受者是客服或者管理员也可以发送消息
-            if(in_array($uid,$kefu) || in_array($param['toContactId'],$kefu)){
-                $manage=true;
-            }
-            if($chatSetting['simpleChat'] == 0 && !$manage){
-                $this->error=lang('im.forbidChat');
-                return false;
-            }
-            // 如果是单聊，并且是社区模式和不是自己的客服、需要判断是否是好友
-            if ($globalConfig['sysInfo']['runMode'] == 2 && $csUid != $param['toContactId'] && !$manage) {
-                // 判断我是不是对方的客服
-                $cus = User::where(['user_id' => $param['toContactId']])->value('cs_uid');
-                if ($cus != $uid) {
-                    $friend = Friend::where(['friend_user_id' => $uid, 'create_user' => $param['toContactId']])->find();
-                    if (!$friend) {
-                        $this->error=lang('im.notFriend');
-                        return false;
-                    }
-                    $otherFriend = Friend::where(['friend_user_id' => $param['toContactId'], 'create_user' => $uid])->find();
-                    if (!$otherFriend) {
-                        $this->error=lang('im.friendNot');
-                        return false;
+        if($param['toContactId']!=-1){
+            if ($is_group == 0) {
+                $kefuUser=$chatSetting['autoAddUser']['user_ids'] ?? [];
+                $manageUser=User::where([['status','=',1],['role','>',0]])->column('user_id');
+                $kefu=array_unique(array_merge($kefuUser,$manageUser));
+                $csUid = self::$userInfo['cs_uid'] ?? 0;
+                $manage=false;
+                // 发送者和接受者是客服或者管理员也可以发送消息
+                if(in_array($uid,$kefu) || in_array($param['toContactId'],$kefu)){
+                    $manage=true;
+                }
+                if($chatSetting['simpleChat'] == 0 && !$manage){
+                    $this->error=lang('im.forbidChat');
+                    return false;
+                }
+                // 如果是单聊，并且是社区模式和不是自己的客服、需要判断是否是好友
+                if ($globalConfig['sysInfo']['runMode'] == 2 && $csUid != $param['toContactId'] && !$manage) {
+                    // 判断我是不是对方的客服
+                    $cus = User::where(['user_id' => $param['toContactId']])->value('cs_uid');
+                    if ($cus != $uid) {
+                        $friend = Friend::where(['friend_user_id' => $uid, 'create_user' => $param['toContactId']])->find();
+                        if (!$friend) {
+                            $this->error=lang('im.notFriend');
+                            return false;
+                        }
+                        $otherFriend = Friend::where(['friend_user_id' => $param['toContactId'], 'create_user' => $uid])->find();
+                        if (!$otherFriend) {
+                            $this->error=lang('im.friendNot');
+                            return false;
+                        }
                     }
                 }
-            }
-        }else{
-            // 群聊必须群成员才能发送消息
-            $group_id = explode('-', $param['toContactId'])[1] ?? '';
-            $toContactId=$group_id;
-            if(!$group_id){
-                $this->error=lang('system.parameterError');
-                return false;
-            }
-            if(!self::nospeak($group_id,$uid)){
-                return shutdown(lang('group.notSpeak'));
-            }
-            // 群聊必须群成员才能发送消息
-            $groupUser=GroupUser::where(['user_id'=>$uid,'status'=>1,'group_id'=>$group_id,'delete_time'=>0])->find();
-            if(!$groupUser){
-                $this->error = lang('group.notCustom');
-                return false;
-            }
-            if($groupUser['no_speak_time']>time()){
-                $this->error = lang('group.notSpeak',['time'=>date('Y-m-d H:i:s',$groupUser['no_speak_time'])]);
-                return false;
+            }else{
+                // 群聊必须群成员才能发送消息
+                $group_id = explode('-', $param['toContactId'])[1] ?? '';
+                $toContactId=$group_id;
+                if(!$group_id){
+                    $this->error=lang('system.parameterError');
+                    return false;
+                }
+                if(!self::nospeak($group_id,$uid)){
+                    return shutdown(lang('group.notSpeak'));
+                }
+                // 群聊必须群成员才能发送消息
+                $groupUser=GroupUser::where(['user_id'=>$uid,'status'=>1,'group_id'=>$group_id,'delete_time'=>0])->find();
+                if(!$groupUser){
+                    $this->error = lang('group.notCustom');
+                    return false;
+                }
+                if($groupUser['no_speak_time']>time()){
+                    $this->error = lang('group.notSpeak',['time'=>date('Y-m-d H:i:s',$groupUser['no_speak_time'])]);
+                    return false;
+                }
             }
         }
+        
         if ($sendInterval) {
             Cache::set('send_' . $uid, time(), $sendInterval);
         }
