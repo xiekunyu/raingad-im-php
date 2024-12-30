@@ -11,6 +11,10 @@ use app\manage\model\{Config};
 use think\facade\Filesystem;
 use think\facade\Request;
 use think\File;
+use FFMpeg\FFMpeg;
+use FFMpeg\FFProbe;
+use FFMpeg\Coordinate\TimeCode;
+
 class Upload extends BaseController
 {
     protected $middleware = ['checkAuth'];
@@ -59,8 +63,10 @@ class Upload extends BaseController
             return shutdown(lang('file.typeNotSupport'));
         }
         $fileType=getFileType($info['ext']);
+        $imageInfo=[];
         if($fileType==2){
             $filecate="image";
+            $imageInfo=$this->getImageSizeInfo($info['path']);
         }elseif($fileType==3){
             $msgType=$message['type'] ?? '';
             // 如果是语音消息，类型才为语音，否者为文件，主要是兼容发送音频文件
@@ -102,24 +108,32 @@ class Upload extends BaseController
             "ext"     => $info['ext'],
             "type"     =>2,
             'user_id'=>$uid,
+            'videoInfo'=>$imageInfo
         ];
         
         if($message){
             // 自动获取视频第一帧,视频并且是使用的阿里云
             if($message['type']=='video'){
-                if($this->disk=='aliyun'){
-                    $message['extends']['poster']=$this->url.$ret['src'].'?x-oss-process=video/snapshot,t_1000,m_fast,w_800,f_png';
+                $videoInfo=$this->getVideoCover($filePath);
+                if($videoInfo){
+                    $extends=$videoInfo['videoInfo'];
+                    $extends['poster']=$this->url.$videoInfo['src'];
+                    $message['extends']=$extends;
                 }else{
                     $message['extends']['poster']=getMainHost().'/static/common/img/video.png';
                 }
+                // if($this->disk=='aliyun'){
+                //     $message['extends']['poster']=$this->url.$ret['src'].'?x-oss-process=video/snapshot,t_1000,m_fast,w_800,f_png';
+                // }else{
+                //     $message['extends']['poster']=getMainHost().'/static/common/img/video.png';
+                // }
             }
             // 如果发送的文件是图片、视频、音频则将消息类型改为对应的类型
             if(in_array($fileType,[2,3,4])){
                 $message['type']=$filecate;
             }
             if($message['type']=='image'){
-                $extends=$this->getImageSizeInfo($info['path']);
-                $message['extends']=$extends;
+                $message['extends']=$imageInfo;
             }
             $newFile=new FileModel;
             // 录音就不保存了
@@ -152,7 +166,7 @@ class Upload extends BaseController
             $info=$this->upload($param,$file);
             return success(lang('file.uploadOk'),$info);
         } catch(\Exception $e) {
-            return error($e->getMessage());
+            return error($e->getMessage().$e->getLine());
         }
     }
 
@@ -302,5 +316,31 @@ class Upload extends BaseController
         return $extends;
     }
 
+    // 获取视频封面
+    public function getVideoCover($filePath){
+        $fileName=pathinfo($filePath,PATHINFO_FILENAME).'.jpg';
+        $ffmpegPath=env('app.ffmpeg_path','/www/server/ffmpeg/ffmpeg-6.1');
+        if(!$ffmpegPath){
+            return false;
+        }
+        $path=array(
+            'ffmpeg.binaries'  => $ffmpegPath.'/ffmpeg',
+            'ffprobe.binaries' => $ffmpegPath.'/ffprobe',
+            'timeout'          => 3600, // 进程超时时间
+            'ffmpeg.threads'   => 12,   // FFMpeg应使用的线程数
+        );
+        $ffmpeg = FFMpeg::create($path);
+        $ffprobe = FFProbe::create($path);
+        $duration=$ffprobe->format($filePath)->get('duration');// 获取 duration 属性
+        $video = $ffmpeg->open($filePath);
+        $frame = $video->frame(TimeCode::fromSeconds(1));
+        $tempPath=root_path().'public/temp';
+        $savePath=$tempPath. '/' .$fileName;
+        $frame->save($savePath);
+        $info=$this->upload([],$savePath,'cover/'.date('Y-m-d').'/',false);
+        $info['videoInfo']['duration']= ceil($duration);
+        unlink($savePath);
+        return $info;
+    }
 
 }
