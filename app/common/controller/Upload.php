@@ -319,7 +319,7 @@ class Upload extends BaseController
     // 获取视频封面
     public function getVideoCover($filePath){
         $fileName=pathinfo($filePath,PATHINFO_FILENAME).'.jpg';
-        $ffmpegPath=env('app.ffmpeg_path','/www/server/ffmpeg/ffmpeg-6.1');
+        $ffmpegPath=env('ffmpeg.bin_path','');
         if(!$ffmpegPath){
             return false;
         }
