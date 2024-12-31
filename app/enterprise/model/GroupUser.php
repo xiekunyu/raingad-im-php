@@ -53,4 +53,14 @@ class GroupUser extends BaseModel
       wsSendMsg($group_id,"addGroupUser",['group_id'=>$group_id,'avatar'=>$url],1);
       return true;
    }
+
+   // 获取群管理
+   public static function getGroupManage($group_id){
+      $list=self::where([['group_id','=',$group_id],['role','<',3],['status','=',1]])->select()->toArray();
+      $data=[];
+      foreach($list as $k=>$v){
+         $data[$v['user_id']]=$v['role'];
+      }
+      return $data;
+   }
 }

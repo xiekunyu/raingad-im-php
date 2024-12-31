@@ -134,10 +134,12 @@ class Message extends BaseModel
     public static function sendMsg($param,$is_group=0){
         $uid=self::$uid ?: ($param['user_id'] ?? 1);
         $toContactId=$param['toContactId'];
+        $manage=[];
         if($is_group==1){
             $group_id = explode('-', $param['toContactId'])[1] ?? '';
             $chat_identify=$toContactId;
             $toContactId=$group_id;
+            $manage=GroupUser::getGroupManage($group_id);
         }else{
             $chat_identify=chat_identify($param['user_id'],$toContactId);
         }
@@ -188,6 +190,7 @@ class Message extends BaseModel
         $sendData['msg_id']=$message->msg_id;
         $sendData['is_read']=0;
         $sendData['to_user']=$toContactId;
+        $sendData['role']=$manage[self::$uid] ?? 3;
         $sendData['sendTime']=(int)$sendData['sendTime'];
         //这里单聊中发送对方的消息，对方是接受状态，自己是对方的联系人，要把发送对象设置为发送者的ID。
         if($is_group){

@@ -355,10 +355,19 @@ class User extends BaseModel
          array_splice($idr, $key, 1);
       }
       $userList = self::where([['user_id', 'in', $idr]])->field(self::$defaultField)->select()->toArray();
+      $friend = Friend::where([['friend_user_id', 'in', $idr],['create_user','=',self::$uid]])->field('friend_user_id,nickname')->select()->toArray();
       $list = [];
       foreach ($userList as $v) {
          $v['avatar'] = avatarUrl($v['avatar'], $v['realname'], $v['user_id'], $cs);
          $v['id'] = $v['user_id'];
+         if($friend){
+            foreach($friend as $key=>$val){
+               if($val['friend_user_id']==$v['user_id']){
+                  $v['realname']=$val['nickname'] ? : $v['displayName'];
+                  break;
+               }
+            }
+         }
          $list[$v['user_id']] = $v;
       }
       return $list;

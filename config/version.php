@@ -6,12 +6,12 @@
 # UPDATE_TYPE ：forcibly 强制更新, solicit弹窗确认更新, silent 静默更新 
 # UPDATE_INFO ：更新说明，换行用\n 
 return [
-    'app_name'=>env('app.name', 'Raingad-IM'),
+    'app_name'=>env('app.name', 'Raingad-IM'),  //在.env中配置
     'andriod' => [
-        'version' => env('app.version', '5.3.1'),
-        'release' => env('app.release', '20241127'),
+        'version' => env('app.version', '5.3.1'),  //在.env中配置
+        'release' => env('app.release', '20241127'), //在.env中配置
         'url' =>env('app.andriod_webclip',''),
-        'update_info' => '1.移动端键盘遮挡问题\n2.修复消息类型的列表展示\n3.修复若干BUG',
+        'update_info' => '1.优化界面，消息操作更直观\n2.增加群聊管理标识\n3.增加视频封面以及比例自动计算\n4.修复若干BUG',
         'update_type' => 'solicit',
     ],
     'ios' => [
@@ -22,8 +22,8 @@ return [
         'update_type' => 'solicit',
     ],
     'windows' => [
-        'version' => '5.4.0',
-        'release' => '20241125',
+        'version' => '5.5.0',
+        'release' => '20241231',
         'url' => env('app.win_webclip',''),
         'update_info' => '1.lemon-imui本地化，消息底部检测',
         'update_type' => 'solicit',

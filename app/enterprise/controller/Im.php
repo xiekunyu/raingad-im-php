@@ -208,10 +208,12 @@ class Im extends BaseController
                 $where[] = ['type', '<>', 'event'];
             }
         }
+        $groupManage=[];
         // 群聊查询入群时间以后的消息
         if($is_group==1){
             $group_id = explode('-', $param['toContactId'])[1];
             $group=Group::where(['group_id'=> $group_id])->find();
+            $groupManage=$groupManage=GroupUser::getGroupManage($group_id);
             if($group && $group['setting']){
                 $groupSetting=json_decode($group['setting'],true);
                 $history=$groupSetting['history'] ?? false;
@@ -244,7 +246,7 @@ class Im extends BaseController
             $where[]=['msg_id','<',$last_id];
         }
         $list = Message::getList($map, $where, 'msg_id desc', $listRows, $pageSize);
-        $data = $this->recombileMsg($list);
+        $data = $this->recombileMsg($list,true,$groupManage);
         // 如果是群聊并且是第一页消息，需要推送@数据给用户
         if($param['is_group']==1 && $param['page']==1){
             $isPush=Cache::get('atMsgPush'.$chat_identify) ?? '';
@@ -268,13 +270,14 @@ class Im extends BaseController
         return success('', $data, $list->total());
     }
 
-    protected function recombileMsg($list,$isPagination=true)
+    protected function recombileMsg($list,$isPagination=true,$manage=[])
     {
         $data = [];
         $userInfo = $this->userInfo;
         if ($list) {
             $listData = $isPagination ? $list->toArray()['data'] : $list;
             $userList = User::matchUser($listData, true, 'from_user', 120);
+            
             foreach ($listData as $k => $v) {
                 // 屏蔽已删除的消息
                 if ($v['del_user']) {
@@ -308,6 +311,7 @@ class Im extends BaseController
                 }
                 $toContactId=$v['is_group'] ==1 ?  'group-'.$v['to_user'] : $v['to_user'];
                 $atList=($v['at'] ?? null) ? explode(',',$v['at']): [];
+                $role=$manage[$v['from_user']] ?? 3;
                 $data[] = [
                     'msg_id' => $v['msg_id'],
                     'id' => $v['id'],
@@ -328,6 +332,7 @@ class Im extends BaseController
                     'fileSize' => $v['file_size'],
                     'fromUser' => $fromUser,
                     'extUrl'=>$ext,
+                    'role'=>$role,
                     'extends'=>is_string($v['extends'])?json_decode($v['extends'],true) : $v['extends']
                 ];
             }
