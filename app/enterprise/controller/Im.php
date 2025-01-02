@@ -430,6 +430,8 @@ class Im extends BaseController
             $data['msg_id'] = $info['msg_id'];
             $data['status'] = $info['status'];
             $data['type'] = 'event';
+            $data['is_last'] = $info['is_last'];
+            $data['toContactId'] = $message['is_group'] == 1 ? $info['chat_identify'] : $toContactId;
             $data['isMobile'] = $this->request->isMobile() ? 1 : 0;
             wsSendMsg($toContactId, 'undoMessage', $data, $info['is_group']); 
             if($info['is_group']==0){
