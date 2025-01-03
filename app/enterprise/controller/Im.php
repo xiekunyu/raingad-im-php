@@ -64,6 +64,7 @@ class Im extends BaseController
             return warning(lang('im.exist'));
         }
         $message=$message->toArray();
+       
         $userInfo=$this->userInfo;
         try{
             $is_group=0;
@@ -92,19 +93,6 @@ class Im extends BaseController
                     'displayName'=>$userInfo['realname']
                 ];
                 $msgInfo['is_group']=$is_group;
-                // 如果是单聊，并且是社区模式，需要判断是否是好友
-                if($is_group==0 && $this->globalConfig['sysInfo']['runMode']==2){
-                    $friend=Friend::where(['friend_user_id'=>$this->uid,'create_user'=>$v])->find();
-                    if(!$friend){
-                        $error++;
-                        continue;
-                    }
-                    $otherFriend=Friend::where(['friend_user_id'=>$v,'create_user'=>$this->uid])->find();
-                    if(!$otherFriend){
-                        $error++;
-                        continue;
-                    }
-                }
                 $message=new Message();
                 $data=$message->sendMessage($msgInfo,$this->globalConfig);
                 if(!$data){
