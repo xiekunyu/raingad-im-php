@@ -221,6 +221,9 @@ HOST = {$data['redishost']}
 PORT = {$data['redisport']}
 PASSWORD ={$data['redispass']}
 
+视频封面截取配置，需要单独安装，宝塔安装默认地址为/www/server/ffmpeg/ffmpeg-6.1
+[FFMPEG]
+BIN_PATH =
 
 [AES]
 TOKEN_KEY = tHTi8USApxsdfnhTM
@@ -242,10 +245,6 @@ REGISTER_ADDRESS =127.0.0.1:1236
 lAN_IP = 127.0.0.1
 # 分部署部署只需要启动一个gateway，其他的gateway只需要配置register_address即可
 REGISTER_DEPLOY = true
-
-视频封面截取配置，需要单独安装，宝塔安装默认地址为/www/server/ffmpeg/ffmpeg-6.1
-[FFMPEG]
-BIN_PATH =
 
 #配置预览功能，本系统主要使用第三方的预览工具，比如永中云转换，自带预览系统
 [PREVIEW]

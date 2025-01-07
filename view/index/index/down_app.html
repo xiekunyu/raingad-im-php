@@ -36,11 +36,13 @@
         <div class="appTip" style="margin-bottom: 20px;"> 
             <div class="tipss">声明：请注意甄别APP内容，谨防上当受骗！</div> 
         </div> 
-        <div class="comment" align="center"> 
+        
+        <div class="comment" align="center" {if condition="request()->isMobile()"} style="display: none;" {/if}> 
             <div id="app_code"> 
              
             </div> 
         </div>
+        {if condition="!request()->isMobile()"}
         <div class="pc-box appInfo">
             <div>桌面端下载：</div>
             <div style="display: flex;justify-content: center;width:400px;margin:0 auto" align="center">
@@ -63,8 +65,9 @@
                 {/if}
             </div>
         </div>
+        {/if}
         <div class="appInfo" align="center" style="font-size: 14px;color:#999"> 
-           v- {$Think.config.app.app_version}</p>
+           V- {$Think.config.app.app_version}</p>
         </div> 
       </div> 
     </main> 

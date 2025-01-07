@@ -144,6 +144,15 @@ class Pub
             $client_id=$this->request->param('client_id','');
             if($client_id){
                 Gateway::unbindUid($client_id,$userInfo['user_id']);
+                        // 查询团队，如果有团队则加入团队
+                $group=Group::getMyGroup(['gu.user_id'=>$userInfo['user_id'],'gu.status'=>1]);
+                if($group){
+                    $group=$group->toArray();
+                    $group_ids=arrayToString($group,'group_id',false);
+                    foreach($group_ids as $v){
+                        Gateway::leaveGroup($client_id, $v); 
+                    }
+                }
             }
             wsSendMsg(0,'isOnline',['id'=>$userInfo['user_id'],'is_online'=>0]);
         }

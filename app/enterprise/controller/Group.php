@@ -7,6 +7,7 @@ use app\enterprise\model\{User,Group as GroupModel,GroupUser,Message};
 use think\Exception;
 use think\facade\Db;
 use app\common\controller\Upload;
+use GatewayClient\Gateway;
 use utils\Str;
 
 class Group extends BaseController
@@ -282,6 +283,14 @@ class Group extends BaseController
          $groupUser=GroupUser::where(['group_id'=>$group_id,'user_id'=>$user_id])->find();
          if(($groupUser && $groupUser['role']>$role) || $user_id==$uid){
             GroupUser::destroy($groupUser->id);
+            Gateway::$registerAddress = config('gateway.registerAddress');
+            $clientIds=Gateway::getClientIdByUid($user_id);
+            // 解绑群组
+            if($clientIds){
+               foreach($clientIds as $k=>$v){
+                  Gateway::leaveGroup($v, $group_id);
+               }
+            }
          }else{
             return warning(lang('system.notAuth'));
          }
