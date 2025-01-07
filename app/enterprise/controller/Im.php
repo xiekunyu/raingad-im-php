@@ -64,6 +64,7 @@ class Im extends BaseController
             return warning(lang('im.exist'));
         }
         $message=$message->toArray();
+       
         $userInfo=$this->userInfo;
         try{
             $is_group=0;
@@ -92,19 +93,6 @@ class Im extends BaseController
                     'displayName'=>$userInfo['realname']
                 ];
                 $msgInfo['is_group']=$is_group;
-                // 如果是单聊，并且是社区模式，需要判断是否是好友
-                if($is_group==0 && $this->globalConfig['sysInfo']['runMode']==2){
-                    $friend=Friend::where(['friend_user_id'=>$this->uid,'create_user'=>$v])->find();
-                    if(!$friend){
-                        $error++;
-                        continue;
-                    }
-                    $otherFriend=Friend::where(['friend_user_id'=>$v,'create_user'=>$this->uid])->find();
-                    if(!$otherFriend){
-                        $error++;
-                        continue;
-                    }
-                }
                 $message=new Message();
                 $data=$message->sendMessage($msgInfo,$this->globalConfig);
                 if(!$data){
@@ -435,6 +423,8 @@ class Im extends BaseController
             $data['msg_id'] = $info['msg_id'];
             $data['status'] = $info['status'];
             $data['type'] = 'event';
+            $data['is_last'] = $info['is_last'];
+            $data['toContactId'] = $message['is_group'] == 1 ? $info['chat_identify'] : $toContactId;
             $data['isMobile'] = $this->request->isMobile() ? 1 : 0;
             wsSendMsg($toContactId, 'undoMessage', $data, $info['is_group']); 
             if($info['is_group']==0){

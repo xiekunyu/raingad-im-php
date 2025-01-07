@@ -221,6 +221,9 @@ HOST = {$data['redishost']}
 PORT = {$data['redisport']}
 PASSWORD ={$data['redispass']}
 
+视频封面截取配置，需要单独安装，宝塔安装默认地址为/www/server/ffmpeg/ffmpeg-6.1
+[FFMPEG]
+BIN_PATH =
 
 [AES]
 TOKEN_KEY = tHTi8USApxsdfnhTM
