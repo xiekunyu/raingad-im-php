@@ -235,10 +235,6 @@ CHAT_KEY  =
 SECRET = 17b190c0d612321f94f57325ae5a8b4c
 TTL = 2592000
 
-# 视频封面处理工具安装地址
-[FFMPEG]
-BIN_PATH = 
-
 [WORKER]
 NAME = businessWorker
 PORT = 8282
