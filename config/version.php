@@ -22,8 +22,8 @@ return [
         'update_type' => 'solicit',
     ],
     'windows' => [
-        'version' => '5.5.0',
-        'release' => '20241231',
+        'version' => '5.5.2',
+        'release' => '20250107',
         'url' => env('app.win_webclip',''),
         'update_info' => '1.lemon-imui本地化，消息底部检测',
         'update_type' => 'solicit',
