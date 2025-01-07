@@ -7,8 +7,8 @@ Raingad-IM是一个开源的即时通信demo，需要前后端配合使用，主
 
 |  类型 | 链接 |
 | --------- | ---- |
-| 前端源码    | https://gitee.com/raingad/im-chat-front |
-| 后端源码 | https://gitee.com/raingad/im-instant-chat |
+| 前端源码（含后台管理）    | https://gitee.com/raingad/im-chat-front |
+| 后端源码（已编译前端） | https://gitee.com/raingad/im-instant-chat |
 | web端演示 | http://im.raingad.com/index.html |
 | 移动端H5演示 | http://im.raingad.com/h5 |
 | 桌面端/安卓端 | 请进前端演示页下载 |
