@@ -39,6 +39,7 @@ class CheckAuth
         $userInfo = (array)json_decode($userInfo, true);
         
         if(cache('forbidUser_'.$userInfo['id'])){
+            JWTAuth::invalidate(JWTAuth::token()->get());
             Cache::delete('forbidUser_'.$userInfo['id']);
             return shutdown(lang('user.forbid'), -1);
         }

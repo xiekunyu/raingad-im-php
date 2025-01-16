@@ -192,6 +192,7 @@ class User extends BaseController
             if($password){
                 $salt=$user->salt;
                 $user->password= password_hash_tp($password,$salt);
+                Cache::set('forbidUser_'.$user_id,true,env('jwt.ttl',86400));
             }
             $user->save();
             return success('');
