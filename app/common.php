@@ -223,13 +223,27 @@ function getMainHost(){
     }
     $port=request()->port();
     $domain=request()->domain();
-    if(\utils\Regular::is_url($domain)){
-        if($port!=80  || $port !=443){
+    // halt($domain);
+    // 判断url是否有端口
+    if(!hasPort($domain)){
+        if($port!=80  && $port !=443){
             return request()->domain().":".$port;
         }
     }
     return $domain;
 }
+
+function hasPort($domainOrIp) { 
+     // 查找冒号的位置 
+     $colonPos = strrpos($domainOrIp, ':'); 
+     if ($colonPos!== false) { 
+         // 获取冒号后面的字符串 
+         $portPart = substr($domainOrIp, $colonPos + 1); 
+         // 判断冒号后面的字符串是否为纯数字 
+         return ctype_digit($portPart); 
+     } 
+     return false; 
+} 
 
 // 获取url中的主机名
 function getHost($url){ 
