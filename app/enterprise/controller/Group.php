@@ -284,6 +284,8 @@ class Group extends BaseController
          if(($groupUser && $groupUser['role']>$role) || $user_id==$uid){
             GroupUser::destroy($groupUser->id);
             Gateway::$registerAddress = config('gateway.registerAddress');
+            $url=GroupModel::setGroupAvatar($group_id);
+            wsSendMsg($group_id,"removeUser",['group_id'=>$param['id'],'avatar'=>$url,'user_id'=>$user_id],1);
             $clientIds=Gateway::getClientIdByUid($user_id);
             // 解绑群组
             if($clientIds){
@@ -294,8 +296,6 @@ class Group extends BaseController
          }else{
             return warning(lang('system.notAuth'));
          }
-         $url=GroupModel::setGroupAvatar($group_id);
-         wsSendMsg($group_id,"removeUser",['group_id'=>$param['id'],'avatar'=>$url,'user_id'=>$user_id],1);
          return success(lang('system.delOk'));
       }
 
