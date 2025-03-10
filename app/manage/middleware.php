@@ -1,5 +1,6 @@
 <?php
 return [
 "checkAuth",
-"manageAuth"
+"manageAuth",
+"locale"
 ];

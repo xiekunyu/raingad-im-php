@@ -7,7 +7,7 @@ return [
 
     // 多语言加载
 
-    // 'think\middleware\LoadLangPack',
+    'think\middleware\LoadLangPack',
 
     // Session初始化
 

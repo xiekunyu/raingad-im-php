@@ -19,13 +19,13 @@ return [
         'zh-cn'    => [
             app()->getBasePath() . 'lang/zh_cn.php',
         ],
-        'en-en'    => [
-            app()->getBasePath() . 'lang/en_en.php',
+        'en-us'    => [
+            app()->getBasePath() . 'lang/en_us.php',
         ],
     ],
     // Accept-Language转义为对应语言包名称
     'accept_language' => [
-        'zh-hans-cn' => 'zh-cn',
+        'zh-hans' => 'zh-cn',
     ],
     // 是否支持语言分组
     'allow_group'     => true,
