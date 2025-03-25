@@ -25,7 +25,8 @@ return [
     ],
     // Accept-Language转义为对应语言包名称
     'accept_language' => [
-        'zh-hans' => 'zh-cn',
+        'zh-Hans' => 'zh-cn',
+        'en' => 'en-us',
     ],
     // 是否支持语言分组
     'allow_group'     => true,
