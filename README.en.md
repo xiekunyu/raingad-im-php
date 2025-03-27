@@ -143,5 +143,5 @@ If you have any questions, please leave a message or join our QQ group!
 
 It's not easy to create. Click a star.
 
-[QQ Communication group：336921267](https://jq.qq.com/?_wv=1027&k=jMQAt9lh)
+[QQ Communication group：1031495465](https://qm.qq.com/q/RgHdvLGiMk)
 
