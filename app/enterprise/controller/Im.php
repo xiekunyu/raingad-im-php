@@ -232,6 +232,7 @@ class Im extends BaseController
         $last_id = $param['last_id'] ?? 0;
         if($last_id){
             $where[]=['msg_id','<',$last_id];
+            $pageSize=1;
         }
         $list = Message::getList($map, $where, 'msg_id desc', $listRows, $pageSize);
         $data = $this->recombileMsg($list,true,$groupManage);
