@@ -391,8 +391,9 @@ class Im extends BaseController
         if ($message) {
             // 如果时间超过了2分钟也不能撤回
             $createTime=is_string($message['create_time']) ? strtotime($message['create_time']) : $message['create_time'];
-            if(time()-$createTime>120 && $message['is_group']==0){
-                return warning(lang('im.redoLimitTime',['limit'=>2]));
+            $redoTime=$this->globalConfig['chatInfo']['redoTime'] ?? 120;
+            if(time()-$createTime>$redoTime && $message['is_group']==0){
+                return warning(lang('im.redoLimitTime',['time'=>floor($redoTime/60)]));
             }
             $text = lang('im.redo');
             $fromUserName = lang('im.other');
