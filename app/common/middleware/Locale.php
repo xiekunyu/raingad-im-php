@@ -6,17 +6,17 @@ class Locale
 {
     public function handle($request, \Closure $next)
     {
-        $lang = $request->header('Accept-Language'); // 从HTTP头获取语言设置
+        $locale = $request->header('Accept-Language'); // 从HTTP头获取语言设置
         $config=lang::getConfig();
-        if ($lang) {
+        if ($locale) {
             $extLang=$config['extend_list'];
-            if(!isset($extLang[$lang])){
+            if(!isset($extLang[$locale])){
                 $lang=$config['default_lang'];
             }
             $accept_lang=$config['accept_language'];
             // 检测替换包
-            if(isset($accept_lang[$lang])){
-                $lang=$accept_lang[$lang];
+            if(isset($accept_lang[$locale])){
+                $lang=$accept_lang[$locale];
             }
             // 根据Accept-Language头设置语言
             Lang::setLangSet($lang); // 例如 'zh-cn' 或 'en'
