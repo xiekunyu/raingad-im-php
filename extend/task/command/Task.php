@@ -54,7 +54,7 @@ class Task extends Command
         // 定时任务
         $task->addCommand('php think cron:run', 'schedule', 60);
         // 消息队列
-        $task->addCommand('php think queue:listen --sleep 0.3 --queue lvzhe', 'queue', 0);
+        $task->addCommand('php think queue:listen --sleep 0.3 --queue im', 'queue', 0);
         
         // 定时删除运行日志
         $task->addFunc(function () {

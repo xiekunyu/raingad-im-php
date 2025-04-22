@@ -22,39 +22,4 @@ class Group extends BaseModel
       ->select();
    }
 
-   //生成群聊头像
-   public static function setGroupAvatar($group_id){
-      $userList=GroupUser::where('group_id',$group_id)->limit(9)->column('user_id');
-      $userList=User::where('user_id','in',$userList)->select()->toArray();
-      $imgList=[];
-      $dirPath=app()->getRootPath().'public/temp';
-      foreach($userList as $k=>$v){
-         if($v['avatar']){
-            $imgList[]=avatarUrl($v['avatar'],$v['realname'],$v['user_id']);
-         }else{
-            $imgList[]=circleAvatar($v['realname'],80,$v['user_id'],1,$dirPath);
-         }
-      }
-      $groupId='group_'.$group_id;
-      $path=$dirPath.'/'.$groupId.'.jpg';
-      $a = getGroupAvatar($imgList,1,$path);
-      $url='';
-      if($a){
-         $upload=new Upload();
-         $newPath=$upload->uploadLocalAvatar($path,[],$groupId);
-         if($newPath){
-            Group::where('group_id',$group_id)->update(['avatar'=>$newPath]);
-            $url=avatarUrl($newPath);
-         }
-      }
-      // 删除目录下的所有文件
-      $files = glob($dirPath . '/*'); // 获取目录下所有文件路径
-      foreach ($files as $file) {
-         if (is_file($file)) { // 如果是文件则删除
-            unlink($file);
-         }
-      }
-      return $url;
-   }
-
 }

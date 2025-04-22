@@ -31,7 +31,7 @@ class Group extends BaseController
             $data = $list->toArray()['data'];
             $userList=UserModel::matchUser($data,true,'owner_id',120);
             foreach($data as $k=>$v){
-                $data[$k]['avatar']=avatarUrl($v['avatar'],$v['name'],$v['group_id'],120);
+                $data[$k]['avatar']=avatarUrl($v['avatar'],$v['name'],$v['group_id'],120,1);
                 $data[$k]['owner_id_info']=$userList[$v['owner_id']] ?? [];
             }
         }
@@ -111,8 +111,7 @@ class Group extends BaseController
             }
             $groupUser=new GroupUser;
             $groupUser->saveAll($data);
-            $url=GroupModel::setGroupAvatar($group_id);
-            wsSendMsg($group_id,"addGroupUser",['group_id'=>"group-".$group_id,'avatar'=>$url],1);
+            queuePush(['action'=>'createAvatar','group_id'=>$group_id]);
             return success(lang('system.addOk'));
         }catch(\Exception $e){
                 return error($e->getMessage());

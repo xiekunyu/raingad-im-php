@@ -134,12 +134,10 @@ class Group extends BaseController
                GroupUser::create($item);
             }
          }
-         $url=GroupModel::setGroupAvatar($group_id);
-         // 更新原来群聊的头像和成员列表
-         wsSendMsg($group_id,"addGroupUser",['group_id'=>$param['id'],'avatar'=>$url],1);
          // 给新成员添加新群聊信息
          $user=new User();
          $data=$user->setContact($group_id,1,'text',lang('group.invite',['username'=>$this->userInfo['realname']]),$groupInfo);
+         queuePush(['action'=>'createAvatar','group_id'=>$group_id]);
          wsSendMsg($user_ids, 'addGroup', $data);
          return success(lang('system.addOk'));
       }catch(Exception $e){
@@ -233,14 +231,13 @@ class Group extends BaseController
             }
             $groupUser=new GroupUser();
             $groupUser->saveAll($data);
-            $url=GroupModel::setGroupAvatar($group_id);
             $groupInfo=[
                'displayName'=>$create['name'],
                'owner_id'=>$create['owner_id'],
                'role'=>3,
                'name_py'=>$create['name_py'],
                'id'=>'group-'.$group_id,
-               'avatar'=>avatarUrl($url,$create['name'],$group_id,120),
+               'avatar'=>avatarUrl('',$create['name'],$group_id,120,1),
                'is_group'=>1,
                'lastContent'=>lang('group.add',['username'=>$this->userInfo['realname']]),
                'lastSendTime'=>time()*1000,
@@ -248,7 +245,6 @@ class Group extends BaseController
                'is_notice'=>1,
                'is_top'=>0,
                'setting'=>$setting,
-         
             ];
             Message::create([
                'from_user'=>$uid,
@@ -263,6 +259,7 @@ class Group extends BaseController
             wsSendMsg($user_ids, 'addGroup', $groupInfo);
             Db::commit();
             $groupInfo['role']=1;
+            queuePush(['action'=>'createAvatar','group_id'=>$group_id]);
             return success('',$groupInfo);
          }catch(Exception $e){
             Db::rollback();
@@ -275,6 +272,10 @@ class Group extends BaseController
          $param = $this->request->param();
          $uid=$this->userInfo['user_id'];
          $group_id = explode('-', $param['id'])[1];
+         $groupInfo=GroupModel::where(['group_id'=>$group_id])->find();
+         if(!$groupInfo){
+            return warning(lang('group.exist'));
+         }
          $user_id=$param['user_id'];
          $role=GroupUser::where(['group_id'=>$group_id,'user_id'=>$uid])->value('role');
          if($role>2 && $user_id!=$uid){
@@ -284,8 +285,7 @@ class Group extends BaseController
          if(($groupUser && $groupUser['role']>$role) || $user_id==$uid){
             GroupUser::destroy($groupUser->id);
             Gateway::$registerAddress = config('gateway.registerAddress');
-            $url=GroupModel::setGroupAvatar($group_id);
-            wsSendMsg($group_id,"removeUser",['group_id'=>$param['id'],'avatar'=>$url,'user_id'=>$user_id],1);
+            wsSendMsg($group_id,"removeUser",['group_id'=>$param['id'],'avatar'=>avatarUrl($groupInfo['avatar'],$groupInfo['name']),'user_id'=>$user_id],1);
             $clientIds=Gateway::getClientIdByUid($user_id);
             // 解绑群组
             if($clientIds){
@@ -293,6 +293,8 @@ class Group extends BaseController
                   Gateway::leaveGroup($v, $group_id);
                }
             }
+            // 更新群聊头像
+            queuePush(['action'=>'createAvatar','group_id'=>$group_id]);
          }else{
             return warning(lang('system.notAuth'));
          }
@@ -330,6 +332,10 @@ class Group extends BaseController
          $param = $this->request->param();
          $uid=$this->userInfo['user_id'];
          $group_id = explode('-', $param['id'])[1];
+         $groupInfo=GroupModel::where(['group_id'=>$group_id])->find();
+         if(!$groupInfo){
+            return warning(lang('group.exist'));
+         }
          $role=GroupUser::where(['group_id'=>$group_id,'user_id'=>$uid])->value('role');
          if($role>1){
             return warning(lang('system.notAuth'));
@@ -397,41 +403,6 @@ class Group extends BaseController
          GroupModel::update(['setting'=>$setting],['group_id'=>$group_id]);
          wsSendMsg($group_id,"groupSetting",['group_id'=>$param['id'],'setting'=>$param['setting']],1);
          return success('');
-      }
-
-      //生成群聊头像
-      protected function setGroupAvatar($group_id){
-         $userList=GroupUser::where('group_id',$group_id)->limit(9)->column('user_id');
-         $userList=User::where('user_id','in',$userList)->select()->toArray();
-         $imgList=[];
-         $dirPath=app()->getRootPath().'public/temp';
-         foreach($userList as $k=>$v){
-            if($v['avatar']){
-               $imgList[]=avatarUrl($v['avatar'],$v['realname'],$v['user_id']);
-            }else{
-               $imgList[]=circleAvatar($v['realname'],80,$v['user_id'],1,$dirPath);
-            }
-         }
-         $groupId='group_'.$group_id;
-         $path=$dirPath.'/'.$groupId.'.jpg';
-         $a = getGroupAvatar($imgList,1,$path);
-         $url='';
-         if($a){
-            $upload=new Upload();
-            $newPath=$upload->uploadLocalAvatar($path,[],$groupId);
-            if($newPath){
-               GroupModel::where('group_id',$group_id)->update(['avatar'=>$newPath]);
-               $url=avatarUrl($newPath);
-            }
-         }
-         // 删除目录下的所有文件
-         $files = glob($dirPath . '/*'); // 获取目录下所有文件路径
-         foreach ($files as $file) {
-            if (is_file($file)) { // 如果是文件则删除
-               unlink($file);
-            }
-         }
-         return $url;
       }
 
       // 加入群

@@ -10,7 +10,7 @@
 // +----------------------------------------------------------------------
 
 return [
-    'default'     => 'sync',
+    'default'     => 'redis',
     'connections' => [
         'sync'     => [
             'type' => 'sync',
@@ -24,9 +24,11 @@ return [
         'redis'    => [
             'type'       => 'redis',
             'queue'      => 'default',
-            'host'       => '127.0.0.1',
-            'port'       => 6379,
-            'password'   => '',
+            'host'   =>env('redis.host', '127.0.0.1'),
+            'port'   => env('redis.port', '6379'),
+            'password' => env('redis.password', ''),
+            // 缓存前缀
+            'prefix' => env('redis.prefix', ''),
             'select'     => 0,
             'timeout'    => 0,
             'persistent' => false,

@@ -48,9 +48,8 @@ class GroupUser extends BaseModel
          'role'=>$action=='autoCreateGroup' ? 1 : 3,
          'group_id'=>$group_id,
       ]);
-      $url=Group::setGroupAvatar($group_id);
       event('GroupChange', ['action' => $action, 'group_id' => $group_id, 'param' => $groupInfo]);
-      wsSendMsg($group_id,"addGroupUser",['group_id'=>$group_id,'avatar'=>$url],1);
+      queuePush(['action'=>'createAvatar','group_id'=>$group_id]);
       return true;
    }
 

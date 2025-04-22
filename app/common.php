@@ -3,6 +3,7 @@
 use SingKa\Sms\SkSms;
 use GatewayClient\Gateway;
 use \utils\Str;
+use think\facade\Queue;
 /**
  * 框架内部默认ajax返回
  * @param string $msg      提示信息
@@ -309,14 +310,8 @@ function circleAvatar($str,$s,$uid=0,$is_save=0,$save_path=''){
 }
 
 //头像拼接
-function avatarUrl($path, $str = "雨",$uid=0,$s=80)
+function avatarUrl($path, $str = "雨",$uid=0,$s=80,$is_group=0)
 {
-    // $str = Str::strFilter($str);
-    preg_match_all('/[\x{4e00}-\x{9fff}]+/u', $str, $matches);
-    $str=implode('', $matches[0]);
-    if($str==''){
-        $str="无";
-    }
     if ($path) {
         // 判断头像路径中是否有http
         if (strpos($path, 'http') !== false) {
@@ -325,13 +320,34 @@ function avatarUrl($path, $str = "雨",$uid=0,$s=80)
             $url = getDiskUrl() .'/'. ltrim($path,'/') ;
         }
     }else {
-        if($str){
-            $url=getMainHost()."/avatar/".$str.'/'.$s.'/'.$uid;
+        if($is_group){
+            $url=getMainHost()."/static/img/group.png";
         }else{
-            $url='';
+            $url=getMainHost()."/static/img/avatar.png";;
         }
     }
     return $url;
+    // $str = Str::strFilter($str);
+    // preg_match_all('/[\x{4e00}-\x{9fff}]+/u', $str, $matches);
+    // $str=implode('', $matches[0]);
+    // if($str==''){
+    //     $str="无";
+    // }
+    // if ($path) {
+    //     // 判断头像路径中是否有http
+    //     if (strpos($path, 'http') !== false) {
+    //         $url = $path;
+    //     } else {
+    //         $url = getDiskUrl() .'/'. ltrim($path,'/') ;
+    //     }
+    // }else {
+    //     if($str){
+    //         $url=getMainHost()."/avatar/".$str.'/'.$s.'/'.$uid;
+    //     }else{
+    //         $url='';
+    //     }
+    // }
+    // return $url;
 }
 
 // 获取文件的地址
@@ -1077,5 +1093,25 @@ function preg_link($text){
     
     return $replaced_text;
 
+}
+
+//消息队列think-queue
+function queuePush($data, $delay = 0, $job = "Work", $queue = "im")
+{
+    $data['job']   = $data['job'] ?? $job;
+    $data['queue'] = $data['queue'] ?? $queue;
+    $data['data']  = $data['data'] ?? [];
+    try {
+        if ($data) {
+            if ($delay == 0) {
+                Queue::push($job, $data, $queue);
+            } else {
+                Queue::later($delay, $job, $data, $queue);
+            }
+        }
+        return true;
+    } catch (Exception $e) {
+        return false;
+    }
 }
 

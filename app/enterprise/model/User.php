@@ -164,7 +164,7 @@ class User extends BaseModel
             $group_id = 'group-' . $v['group_id'];
             $group[$k]['id'] = $group_id;
             $group[$k]['account'] = $group_id;
-            $group[$k]['avatar'] = avatarUrl($v['avatar'], $v['displayName'], $v['group_id'], 120);
+            $group[$k]['avatar'] = avatarUrl($v['avatar'], $v['displayName'], $v['group_id'], 120,1);
             $group[$k]['name_py'] = $v['name_py'];
             $group[$k]['owner_id'] = $v['owner_id'];
             $group[$k]['role'] = $v['role'];
@@ -444,7 +444,7 @@ class User extends BaseModel
          }
          $data['id'] = 'group-'.$group_id;
          $data['displayName'] = $group['name'];
-         $data['avatar'] = avatarUrl($group['avatar'], $group['name'], $group['group_id'], 120);
+         $data['avatar'] = avatarUrl($group['avatar'], $group['name'], $group['group_id'], 120,1);
          $data['name_py'] = $group['name_py'];
          $data['setting'] = $group['setting'];
          $data['role'] = 3;

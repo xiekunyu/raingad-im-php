@@ -104,7 +104,7 @@ class Index
         $group=Group::find($group_id);
         if($group){
             $group=$group->toArray();
-            $group['avatar']=avatarUrl($group['avatar'],$group['name'],$group_id,120);
+            $group['avatar']=avatarUrl($group['avatar'],$group['name'],$group_id,120,1);
             $group['invite_id']=$uid;
             $group['id']='group-'.$group_id;
             $group['action']='groupInfo';
