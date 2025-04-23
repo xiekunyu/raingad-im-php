@@ -181,4 +181,10 @@ class Index
             return shutdown(lang('file.exist'));
         }
     }
+
+    public function test(){
+        $where[]=['create_time','<',time()-(15*86400)];
+        $fileIds=\app\enterprise\model\Message::where($where)->where([['type','in',['image','video','file']],['file_id','>',0]])->column('file_id');
+        halt($fileIds);
+    }
 }
