@@ -17,6 +17,8 @@ class Locale
             // 检测替换包
             if(isset($accept_lang[$locale])){
                 $lang=$accept_lang[$locale];
+            }else{
+                $lang=$config['default_lang'];
             }
             // 根据Accept-Language头设置语言
             Lang::setLangSet($lang); // 例如 'zh-cn' 或 'en'
