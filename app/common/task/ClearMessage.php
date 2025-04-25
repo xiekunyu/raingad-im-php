@@ -56,8 +56,10 @@ class ClearMessage extends Task
            if($status && $days){
                 $time=time() - ($days * $this->daytime);
                 $where[]=['create_time','<',$time];
-                $fileIds=Message::where($where)->where([['type','in',['image','video','voice','file']]])->column('file_id');
+                $fileIds=Message::where($where)->where([['type','in',['image','video','file']],['file_id','>',0]])->column('file_id');
                 queuePush(['action'=>'clearFiles','fileIds'=>array_unique($fileIds)],10);
+                $list=Message::where($where)->where([['type','=','voice']])->column('content');
+                queuePush(['action'=>'clearVoice','list'=>$list],60);
                 Message::where($where)->delete();
            }
            print "****************消息清理成功******************\n";

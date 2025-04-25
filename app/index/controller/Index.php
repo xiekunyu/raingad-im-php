@@ -1,10 +1,11 @@
 <?php
 namespace app\index\controller;
 
-use app\enterprise\model\{File,Group,User};
+use app\enterprise\model\{File,Group,User,Message};
 use think\facade\View;
 use app\manage\model\Config;
 use app\Request;
+use think\facade\Filesystem;
 
 class Index
 {
@@ -14,10 +15,9 @@ class Index
         if (!file_exists(PACKAGE_PATH . "install.lock")) {
             return redirect(url('index/install/index'));
         }
-        // 自动跳转后无法注册
-        // if(request()->isMobile() && !env('app.demon_mode',false)){
-        //     return redirect("/h5");
-        // }
+        if(request()->isMobile() && strpos('index.html',request()->url())===false){
+            return redirect("/h5");
+        }
         return redirect("/index.html");
     }
 
@@ -88,7 +88,7 @@ class Index
             }
             return $this->$a($param);
         }else{
-            return $this->index();
+            return redirect('/downapp');
         }
     }
 
@@ -183,8 +183,11 @@ class Index
     }
 
     public function test(){
-        $where[]=['create_time','<',time()-(15*86400)];
-        $fileIds=\app\enterprise\model\Message::where($where)->where([['type','in',['image','video','file']],['file_id','>',0]])->column('file_id');
-        halt($fileIds);
+        echo time()-(30*86400);
+        // $list=Message::where('create_time','<',time()-(30*86400))->where(['type'=>'image'])->select()->toArray();
+        // foreach($list as $k=> $v){
+        //     $list[$k]['src']=str_encipher($v['content'],false);
+        // }
+        // halt($list);
     }
 }

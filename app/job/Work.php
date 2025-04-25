@@ -8,17 +8,21 @@ namespace app\job;
 
 use app\common\controller\Upload;
 
-use app\enterprise\model\{Group,GroupUser,User};
+use app\enterprise\model\{Group,GroupUser,User,Message,File};
 
 use Exception;
 
 use think\queue\Job;
+
+use think\facade\Filesystem;
 
 class Work
 {
     // 允许的队列
     protected $actions=[
         'createAvatar', //创建、更新头像
+        'clearFiles', //清理文件
+        'clearVoice', //清理音频
     ];
 
     // 执行队列
@@ -82,5 +86,50 @@ class Work
         wsSendMsg($group_id,"setManager",['group_id'=>'group-'.$group_id,'avatar'=>$url],1);
         return true;
     }
+
+    // 清理除了音频相关的文件
+    public function clearFiles($data){
+        $fileIds = $data['fileIds'];
+        $count=0;
+        foreach($fileIds as $fileId){
+            $message=Message::where(['file_id'=>$fileId])->count();
+            // 如果还有消息，就不删除文件
+            if($message>0){
+                continue;
+            }
+            $file=File::find($fileId);
+            if($file){
+                $MD5=$file->md5;
+                $src=$file->src;
+                $file->delete();
+                // 查询相同文件
+                $sameFile=File::where(['md5'=>$MD5])->count();
+                // 如果有相同的文件，则不删除原件
+                if($sameFile){
+                    continue;
+                }
+                $count++;
+                // 删除源文件
+                $disk=env('filesystem.driver','local');
+                Filesystem::disk($disk)->delete($src);
+            }
+            print("<info>成功删除".$count."个文件！</info> \n");
+            return true;
+        }
+    }
+
+    // 清理除了音频相关的文件
+    public function clearVoice($data){
+        $list = $data['list'];
+        foreach($list as $content){
+            $src = str_encipher($content,false);
+            // 解密文件路径，删除源文件
+            $disk=env('filesystem.driver','local');
+            Filesystem::disk($disk)->delete($src);
+        }
+        print("<info>成功删除".count($list)."个音频文件！</info> \n");
+        return true;
+    }
+    
 
 }
