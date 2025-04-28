@@ -7,16 +7,16 @@
 # UPDATE_INFO ：更新说明，换行用\n 
 return [
     'app_name'=>env('app.name', 'Raingad-IM'),  //在.env中配置
-    'andriod' => [
-        'version' => env('app.version', '5.3.1'),  //在.env中配置
-        'release' => env('app.release', '20241127'), //在.env中配置
-        'url' =>env('app.andriod_webclip',''),
+    'android' => [
+        'version' => env('app.version', '6.0.0'),  //在.env中配置
+        'release' => env('app.release', '20250505'), //在.env中配置
+        'url' =>env('app.android_webclip',''),
         'update_info' => '1.优化界面，消息操作更直观\n2.增加群聊管理标识\n3.增加视频封面以及比例自动计算\n4.修复若干BUG',
         'update_type' => 'solicit',
     ],
     'ios' => [
-        'version' => '5.2.2',
-        'release' => '20241118',
+        'version' => env('app.version', '6.0.0'),  //在.env中配置
+        'release' => env('app.release', '20250505'), //在.env中配置
         'url' => env('app.ios_webclip',''),
         'update_info' => '暂无',
         'update_type' => 'solicit',

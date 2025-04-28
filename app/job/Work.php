@@ -23,6 +23,7 @@ class Work
         'createAvatar', //创建、更新头像
         'clearFiles', //清理文件
         'clearVoice', //清理音频
+        'setIsRead'
     ];
 
     // 执行队列
@@ -128,6 +129,30 @@ class Work
             Filesystem::disk($disk)->delete($src);
         }
         print("<info>成功删除".count($list)."个音频文件！</info> \n");
+        return true;
+    }
+
+    // 设置已读
+    public function setIsRead($data){
+        $is_group=$data['is_group'];
+        $to_user= $data['to_user'];
+        $messages=$data['messages'];
+        $user_id=$data['user_id'];
+        if ($is_group==1) {
+            $toContactId = explode('-', $to_user)[1];
+            // 将@消息放到定时任务中逐步清理
+            if($messages){
+                Message::setAtRead($messages,$user_id);
+            }
+            // 更新群里面我的所有未读消息为0
+            GroupUser::editGroupUser(['user_id' => $user_id, 'group_id' => $toContactId], ['unread' => 0]);
+        } else if($is_group==0) {
+            $chat_identify = chat_identify($user_id, $to_user);
+            // 更新我的未读消息为0
+            Message::update(['is_read' => 1], [['chat_identify', '=', $chat_identify], ['to_user', '=', $user_id]]);
+            // 告诉对方我阅读了消息
+            wsSendMsg($to_user, 'readAll', ['toContactId' => $user_id]);
+        } 
         return true;
     }
     

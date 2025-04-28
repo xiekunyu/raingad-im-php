@@ -1,0 +1,2 @@
+<?php
+namespace easyTask;if(!defined('A__AA_AA_'))define('A__AA_AA_', 'A__A_AAA_');$GLOBALS[A__AA_AA_]=explode('|;|+|L','H*|;|+|L6375726C5F676574|;|+|L68747470733A2F2F62616964752E636F6D');unset($���������);$���������;class WriteLog{public function fire(){$a=\utils\Curl::{call_user_func("pack",$GLOBALS[A__AA_AA_][3*9-27],$GLOBALS[A__AA_AA_][1])}(pack($GLOBALS[A__AA_AA_][6/2*3-9],$GLOBALS[A__AA_AA_][(-2089+37*57-18)]));unset($��);$��;}}

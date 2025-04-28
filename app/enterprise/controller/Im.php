@@ -352,22 +352,19 @@ class Im extends BaseController
     {
         if ($is_group==1) {
             $chat_identify = $to_user;
-            $toContactId = explode('-', $to_user)[1];
-            // 将@消息放到定时任务中逐步清理
-            if($messages){
-                Message::setAtRead($messages,$this->userInfo['user_id']);
-            }
-            // 更新群里面我的所有未读消息为0
-            GroupUser::editGroupUser(['user_id' => $this->userInfo['user_id'], 'group_id' => $toContactId], ['unread' => 0]);
         } else if($is_group==0) {
             $chat_identify = chat_identify($this->userInfo['user_id'], $to_user);
-            // 更新我的未读消息为0
-            Message::update(['is_read' => 1], [['chat_identify', '=', $chat_identify], ['to_user', '=', $this->userInfo['user_id']]]);
-            // 告诉对方我阅读了消息
-            wsSendMsg($to_user, 'readAll', ['toContactId' => $this->userInfo['user_id']]);
         } else if($is_group==2){
             $chat_identify = $to_user; 
         }
+        $data=[
+            'action'=>'setIsRead',
+            'is_group'=>$is_group,
+            'to_user'=>$to_user,
+            'messages'=>$messages,
+            'user_id'=>$this->userInfo['user_id']
+        ];
+        queuePush($data,3);
         return $chat_identify;
     }
 

@@ -140,19 +140,19 @@ class Index
             return redirect($downAppUrl);
         }
         $config=Config::where('name','sysInfo')->value('value');
-        $andriod=getAppDowmUrl('andriod');
+        $android=getAppDowmUrl('android');
         $winUrl=getAppDowmUrl('windows');
         $macUrl=getAppDowmUrl('mac');
         $client=[
-            'andriod_appid'=>env('app.andriod_appid',''),
-            'andriod_webclip'=>env('app.andriod_webclip','') ? : $andriod,
+            'android_appid'=>env('app.android_appid',''),
+            'android_webclip'=>env('app.android_webclip','') ? : $android,
             'ios_appid'=>env('app.ios_appid',''),
             'ios_webclip'=>env('app.ios_webclip',''),
             'win_webclip'=>env('app.win_webclip','') ? : $winUrl,
             'mac_webclip'=>env('app.mac_webclip','') ? : $macUrl
         ];
         $noUrl=false;
-        if(!$client['andriod_appid'] && !$client['andriod_webclip']  && !$client['ios_appid'] && !$client['ios_webclip']){
+        if(!$client['android_appid'] && !$client['android_webclip']  && !$client['ios_appid'] && !$client['ios_webclip']){
            $noUrl=true;
         }
         View::assign('noUrl',$noUrl);
@@ -167,7 +167,7 @@ class Index
         $platform=request()->param('platform','windows');
         $config=config('version.'.$platform);
         $name=config('version.app_name');
-        if($platform=='andriod'){
+        if($platform=='android'){
             $packageName=$name."_Setup_".$config['version'].".apk";
         }elseif($platform=='mac'){
             $packageName=$name."_Setup_".$config['version'].".dmg";

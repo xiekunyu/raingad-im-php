@@ -50,7 +50,6 @@ class Terminal
     {
         $this->rootPath = root_path();
         $this->runType  = $runType;
-
         // 初始化日志文件
 
         if ($this->runType === 1) {
@@ -79,7 +78,8 @@ class Terminal
 
     public function exec(string $command)
     {
-
+        // 写入日志
+        $this->writeLog();
         $this->process = proc_open($command, $this->descriptorsPec, $this->pipes, $this->rootPath);
 
         foreach ($this->pipes as $pipe) {
@@ -98,6 +98,10 @@ class Terminal
     {
         $status = proc_get_status($this->process);
         return (bool)$status['running'];
+    }
+
+    public function writeLog(){
+        echo 123;
     }
 
 

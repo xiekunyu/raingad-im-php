@@ -176,9 +176,10 @@ APP_DEBUG = true
 [APP]
 NAME = IM
 LOGO = 
-VERSION = 5.4.0
-RELEASE = 20241226
-# 主域名必填
+# 如果安卓和ios不同步更新，请到/config/version.php中单独设置版本号
+VERSION = 6.0.0
+RELEASE = 20250505
+# 主域名必填，例如：https://im.example.com
 HOST = 
 DEFAULT_TIMEZONE = Asia/Shanghai
 ID = a1b2c3d4e5f
@@ -191,12 +192,12 @@ THINKAPI_TOKEN =
 # 下载页分发链接
 DOWNAPP_URL = 
 # 安卓包名，如果上架了市场，根据市场ID跳转市场
-ANDRIOD_APPID = 
+ANDROID_APPID = 
 #安卓下载地址，如果未设置会检测根目录是否有app.apk
-ANDRIOD_WEBCLIP =
+ANDROID_WEBCLIP =
 #APPSTORE市场ID
 IOS_APPID =
-#IOS下载地址，如果没有市场的ID则使用下载地址
+#IOS下载地址，如果没有市场的ID则使用下载地址,如果用于更新可以放苹果市场的链接地址
 IOS_WEBCLIP =
 #windows下载地址
 WIN_WEBCLIP = 

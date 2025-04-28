@@ -56,6 +56,7 @@ class ClearMessage extends Task
            if($status && $days){
                 $time=time() - ($days * $this->daytime);
                 $where[]=['create_time','<',$time];
+                $where[]=['chat_identify','<>','admin_notice']; //不删除公告
                 $fileIds=Message::where($where)->where([['type','in',['image','video','file']],['file_id','>',0]])->column('file_id');
                 queuePush(['action'=>'clearFiles','fileIds'=>array_unique($fileIds)],10);
                 $list=Message::where($where)->where([['type','=','voice']])->column('content');

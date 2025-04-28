@@ -347,11 +347,11 @@ class Pub
     public function checkVersion(){
         $oldRelease=$this->request->param('release',0);
         $setupPage=$this->request->param('setupPage',false);
-        $platform=$this->request->param('platform',1101);
+        $platform=$this->request->param('type',1101);
         $name=config('version.app_name');
         $packageName='';
         if($platform==1101){
-            $teminal='andriod';
+            $teminal='android';
         }else{
             $teminal='ios';
         }
@@ -372,14 +372,14 @@ class Pub
             return success('',$data);
         }
         $downUrl='';
-        $andriod='';
+        $android='';
         // 如果是ios则返回ios地址
         if($platform==1101){
             $packageName=$name."_Setup_".$versionInfo['version'].".apk";
             if(is_file(PACKAGE_PATH . $packageName)){
-                $andriod = getMainHost().'/unpackage/'.$packageName;
+                $android = getMainHost().'/unpackage/'.$packageName;
             }
-            $downUrl=env('app.andriod_webclip','') ? : $andriod;
+            $downUrl=env('app.android_webclip','') ? : $android;
         }else{
             $downUrl=env('app.ios_webclip','');
         }

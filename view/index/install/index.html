@@ -157,10 +157,9 @@
                     <p>您已成功安装本程序，现在您还需最后一步即可使用聊天程序！</p>
                     <p>管理员账号：<b style="font-size:18px">administrator</b>；密码：<b style="font-size:18px">123456</b>；进入后再聊天界面的左下角可以进入后台。</p>
                     <h4>启动消息推送</h4>
-                    <p>第一种方式：进入终端，输入[ <code>php think worker:gateway start -d</code> ] 或者 [ <code>php start.php start -d</code> ] 即可启动服务</p>
-                    <p>第二种方式：linux上可以直接在后台启动服务，首次启动必须要先进行第一种方式调试没问题后才能用这种方式</p>
-                    <p>windows启动直接运行根目录的start_for_win.bat，推送服务不建议在windows上运行，不稳定，生产环境请使用linux。</p>
-                    <p>PS：消息推送的服务器必须开启8282端口，并在nginx配置文件中配置反向代理。如需更改，请修改[ <b>app\worker\start_gateway.php</b> ]中的8282端口</p>
+                    <p>linux服务器：进入系统后台管理后，在系统服务的右上方点击启动图标，启动服务，如果无法启动请参阅文档</p>
+                    <p>windows启动直接运行根目录的start_for_win.bat，生产环境不要用widnows，请使用linux。</p>
+                    <p>PS：消息推送必须在nginx配置文件中配置反向代理，代码已经贴到readme.md里面了。</p>
                     <h4>前台地址：</h4>
                     <p>浏览器访问：<a href="{:getMainHost()}/index.html">{:getMainHost()}/index.html</a></p>
                     <div>QQ交流群： <a href="https://qm.qq.com/q/RgHdvLGiMk" target="_blank">1031495465</a></div>
