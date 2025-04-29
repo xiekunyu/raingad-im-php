@@ -47,9 +47,10 @@ class Message extends BaseModel
             $this->error=lang('im.forbidChat');
             return false;
         }
+        $isForward=$param['is_forward'] ?? 0;
         $sendInterval = $globalConfig['chatInfo']['sendInterval'] ?? 0;
-        // 如果设置了消息频率则验证
-        if ($sendInterval) {
+        // 如果设置了消息频率则验证，转发不收限制
+        if ($sendInterval && !$isForward) {
             if (Cache::has('send_' . $uid)) {
                 $this->error=lang('im.sendTimeLimit',['time'=>$sendInterval]);
                 return false;

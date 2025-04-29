@@ -63,15 +63,14 @@ class Im extends BaseController
         if(!$message){
             return warning(lang('im.exist'));
         }
-        $message=$message->toArray();
-       
+        $msg=$message->toArray();
         $userInfo=$this->userInfo;
         try{
             $is_group=0;
             $error=0;
             $chatSetting=$this->chatSetting;
             foreach($userIds as $k=>$v){
-                $msgInfo=$message;
+                $msgInfo=$msg;
                 if(strpos($v,'group')!==false){
                     $is_group=1;
                 }else{
@@ -94,13 +93,14 @@ class Im extends BaseController
                 ];
                 $msgInfo['is_group']=$is_group;
                 $message=new Message();
+                $msgInfo['is_forward']=1;
                 $data=$message->sendMessage($msgInfo,$this->globalConfig);
                 if(!$data){
                     return warning($message->getError());
                 }
             }
         }catch(\Exception $e){
-            return error($e->getMessage());
+            return error($e->getMessage().$e->getLine());
         }
         if ($error) {
             $text=lang('im.forwardRule',['count'=>$error]);
