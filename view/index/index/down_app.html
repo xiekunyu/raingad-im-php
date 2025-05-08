@@ -117,6 +117,7 @@
 
     if (/^win/.test(navigator.platform.toLowerCase())) {
         $('.pc-box').show();
+        downapk();
     } else if (/(iPhone|iPad|iPod|iOS|mac)/i.test(ua)) {
       if (Sys.safari) {
         $(".down").attr("href", "javascript:downloadFn();");
@@ -142,8 +143,12 @@
       });
     }
  
-    else if (/(Android)/i.test(ua)) {
-      $(".down").attr("href", "{$client.andriod_webclip}");
+    else{
+      downapk();
+    }
+
+    function downapk(){
+      $(".down").attr("href", "{$client.android_webclip}");
      
       $(".doubt").click(function (event) {
         $(".pup").fadeIn();
@@ -155,7 +160,7 @@
         });
       });
     }
-
+    // if (/(Android)/i.test(ua)) 
     $(".colse").click(function (event) {
       $(".pup").fadeOut();
     });
