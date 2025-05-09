@@ -31,13 +31,13 @@ class User extends BaseModel
       return [
          'adminNotice'=>[
             'id'=>'admin_notice',
-            'displayName'=>'系统通知',
+            'displayName'=>lang('system.notice'),
             'avatar'=>getMainHost().'/static/common/img/notice.png',
             'name_py'=>'xitongtongzhi',
          ],
          'fileTransfer'=>[
             'id'=>-1,
-            'displayName'=>'我的收藏',
+            'displayName'=>lang('system.favor'),
             'avatar'=>getMainHost().'/static/common/img/file_transfer.png',
             'name_py'=>'wodeshoucang',
         ]
@@ -294,7 +294,7 @@ class User extends BaseModel
                'realname'=>$adminNotice['displayName'],
                'name_py'=>$adminNotice['name_py'],
                'avatar'=>$adminNotice['avatar'],
-               'lastContent'=>$sendTime ? $count.'条公告' :'',
+               'lastContent'=>$sendTime ? lang('system.announce',['num'=>$count]) :'',
                'unread'=>0,
                'lastSendTime'=>$sendTime * 1000,
                'is_group'=>2,
@@ -303,7 +303,7 @@ class User extends BaseModel
                'is_top'=>0,
                'is_notice'=>1,
                'is_online'=>0,
-               'index'=>"[1]系统消息",
+               'index'=>"[1]".lang('system.message'),
             ],
             [
                'id'=>$fileTransfer['id'],
@@ -312,7 +312,7 @@ class User extends BaseModel
                'realname'=>$fileTransfer['displayName'],
                'name_py'=>$fileTransfer['name_py'],
                'avatar'=>$fileTransfer['avatar'],
-               'lastContent'=> str_encipher($content,false) ?: '传输你的文件',
+               'lastContent'=> str_encipher($content,false) ?: lang('system.transFile'),
                'unread'=>0,
                'lastSendTime'=>((is_string($fileSendTime) ? strtotime($fileSendTime) : $fileSendTime) * 1000) ?: time() * 1000,
                'is_group'=>3,
@@ -321,7 +321,7 @@ class User extends BaseModel
                'is_top'=>$friend['is_top'] ?? 0,
                'is_notice'=>$friend['is_notice'] ?? 1,
                'is_online'=>0,
-               'index'=>"[1]系统消息",
+               'index'=>"[1]".lang('system.message'),
             ],
       ];
 

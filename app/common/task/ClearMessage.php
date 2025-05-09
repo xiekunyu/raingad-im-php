@@ -4,6 +4,7 @@ namespace app\common\task;
 
 use yunwuxin\cron\Task;
 use think\Exception;
+use think\facade\Db;
 use app\manage\model\{Config};
 use app\enterprise\model\Message;
 
@@ -57,11 +58,15 @@ class ClearMessage extends Task
                 $time=time() - ($days * $this->daytime);
                 $where[]=['create_time','<',$time];
                 $where[]=['chat_identify','<>','admin_notice']; //不删除公告
+                $where[]=['to_user','<>',-1]; //不删除收藏
                 $fileIds=Message::where($where)->where([['type','in',['image','video','file']],['file_id','>',0]])->column('file_id');
                 queuePush(['action'=>'clearFiles','fileIds'=>array_unique($fileIds)],10);
                 $list=Message::where($where)->where([['type','=','voice']])->column('content');
                 queuePush(['action'=>'clearVoice','list'=>$list],60);
                 Message::where($where)->delete();
+                // 整理数据碎片
+                $sql="ALTER TABLE `".config('database.connections.mysql.prefix')."message` ENGINE = InnoDB;";
+                Db::execute($sql);
            }
            print "****************消息清理成功******************\n";
         } catch (Exception $e) {

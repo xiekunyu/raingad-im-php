@@ -38,7 +38,7 @@ class Message extends BaseModel
          //    发送消息
     public function sendMessage($param,$globalConfig=false){
         $is_group = $param['is_group'] ?? 0;
-        $uid=self::$uid;
+        $uid=self::$uid ? : ($param['user_id'] ?? 1);
         if($param['toContactId']==-1){
             $is_group=0;
         }
@@ -104,12 +104,14 @@ class Message extends BaseModel
             }else{
                 // 群聊必须群成员才能发送消息
                 $group_id = explode('-', $param['toContactId'])[1] ?? '';
-                $toContactId=$group_id;
                 if(!$group_id){
                     $this->error=lang('system.parameterError');
                     return false;
                 }
                 if(!self::nospeak($group_id,$uid)){
+                    if($isForward){
+                        return false;
+                    }
                     return shutdown(lang('group.notSpeak'));
                 }
                 // 群聊必须群成员才能发送消息

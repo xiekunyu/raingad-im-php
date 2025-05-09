@@ -24,7 +24,12 @@ return [
         'apiClose' => 'API is closed',  
         'appIdError' => 'appId error',  
         'signError' => 'Signature error',  
-        'tooFast'=>"You visited too fast！"
+        'tooFast'=>"You visited too fast！",
+        'notice'=>"System Notice",
+        'favor'=>"My Collection",
+        'message'=>"System Message",
+        'announce'=>"{:num} announcements",
+        'transFile'=>"Transfer your files",
     ],
     'messageType' => [  
         'other' => "[Unsupported message type]",  

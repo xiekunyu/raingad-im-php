@@ -1,6 +1,7 @@
 <?php
 namespace app\index\controller;
 
+use app\cms\model\Message as ModelMessage;
 use app\enterprise\model\{File,Group,User,Message};
 use think\facade\View;
 use app\manage\model\Config;
@@ -184,6 +185,9 @@ class Index
 
     public function test(){
         echo time()-(30*86400);
+        // $m=new Message();
+        // $sql="ALTER TABLE `".config('database.connections.mysql.prefix')."message` ENGINE = InnoDB;";
+        // \think\facade\Db::execute($sql);
         // $list=Message::where('create_time','<',time()-(30*86400))->where(['type'=>'image'])->select()->toArray();
         // foreach($list as $k=> $v){
         //     $list[$k]['src']=str_encipher($v['content'],false);

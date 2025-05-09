@@ -23,7 +23,12 @@ return [
         'apiClose'=>"接口已关闭",
         'appIdError'=>'appId错误',
         'signError'=>'签名错误',
-        'toofast'=>"您访问的太快了！"
+        'toofast'=>"您访问的太快了！",
+        'notice'=>"系统通知",
+        'favor'=>"我的收藏",
+        'message'=>"系统消息",
+        'announce'=>"{:num}条公告",
+        'transFile'=>"传输你的文件"
     ],
     'messageType'=>[
         'other'=>"[暂不支持的消息类型]",

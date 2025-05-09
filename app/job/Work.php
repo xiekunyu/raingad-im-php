@@ -23,7 +23,8 @@ class Work
         'createAvatar', //创建、更新头像
         'clearFiles', //清理文件
         'clearVoice', //清理音频
-        'setIsRead'
+        'setIsRead', //设置消息为已读
+        'forwardMessage'  //转发消息
     ];
 
     // 执行队列
@@ -156,5 +157,51 @@ class Work
         return true;
     }
     
+    // 转发消息
+    public function forwardMessage($data){
+        try{
+            $is_group=0;
+            $error=0;
+            $simpleChat=$data['config']['chatInfo']['simpleChat'] ?? 1;
+            $userInfo=$data['userInfo'];
+            $userIds=$data['user_ids'];
+            foreach($userIds as $k=>$v){
+                $msgInfo=$data['message'];
+                if(strpos($v,'group')!==false){
+                    $is_group=1;
+                }else{
+                    $is_group=0;
+                }
+                if($is_group==0 && $simpleChat==0){
+                    $error++;
+                    continue;
+                }
+                $msgInfo['id']=\utils\Str::getUuid();
+                $msgInfo['status']='successd';
+                $msgInfo['user_id']=$userInfo['user_id'];
+                $msgInfo['sendTime']=time()*1000;
+                $msgInfo['toContactId']=$v;
+                $msgInfo['content']=str_encipher($msgInfo['content'],false);
+                $msgInfo['fromUser']=[
+                    'id'=>$userInfo['user_id'],
+                    'avatar'=>avatarUrl($userInfo['avatar'],$userInfo['realname'],$userInfo['user_id'],120),
+                    'displayName'=>$userInfo['realname']
+                ];
+                $msgInfo['is_group']=$is_group;
+                $message=new Message();
+                $msgInfo['is_forward']=1;
+                $isSend=$message->sendMessage($msgInfo,$data['config']);
+                if(!$isSend){
+                    $error++;
+                }
+            }
+            $count=count($userIds);
+            print("<info>成功转发".($count - $error)."条消息</info> \n");
+            return true;
+        }catch(\Exception $e){
+            print("<info>转发失败！</info> \n".$e->getMessage().$e->getLine());
+        }
+        
+    }
 
 }

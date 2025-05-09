@@ -65,49 +65,58 @@ class Im extends BaseController
         }
         $msg=$message->toArray();
         $userInfo=$this->userInfo;
-        try{
-            $is_group=0;
-            $error=0;
-            $chatSetting=$this->chatSetting;
-            foreach($userIds as $k=>$v){
-                $msgInfo=$msg;
-                if(strpos($v,'group')!==false){
-                    $is_group=1;
-                }else{
-                    $is_group=0;
-                }
-                if($is_group==0 && $chatSetting['simpleChat']==0){
-                    $error++;
-                    continue;
-                }
-                $msgInfo['id']=\utils\Str::getUuid();
-                $msgInfo['status']='successd';
-                $msgInfo['user_id']=$userInfo['user_id'];
-                $msgInfo['sendTime']=time()*1000;
-                $msgInfo['toContactId']=$v;
-                $msgInfo['content']=str_encipher($msgInfo['content'],false);
-                $msgInfo['fromUser']=[
-                    'id'=>$userInfo['user_id'],
-                    'avatar'=>avatarUrl($userInfo['avatar'],$userInfo['realname'],$userInfo['user_id'],120),
-                    'displayName'=>$userInfo['realname']
-                ];
-                $msgInfo['is_group']=$is_group;
-                $message=new Message();
-                $msgInfo['is_forward']=1;
-                $data=$message->sendMessage($msgInfo,$this->globalConfig);
-                if(!$data){
-                    return warning($message->getError());
-                }
-            }
-        }catch(\Exception $e){
-            return error($e->getMessage().$e->getLine());
-        }
-        if ($error) {
-            $text=lang('im.forwardRule',['count'=>$error]);
-        } else {
-            $text=lang('im.forwardOk');
-        }
-        return success($text);
+        queuePush([
+            'action'=>'forwardMessage',
+            'message'=>$msg,
+            'user_ids'=>$userIds,
+            'config'=>$this->globalConfig,
+            'userInfo'=>$userInfo
+        ]);
+        return success(lang('im.forwardOk'));
+        // try{
+        //     $is_group=0;
+        //     $error=0;
+        //     $chatSetting=$this->chatSetting;
+            
+        //     foreach($userIds as $k=>$v){
+        //         $msgInfo=$msg;
+        //         if(strpos($v,'group')!==false){
+        //             $is_group=1;
+        //         }else{
+        //             $is_group=0;
+        //         }
+        //         if($is_group==0 && $chatSetting['simpleChat']==0){
+        //             $error++;
+        //             continue;
+        //         }
+        //         $msgInfo['id']=\utils\Str::getUuid();
+        //         $msgInfo['status']='successd';
+        //         $msgInfo['user_id']=$userInfo['user_id'];
+        //         $msgInfo['sendTime']=time()*1000;
+        //         $msgInfo['toContactId']=$v;
+        //         $msgInfo['content']=str_encipher($msgInfo['content'],false);
+        //         $msgInfo['fromUser']=[
+        //             'id'=>$userInfo['user_id'],
+        //             'avatar'=>avatarUrl($userInfo['avatar'],$userInfo['realname'],$userInfo['user_id'],120),
+        //             'displayName'=>$userInfo['realname']
+        //         ];
+        //         $msgInfo['is_group']=$is_group;
+        //         $message=new Message();
+        //         $msgInfo['is_forward']=1;
+        //         $data=$message->sendMessage($msgInfo,$this->globalConfig);
+        //         if(!$data){
+        //             return warning($message->getError());
+        //         }
+        //     }
+        // }catch(\Exception $e){
+        //     return error($e->getMessage().$e->getLine());
+        // }
+        // if ($error) {
+        //     $text=lang('im.forwardRule',['count'=>$error]);
+        // } else {
+        //     $text=lang('im.forwardOk');
+        // }
+        // return success($text);
     }
 
     // 获取用户信息
