@@ -41,6 +41,7 @@ class Events
             'type'      => 'init',
             'client_id' => $client_id
         )));
+        self::onlineStatistics();
     }
     /**
     * 有消息时
@@ -113,11 +114,13 @@ class Events
             self::closeClient($client_id);
         }
         $_SESSION['user_id']=$userInfo['user_id'];
+    
         self::sendStatus($client_id);
     }
 
     //断开连接
     protected static function closeClient($client_id){
+        self::onlineStatistics();
         $_SESSION['user_id']=null;
         Gateway::closeClient($client_id);
     }
@@ -136,7 +139,21 @@ class Events
             'data' => ['id'=>$user_id,'is_online'=>0]
         )));
         }
-        
+        self::onlineStatistics();
+    }
+
+    public static function onlineStatistics()
+    {
+       // 通知后台在线用户数和在线设备数
+        $data=[
+            'onlineCount'=>Gateway::getAllUidCount() ?? 0,
+            'clientCount'=>Gateway::getAllClientCount() ?? 0,
+        ];
+        Gateway::sendToGroup('admin-manage', json_encode(array(
+            'type'      => 'statistics',
+            'time' => time(),
+            'data' => $data
+        )));
     }
   
 }

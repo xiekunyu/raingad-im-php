@@ -10,11 +10,27 @@ namespace app\manage\controller;
 
 
 use app\BaseController;
-use app\enterprise\model\{Message};
-use think\facade\Cache;
+use app\enterprise\model\{Message,User,Group,File};
+use GatewayClient\Gateway;
 class Index extends BaseController
 {
     // 超级管理员专属功能
+    public function index(){
+        Gateway::$registerAddress = config('gateway.registerAddress');
+        $client_id=$this->request->param('client_id','');
+        if($client_id){
+            Gateway::joinGroup($client_id, 'admin-manage');
+        }
+        $data=[
+            'userCount'=>User::where(['status'=>1])->count(),
+            'groupCount'=>Group::where(['status'=>1])->count(),
+            'messageCount'=>Message::where(['status'=>1])->where([['type', 'not in', ['event','admin_notice','webrtc']]])->count(),
+            'fileCount'=>File::where(['status'=>1])->count(),
+            'onlineCount'=>Gateway::getAllUidCount() ?? 0,
+            'clientCount'=>Gateway::getAllClientCount() ?? 0,
+        ];
+        return success('', $data);
+    }
 
     // 清理消息
     public function clearMessage(){
