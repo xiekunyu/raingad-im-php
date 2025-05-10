@@ -29,7 +29,7 @@
           <strong>{$config.name}</strong> 
           <p>{$config.description}</p> 
           <div class="installBox"> 
-            <a class="down" href="javascript:;">下载</a> 
+            <a class="down downapp" href="javascript:;">下载</a> 
             <a class="doubt" href="https://support.apple.com/zh-cn/102400" target='_blank'>?</a> 
           </div> 
         </div> 
@@ -120,7 +120,7 @@
         downapk();
     } else if (/(iPhone|iPad|iPod|iOS|mac)/i.test(ua)) {
       if (Sys.safari) {
-        $(".down").attr("href", "javascript:downloadFn();");
+        $(".downapp").attr("href", "javascript:downloadFn();");
        
         $(".doubt").click(function (event) {
           $(".pup").fadeIn();
@@ -137,7 +137,7 @@
         });
       }
     } else if (ua.indexOf('qq') > -1 && ua.indexOf('mqqbrowser') < 0) {
-      $(".down").attr("href", "###");
+      $(".downapp").attr("href", "###");
       $("body").click(function (event) {
         $(".pupPic").show();
       });
@@ -148,7 +148,7 @@
     }
 
     function downapk(){
-      $(".down").attr("href", "{$client.android_webclip}");
+      $(".downapp").attr("href", "{$client.android_webclip}");
      
       $(".doubt").click(function (event) {
         $(".pup").fadeIn();
