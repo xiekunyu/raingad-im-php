@@ -18,8 +18,10 @@ class Index extends BaseController
     public function index(){
         Gateway::$registerAddress = config('gateway.registerAddress');
         $client_id=$this->request->param('client_id','');
+        $is_join=0;
         if($client_id){
             Gateway::joinGroup($client_id, 'admin-manage');
+             $is_join=1;
         }
         $data=[
             'userCount'=>User::where(['status'=>1])->count(),
@@ -28,6 +30,7 @@ class Index extends BaseController
             'fileCount'=>File::where(['status'=>1])->count(),
             'onlineCount'=>Gateway::getAllUidCount() ?? 0,
             'clientCount'=>Gateway::getAllClientCount() ?? 0,
+            'isJoin'=>$is_join,
         ];
         return success('', $data);
     }

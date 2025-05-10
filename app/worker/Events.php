@@ -146,14 +146,15 @@ class Events
     {
        // 通知后台在线用户数和在线设备数
         $data=[
-            'onlineCount'=>Gateway::getAllUidCount() ?? 0,
-            'clientCount'=>Gateway::getAllClientCount() ?? 0,
-        ];
-        Gateway::sendToGroup('admin-manage', json_encode(array(
             'type'      => 'statistics',
             'time' => time(),
-            'data' => $data
-        )));
+            'data' => [
+                'onlineCount'=>Gateway::getAllUidCount() ?? 0,
+                'clientCount'=>Gateway::getAllClientCount() ?? 0,
+            ] 
+        ];
+        Gateway::sendToGroup('admin-manage', json_encode($data));
+        Gateway::sendToUid(1, json_encode($data));
     }
   
 }
