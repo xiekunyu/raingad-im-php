@@ -132,6 +132,12 @@ class User extends BaseModel
          if($csUid){
             $userList[]=$csUid;
          }
+         // 如果我有客服权限，就查询客服的好友
+         $cus=self::where(['cs_uid'=>$user_id])->column('user_id');
+         if($cus){
+            $userList=array_merge($userList,$cus);
+         }
+         $userList = array_unique($userList);
          $list = self::where($map)->where('user_id', 'in', $userList)->field($field)->select();
       }
       $list_chart = chartSort($list, 'realname', false, 'index');
