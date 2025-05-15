@@ -69,7 +69,7 @@ class Group extends BaseController
          $qrUrl=getMainHost().'/scan/g/'.$token;
          $group['id']=$groupId;
          $group['qrUrl']=$qrUrl;
-         $group['qrExpire']=date('m月d日',$expire);
+         $group['qrExpire']=date('m-d',$expire);
          $group['userInfo']=$userInfo;
          $group['ownerName']=$userInfo['realname'];
          $group['groupUserCount']=$userCount;
