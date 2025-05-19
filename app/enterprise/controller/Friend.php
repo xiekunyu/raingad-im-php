@@ -42,6 +42,9 @@ class Friend extends BaseController
     {
         $param = $this->request->param();
         $user_id=$param['user_id'] ?? 0;
+        if(!$user_id){
+            return warning(lang('system.notNull'));
+        }
         if($user_id==$this->uid){
             return warning(lang('friend.notAddOwn'));
         }
