@@ -1025,7 +1025,7 @@ function getMsgType($type,$callVideo=false){
 }
 
 // 获取app的下载链接
-function getAppDowmUrl($platform='andriod'){
+function getAppDowmUrl($platform='android'){
     $config=config('version.'.$platform);
     $name=config('version.app_name');
     if($platform=='windows'){
@@ -1036,7 +1036,7 @@ function getAppDowmUrl($platform='andriod'){
         $path="/downloadApp/mac";
     }else{
         $packageName=$name."_Setup_".$config['version'].".apk";
-        $path="/downloadApp/andriod";
+        $path="/downloadApp/android";
     }
     if(is_file(PACKAGE_PATH . $packageName)){
         return getMainHost().$path;

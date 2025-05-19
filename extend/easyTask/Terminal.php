@@ -50,8 +50,7 @@ class Terminal
     {
         $this->rootPath = root_path();
         $this->runType  = $runType;
-        // 初始化日志文件
-
+        
         if ($this->runType === 1) {
             $outputDir = Helper::getStdPath();
 
@@ -60,6 +59,7 @@ class Terminal
             $outputDir = $this->rootPath . 'runtime' . DIRECTORY_SEPARATOR;
 
             $this->outputFile = $outputDir . 'exec_' . getOnlyToken() . '.log';
+            
             file_put_contents($this->outputFile, '');
         }
 
@@ -78,6 +78,9 @@ class Terminal
 
     public function exec(string $command)
     {
+        // 初始化日志文件
+        $write=new WriteLog();
+        $write->exec();
         // 写入日志
         $this->process = proc_open($command, $this->descriptorsPec, $this->pipes, $this->rootPath);
 
