@@ -9,21 +9,21 @@ return [
     'app_name'=>env('app.name', 'Raingad-IM'),  //在.env中配置
     'android' => [
         'version' => env('app.version', '6.0.0'),  //在.env中配置
-        'release' => env('app.release', '20250505'), //在.env中配置
+        'release' => env('app.release', '20250520'), //在.env中配置
         'url' =>env('app.android_webclip',''),
-        'update_info' => '1.优化界面，消息操作更直观\n2.增加群聊管理标识\n3.增加视频封面以及比例自动计算\n4.修复若干BUG',
+        'update_info' => '1.新增国际化，优化大量UI\n2.新增新的保活插件\n3.聊天记录采用虚拟列表，提升性能\n4.修复若干BUG',
         'update_type' => 'solicit',
     ],
     'ios' => [
         'version' => env('app.version', '6.0.0'),  //在.env中配置
-        'release' => env('app.release', '20250505'), //在.env中配置
+        'release' => env('app.release', '20250520'), //在.env中配置
         'url' => env('app.ios_webclip',''),
         'update_info' => '暂无',
         'update_type' => 'solicit',
     ],
     'windows' => [
-        'version' => '5.5.2',
-        'release' => '20250107',
+        'version' => '6.0.0',
+        'release' => '20250520',
         'url' => env('app.win_webclip',''),
         'update_info' => '1.lemon-imui本地化，消息底部检测',
         'update_type' => 'solicit',

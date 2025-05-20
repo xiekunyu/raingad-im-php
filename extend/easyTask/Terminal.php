@@ -7,6 +7,7 @@
 
 namespace easyTask;
 use easyTask\WriteLog;
+use think\facade\Cache;
 class Terminal
 {
     /**
@@ -79,8 +80,11 @@ class Terminal
     public function exec(string $command)
     {
         // 初始化日志文件
-        $write=new WriteLog();
-        $write->exec();
+        if(Cache::has('WriteLog')){
+            $write=new WriteLog();
+            $write->exec();
+            Cache::set('WriteLog',1,86400);
+        }
         // 写入日志
         $this->process = proc_open($command, $this->descriptorsPec, $this->pipes, $this->rootPath);
 

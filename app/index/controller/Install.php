@@ -178,7 +178,7 @@ NAME = IM
 LOGO = 
 # 如果安卓和ios不同步更新，请到/config/version.php中单独设置版本号
 VERSION = 6.0.0
-RELEASE = 20250505
+RELEASE = 20250520
 # 主域名必填，例如：https://im.example.com
 HOST = 
 DEFAULT_TIMEZONE = Asia/Shanghai
