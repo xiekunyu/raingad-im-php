@@ -140,7 +140,7 @@ class Friend extends BaseController
             }
             
         }
-        return success('');
+        return success(lang('system.success'));
     }
 
 
