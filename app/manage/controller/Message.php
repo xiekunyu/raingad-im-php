@@ -198,6 +198,7 @@ class Message extends BaseController
             }
             $data=[
                 'id'=>$message['id'],
+                'type'=>"text",
                 'content'=>str_encipher($content,false),
             ];
             wsSendMsg($toContactId, $action, $data, $message['is_group']); 
