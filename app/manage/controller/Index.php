@@ -38,7 +38,7 @@ class Index extends BaseController
     // 清理消息
     public function clearMessage(){
         if($this->userInfo['user_id']!=1){
-            return warning('system.noAuth');
+            return warning('system.notAuth');
         }
         Message::where(['status'=>1])->delete();
         return success('system.clearOk');
@@ -76,7 +76,7 @@ class Index extends BaseController
     public function publishNotice(){
         $userInfo=$this->userInfo;
         if($userInfo['user_id']!=1){
-            return warning('system.noAuth');
+            return warning('system.notAuth');
         }
         $param=$this->request->param();
         $msgId=$param['msgId'] ?? 0;

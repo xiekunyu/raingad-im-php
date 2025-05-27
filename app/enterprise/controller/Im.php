@@ -823,12 +823,12 @@ class Im extends BaseController
         $param = $this->request->param();
         $id = $param['id'];
         if(!$this->globalConfig['chatInfo']['dbDelMsg']){
-            return warning(lang('system.noAuth'));
+            return warning(lang('system.notAuth'));
         }
         $message = Message::where(['id' => $id])->find();
         if ($message) {
             if($message['from_user']!=$this->userInfo['user_id']){
-                return warning(lang('system.noAuth'));
+                return warning(lang('system.notAuth'));
             }
             Message::where(['id' => $id])->delete();
             // 如果是最后一条消息，需要将上一条设置为最后一条
